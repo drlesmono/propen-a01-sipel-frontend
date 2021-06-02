@@ -50,15 +50,15 @@ class ReportHead extends Component {
 
     async loadData() {
         try {
-            const orders = await APIConfig.get("/ordersVerifiedReport");
-            const order = await APIConfig.get("/laporan/order");
-            const reports = await APIConfig.get("/reports/all");
-            const listIr = await APIConfig.get("/reports/ir");
-            const listMr = await APIConfig.get("/reports/mr");
-            const listPi = await APIConfig.get("/orders/pi");
-            const listMs = await APIConfig.get("/orders/ms");
-            const listTerm = await APIConfig.get("/orders/ms/perc");
-            const bast = await APIConfig.get("/laporan/bast");
+            const orders = await APIConfig.get("https://propen-a01-sipel.herokuapp.com/api/v1//ordersVerifiedReport");
+            const order = await APIConfig.get("https://propen-a01-sipel.herokuapp.com/api/v1//laporan/order");
+            const reports = await APIConfig.get("https://propen-a01-sipel.herokuapp.com/api/v1//reports/all");
+            const listIr = await APIConfig.get("https://propen-a01-sipel.herokuapp.com/api/v1//reports/ir");
+            const listMr = await APIConfig.get("https://propen-a01-sipel.herokuapp.com/api/v1//reports/mr");
+            const listPi = await APIConfig.get("https://propen-a01-sipel.herokuapp.com/api/v1//orders/pi");
+            const listMs = await APIConfig.get("https://propen-a01-sipel.herokuapp.com/api/v1//orders/ms");
+            const listTerm = await APIConfig.get("https://propen-a01-sipel.herokuapp.com/api/v1//orders/ms/perc");
+            const bast = await APIConfig.get("https://propen-a01-sipel.herokuapp.com/api/v1//laporan/bast");
             this.setState({ ordersVerified: orders.data, reports: reports.data, listIr: listIr.data,
                 listMr: listMr.data, listPi: listPi.data, listMs: listMs.data, bastList: bast.data, orderList: order.data,
                 termList: listTerm.data});

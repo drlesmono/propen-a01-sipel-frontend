@@ -4,7 +4,8 @@ import { Doughnut } from 'react-chartjs-2';
 
 export default function DoughnutChart(props) {
 
-    const { bulan, masuk, selesai } = props;
+    const { data } = props;
+    console.log(data);
 
 
     return (
@@ -15,7 +16,7 @@ export default function DoughnutChart(props) {
                     datasets : [
                         {
                             label: 'Project Installation',
-                            data: [10, 8],
+                            data: data,
                             backgroundColor: ['green', 'red'],
                             borderColor: 'gray',
                             borderWidth: 2,

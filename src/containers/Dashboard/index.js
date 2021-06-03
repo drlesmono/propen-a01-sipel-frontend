@@ -41,7 +41,11 @@ class Dashboard extends Component {
             isSuccess: false,
             listPi: [],
             listMs: [],
-            messageError: null
+            messageError: null,
+            piBelumSelesaiMsBelumSelesai: [0, 0],
+            tepatWaktuTelat: [],
+            piMasukSelesai: [0, 0],
+            msMasukSelesai: [0, 0]
         };
         this.handleEdit = this.handleEdit.bind(this);
         this.handleCancel = this.handleCancel.bind(this);
@@ -53,6 +57,7 @@ class Dashboard extends Component {
         this.handleChangeListService = this.handleChangeListService.bind(this);
         this.handleCloseNotif = this.handleCloseNotif.bind(this);
         this.handleValidation = this.handleValidation.bind(this);
+        this.filterTelatTepatWaktu = this.filterTelatTepatWaktu.bind(this);
     }
 
     componentDidMount() {
@@ -67,6 +72,21 @@ class Dashboard extends Component {
             const listPi = await APIConfig.get("/orders/pi");
             const listMs = await APIConfig.get("/orders/ms");
             this.setState({ ordersVerified: orders.data, engineers: engineers.data, listPi: listPi.data, listMs: listMs.data});
+            this.filterTelatTepatWaktu(this.state.listPi);
+        } catch (error) {
+            this.setState({ isError: true });
+            console.log(error);
+        }
+    }
+
+    async loadDataAfterSetPeriod() {
+        try {
+            const orders = await APIConfig.get("/ordersVerified/ms");
+            const engineers = await APIConfig.get("/engineers");
+            const listPi = await APIConfig.get("/orders/pi");
+            const listMs = await APIConfig.get("/orders/ms");
+            this.setState({ ordersVerified: orders.data, engineers: engineers.data, listPi: listPi.data, listMs: listMs.data});
+            this.filterTelatTepatWaktu(this.state.listPi);
         } catch (error) {
             this.setState({ isError: true });
             console.log(error);
@@ -384,6 +404,23 @@ class Dashboard extends Component {
         return null;
     }
 
+    // Memetakan Project Installation yang selesai tepat waktu dan yang telat
+    filterTelatTepatWaktu(listPi){
+        let tepatWaktu = 0;
+        let telat = 0;
+        let dateClosed;
+        let deadline;
+
+        for(let i = 0; i < listPi.length; i++){
+            dateClosed = moment(new Date(listPi[i].dateClosedPI));
+            deadline = moment (new Date(listPi[i].deadline));
+            if (dateClosed < deadline){
+                tepatWaktu++;
+            } else { telat++; }
+        }
+        this.setState({ tepatWaktuTelat: [tepatWaktu, telat]});
+}
+
     // Mengambil nama lengkap dari engineer pada service yang dipilih
     getPICService(service){
         if(service.idUser !== null){
@@ -497,11 +534,15 @@ class Dashboard extends Component {
             orderFiltered,
             isFiltered,
             listService,
-            services
+            services,
+            piBelumSelesaiMsBelumSelesai,
+            tepatWaktuTelat,
+            piMasukSelesai,
+            msMasukSelesai
         } = this.state;
 
-        const titleExtend = isReportExtend? "Perpanjangan Periode Kontrak" : "Form Perpanjangan Periode Kontrak";
-        const title = isReport? "Rincian Periode Kontrak" : "Form Perbarui Periode Kontrak";
+
+
 
         return (
             <>
@@ -512,7 +553,7 @@ class Dashboard extends Component {
                             <td></td>
                             <td>
                                 <div><h1 className="text-center">Persentase Penyelesaian Tepat Waktu</h1></div>
-                                <DoughnutChart></DoughnutChart>
+                                <DoughnutChart data={this.state.tepatWaktuTelat}></DoughnutChart>
                                 <Button
                                     className={classes.button2}
                                     // onClick={() => this.handleFinalize(report)}

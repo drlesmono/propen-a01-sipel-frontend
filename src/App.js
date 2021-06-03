@@ -15,6 +15,7 @@ import FinalisasiLaporan from "./containers/FinalisasiLaporan";
 import { Navbar, NavDropdown, Nav } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import homepage from "./assets/homepage.png";
+import Dashboard from "./containers/Dashboard";
 
 const routes = {
   "/": () => 
@@ -33,6 +34,7 @@ const routes = {
                 </table>
               </div>
             </div>,
+  "/dashboard": () => <Dashboard />,
   "/order/progress": () => <Progress />,
     "/order/finalisasi": () => <FinalisasiLaporan />,
   "/produksi/penugasan": () => <PenugasanEngineer />,
@@ -55,7 +57,7 @@ function App(){
             <Navbar.Toggle aria-controls="responsive-navbar-nav" />
             <Navbar.Collapse id="responsive-navbar-nav">
               <Nav className="mr-auto">
-                <Nav.Link href="#dashboard">Dashboard</Nav.Link>
+                <Nav.Link href="/dashboard">Dashboard</Nav.Link>
                 <NavDropdown title="Order" id="collasible-nav-dropdown">
                   {/* <NavDropdown.Item href="#action/3.1">Action</NavDropdown.Item>
                   <NavDropdown.Item href="#action/3.2">Another action</NavDropdown.Item>

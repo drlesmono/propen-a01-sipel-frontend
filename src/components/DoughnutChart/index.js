@@ -5,7 +5,6 @@ import { Doughnut } from 'react-chartjs-2';
 export default function DoughnutChart(props) {
 
     const { data } = props;
-    console.log(data);
 
 
     return (

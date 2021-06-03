@@ -42,10 +42,13 @@ class Dashboard extends Component {
             listPi: [],
             listMs: [],
             messageError: null,
+            listNamaBulan: [],
             piBelumSelesaiMsBelumSelesai: [0, 0],
-            tepatWaktuTelat: [],
-            piMasukSelesai: [0, 0],
-            msMasukSelesai: [0, 0]
+            tepatWaktuTelat: [20, 10],
+            piMasuk: [],
+            piSelesai: [],
+            msMasuk: [],
+            msSelesai: []
         };
         this.handleEdit = this.handleEdit.bind(this);
         this.handleCancel = this.handleCancel.bind(this);
@@ -71,7 +74,13 @@ class Dashboard extends Component {
             const engineers = await APIConfig.get("/engineers");
             const listPi = await APIConfig.get("/orders/pi");
             const listMs = await APIConfig.get("/orders/ms");
-            this.setState({ ordersVerified: orders.data, engineers: engineers.data, listPi: listPi.data, listMs: listMs.data});
+            const listNamaBulan = await APIConfig.get("/orders/pi/namaBulan/01_2021/05_2021");
+            const piMasuk = await APIConfig.get("/orders/pi/masuk/01_2021/05_2021");
+            const piSelesai = await APIConfig.get("/orders/pi/selesai/01_2021/05_2021");
+            console.log(listNamaBulan);
+            console.log(listPi);
+            this.setState({ ordersVerified: orders.data, engineers: engineers.data, listPi: listPi.data, listMs: listMs.data,
+            listNamaBulan: listNamaBulan.data, piMasuk: piMasuk.data, piSelesai: piSelesai.data});
             this.filterTelatTepatWaktu(this.state.listPi);
         } catch (error) {
             this.setState({ isError: true });
@@ -537,11 +546,16 @@ class Dashboard extends Component {
             services,
             piBelumSelesaiMsBelumSelesai,
             tepatWaktuTelat,
-            piMasukSelesai,
-            msMasukSelesai
+            piMasuk,
+            piSelesai,
+            listNamaBulan
         } = this.state;
 
-
+        console.log(this.state.listNamaBulan);
+        console.log(this.state.piMasuk);
+        console.log(this.state.piSelesai);
+        console.log(this.state.tepatWaktuTelat);
+        console.log(this.state.ordersVerified);
 
 
         return (
@@ -565,7 +579,7 @@ class Dashboard extends Component {
                         <tr>
                             <td>
                                 <div><h1 className="text-center">Jumlah Project Installation yang Masuk dan Selesai</h1></div>
-                                <BarChart></BarChart>
+                                <BarChart namaBulan={this.state.listNamaBulan} masuk={this.state.piMasuk} selesai={this.state.piSelesai}></BarChart>
                                 <Button
                                     className={classes.button2}
                                     // onClick={() => this.handleFinalize(report)}

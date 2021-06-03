@@ -11,6 +11,7 @@ import ReportHead from "./containers/ReportHead";
 import PenugasanEngineer from "./containers/PenugasanEngineer";
 import PeriodeKontrak from "./containers/PeriodeKontrak";
 import LaporanInstalasiMaintenance from "./containers/LaporanInstalasiMaintenance";
+import FinalisasiLaporan from "./containers/FinalisasiLaporan";
 import { Navbar, NavDropdown, Nav } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import homepage from "./assets/homepage.png";
@@ -33,6 +34,7 @@ const routes = {
               </div>
             </div>,
   "/order/progress": () => <Progress />,
+    "/order/finalisasi": () => <FinalisasiLaporan />,
   "/produksi/penugasan": () => <PenugasanEngineer />,
   "/produksi/periodeKontrak": () => <PeriodeKontrak />,
   "/laporan/daftarLaporan" : () => <LaporanInstalasiMaintenance />,
@@ -64,7 +66,7 @@ function App(){
                     <Nav.Link href="#action/3.1" style={{color: "black"}} className="pl-5 pr-5">Action</Nav.Link>
                     <Nav.Link href="#action/3.2" style={{color: "black"}} className="pl-5 pr-5">Another action</Nav.Link>
                     <Nav.Link href="#action/3.4" style={{color: "black"}} className="pl-5 pr-5">Something</Nav.Link>
-                    <Nav.Link href="#action/3.4" style={{color: "black"}} className="pl-5 pr-5">Something 2</Nav.Link>
+                    <Nav.Link href="/order/finalisasi" style={{color: "black"}} className="pl-5 pr-5">Finalisasi Laporan</Nav.Link>
                   </div>
                 </NavDropdown>
                 <NavDropdown title="Produksi" id="collasible-nav-dropdown">

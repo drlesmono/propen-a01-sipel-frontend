@@ -36,7 +36,7 @@ const routes = {
             </div>,
   "/dashboard": () => <Dashboard />,
   "/order/progress": () => <Progress />,
-    "/order/finalisasi": () => <FinalisasiLaporan />,
+  "/order/finalisasi": () => <FinalisasiLaporan />,
   "/produksi/penugasan": () => <PenugasanEngineer />,
   "/produksi/periodeKontrak": () => <PeriodeKontrak />,
   "/laporan/daftarLaporan" : () => <LaporanInstalasiMaintenance />,

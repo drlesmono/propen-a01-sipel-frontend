@@ -65,11 +65,10 @@ class FinalisasiLaporan extends Component {
             const listIr = await APIConfig.get("/reports/ir");
             const listMr = await APIConfig.get("/reports/mr");
             const listPi = await APIConfig.get("/orders/pi");
-            const listMs = await APIConfig.get("/orders/ms");
+            // const listMs = await APIConfig.get("/orders/ms");
             this.setState({ ordersVerified: orders.data, reports: reports.data, listIr: listIr.data,
-                listMr: listMr.data, listPi: listPi.data, listMs: listMs.data});
+                listMr: listMr.data, listPi: listPi.data});
         } catch (error) {
-            // alert("Oops terjadi masalah pada server");
             this.setState({ isError: true, messageError: "Oops terjadi masalah pada server" });
             console.log(error);
         }
@@ -324,16 +323,22 @@ class FinalisasiLaporan extends Component {
         console.log(this.state.reportTarget);
     }
 
+     // Mendapatkan url sesuai dengan jenis file
+    // Apabila jenis file adalah pdf, maka url preview yang digunakan
+    // Apabila jenis file selain pdf, maka url download yang digunakan
     getUrl(report){
+        //const BASE_URL = "https://propen-a01-sipel.herokuapp.com/report/";
+		const BASE_URL = "http://localhost:2020/report/";
         if(report.fileType === "application/pdf"){
-            return report.urlFile+"/preview";
+            return BASE_URL+report.reportName+"/preview";
         }else{
-            return report.urlFile;
+            return BASE_URL+report.reportName;
         }
     }
 
     getToDownload(report){
-        return report.urlFile;
+	const BASE_URL = "http://localhost:2020/report/";
+        return BASE_URL+report.reportName;
     }
 
     getNotes(report){

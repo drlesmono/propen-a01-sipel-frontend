@@ -112,7 +112,9 @@ class App extends Component {
           <Navbar.Toggle aria-controls="responsive-navbar-nav" />
           <Navbar.Collapse id="responsive-navbar-nav">
               <Nav className="mr-auto">
-                {showDashboard && (<Nav.Link href="/dashboard" style={{color: "black"}} className="pl-5 pr-5">Dashboard</Nav.Link>)}
+                {currentUser ?
+                {showDashboard && (<Nav.Link href="/dashboard" style={{color: "black"}} className="pl-5 pr-5">Dashboard</Nav.Link>)} : <></>}
+                {currentUser ?
               <NavDropdown title="Order" id="collasible-nav-dropdown">
                 <div className="d-flex justify-content-between">
                   {showInputDataOrder && (<Nav.Link href="/order/order" style={{color: "black"}} className="pl-5 pr-5">Input Data Order</Nav.Link>)}
@@ -120,7 +122,8 @@ class App extends Component {
                   {showProgressOrder && (<Nav.Link href="/order/progress" style={{color: "black"}} className="pl-5 pr-5">Progress Delivery</Nav.Link>)}
                   {showChangeStatusOrder && (<Nav.Link href="/order/progress" style={{color: "black"}} className="pl-5 pr-5">Ubah Status</Nav.Link>)}
                   </div>
-              </NavDropdown>
+              </NavDropdown> : <></>}
+              {currentUser ?
               <NavDropdown title="Produksi" id="collasible-nav-dropdown">
                   <div className="d-flex justify-content-between">
                   {showPenugasanEngineer && (<Nav.Link href="/produksi/penugasan" style={{color: "black"}} className="pl-5 pr-5">Penugasan</Nav.Link>)}
@@ -129,7 +132,9 @@ class App extends Component {
                   {showPenjadwalanMaintenance && (<Nav.Link href="/produksi/maintenance" style={{color: "black"}} className="pl-5 pr-5">Penjadwalan Maintenance</Nav.Link>)}
                   
               </div>
-              </NavDropdown>
+              
+              </NavDropdown> : <></>}
+              {currentUser ? 
               <NavDropdown title="Laporan"  id="collasible-nav-dropdown">
               <div className="d-flex justify-content-between">
               {showMengelolaLaporan && (<Nav.Link href="/laporan/daftarLaporan" style={{color: "black"}} className="pl-5 pr-5">Daftar Laporan</Nav.Link>)}
@@ -139,9 +144,10 @@ class App extends Component {
               {showBast && (<Nav.Link href="/laporan/create-bast" style={{color: "black"}} className="pl-5 pr-5">Laporan</Nav.Link>)}
               {showStatusPersetujuanLaporan && (<Nav.Link href="/laporan/verifikasiLaporan" style={{color: "black"}} className="pl-5 pr-5">Verifikasi Laporan</Nav.Link>)}
               {showFinalisasiLaporan && (<Nav.Link href="/laporan/finalisasi" style={{color: "black"}} className="pl-5 pr-5">Finalisasi Laporan</Nav.Link>)}
+
               </div>
-              </NavDropdown>
-              //{showHalamanAdmin && (<Nav.Link href="/halaman/admin">Halaman Admin</Nav.Link>)}
+              </NavDropdown> : <></>}
+              {showHalamanAdmin && (<Nav.Link href="/halaman/admin">Halaman Admin</Nav.Link>)}
               </Nav>
 
               {currentUser ? (

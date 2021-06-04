@@ -198,7 +198,7 @@ class HalamanAdmin extends Component {
                                                 as="select"
                                                 size="lg"
                                                 name="role_name"
-                                                value={ this.state.value }
+                                                value={ this.state.role_name }
                                                 onChange={this.handleChangeField}>
                                                 <option value="None">None</option>
                                                 <option value="Admin">Admin</option>

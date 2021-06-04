@@ -44,8 +44,9 @@ class Dashboard extends Component {
             messageError: null,
             listNamaBulanPi: [],
             listNamaBulanMs: [],
-            piBelumSelesaiMsBelumSelesai: [0, 0],
-            tepatWaktuTelat: [20, 10],
+            piBelumSelesai: 0,
+            MsBelumSelesai: 0,
+            tepatWaktuTelat: [],
             piMasuk: [],
             piSelesai: [],
             msMasuk: [],
@@ -70,7 +71,7 @@ class Dashboard extends Component {
         this.handleChangeListService = this.handleChangeListService.bind(this);
         this.handleCloseNotif = this.handleCloseNotif.bind(this);
         this.handleValidation = this.handleValidation.bind(this);
-        this.filterTelatTepatWaktu = this.filterTelatTepatWaktu.bind(this);
+        this.handleAfterSetPeriod = this.handleAfterSetPeriod.bind(this);
     }
 
     componentDidMount() {
@@ -80,46 +81,24 @@ class Dashboard extends Component {
     // Mengambil dan mengupdate data yang masuk
     async loadData() {
         try {
-            const orders = await APIConfig.get("/ordersVerified/ms");
-            const engineers = await APIConfig.get("/engineers");
-            const listPi = await APIConfig.get("/orders/pi");
-            // const listMs = await APIConfig.get("/orders/ms");
-            const listNamaBulanPi = await APIConfig.get("/orders/pi/namaBulan/01_2021/12_2021");
-            const piMasuk = await APIConfig.get("/orders/pi/masuk/01_2021/12_2021");
-            const piSelesai = await APIConfig.get("/orders/pi/selesai/01_2021/12_2021");
-            const listNamaBulanMs = await APIConfig.get("/orders/ms/namaBulan/01_2021/12_2021");
-            const msMasuk = await APIConfig.get("/orders/ms/masuk/01_2021/12_2021");
-            const msSelesai = await APIConfig.get("/orders/ms/selesai/01_2021/12_2021");
-            // console.log(listNamaBulan);
-            // console.log(listPi);
-            this.setState({ordersVerified: orders.data, engineers: engineers.data, listPi: listPi.data,
-                listNamaBulanPi: listNamaBulanPi.data, piMasuk: piMasuk.data, piSelesai: piSelesai.data,
-                listNamaBulanMs: listNamaBulanMs.data, msMasuk: msMasuk.data, msSelesai: msSelesai.data,
-            });
-            this.filterTelatTepatWaktu(this.state.listPi);
-        } catch (error) {
-            this.setState({ isError: true });
-            console.log(error);
-        }
-    }
-
-    async loadDataAfterSetPeriod() {
-        try {
-            const listPi = await APIConfig.get("/orders/pi");
-            // const listMs = await APIConfig.get("/orders/ms");
+	    console.log("kok kesini")
+            const piBelumSelesai = await APIConfig.get("orders/pi/belumSelesai");
+            const msBelumSelesai = await APIConfig.get("orders/ms/belumSelesai");
+            const tepatWaktuTelat = await APIConfig.get(`orders/pi/tepatWaktuTelat/${this.state.startMonth2}/${this.state.endMonth2}`);
             const listNamaBulanPi = await APIConfig.get(`/orders/pi/namaBulan/${this.state.startMonth3}/${this.state.endMonth3}`);
             const piMasuk = await APIConfig.get(`/orders/pi/masuk/${this.state.startMonth3}/${this.state.endMonth3}`);
             const piSelesai = await APIConfig.get(`/orders/pi/selesai/${this.state.startMonth3}/${this.state.endMonth3}`);
             const listNamaBulanMs = await APIConfig.get(`/orders/ms/namaBulan/${this.state.startMonth4}/${this.state.endMonth4}`);
             const msMasuk = await APIConfig.get(`/orders/ms/masuk/${this.state.startMonth4}/${this.state.endMonth4}`);
             const msSelesai = await APIConfig.get(`/orders/ms/selesai/${this.state.startMonth4}/${this.state.endMonth4}`);
-            // console.log(listNamaBulan);
+            console.log(this.state.startMonth4);
             // console.log(listPi);
-            this.setState({listPi: listPi.data,
+            this.setState({
+                piBelumSelesai: piBelumSelesai.data, msBelumSelesai: msBelumSelesai.data,
+                tepatWaktuTelat: tepatWaktuTelat.data,
                 listNamaBulanPi: listNamaBulanPi.data, piMasuk: piMasuk.data, piSelesai: piSelesai.data,
                 listNamaBulanMs: listNamaBulanMs.data, msMasuk: msMasuk.data, msSelesai: msSelesai.data,
             });
-            this.filterTelatTepatWaktu(this.state.listPi);
         } catch (error) {
             this.setState({ isError: true });
             console.log(error);
@@ -328,6 +307,7 @@ class Dashboard extends Component {
         const { name, value } = event.target;
         
         this.setState({ [name]: value });
+        console.log(this.state.startMonth4);
     }
 
     // Menargetkan order yang dipilih untuk diubah periode kontrak nya atau diperpanjang
@@ -375,7 +355,18 @@ class Dashboard extends Component {
     // Memunculkan modal Set Period untuk Chart 4
     handleSetPeriodChart4(event){
         this.setState({setPeriodChart4: true})
-    }	
+    }
+
+    handleAfterSetPeriod(event){
+	console.log("masuk ke sini");
+        console.log(this.state.startMonth4);
+        this.setState({
+            setPeriodChart2: false,
+            setPeriodChart3: false,
+            setPeriodChart4: false
+        });
+        this.loadData();
+    }
 
     // Menutup semua modal
     handleCancel(event) {
@@ -600,11 +591,7 @@ class Dashboard extends Component {
         } = this.state;
 
 
-        console.log(this.state.piMasuk);
-        console.log(this.state.piSelesai);
-        console.log(this.state.tepatWaktuTelat);
-        console.log(this.state.ordersVerified);
-
+    
 
         return (
             <>
@@ -614,6 +601,16 @@ class Dashboard extends Component {
                         <tr>
                             <td>
                                 <div><h1 className="text-center">Jumlah Project Installation dan Managed Services yang Belum Selesai</h1> </div>
+                                <Table>
+                                    <tr>
+                                        <td><h1>{this.state.piBelumSelesai}</h1></td>
+                                        <td><h1>{this.state.msBelumSelesai}</h1></td>
+                                    </tr>
+                                    <tr>
+                                        <td><h3>Project Installation</h3></td>
+                                        <td><h3>Managed Services</h3></td>
+                                    </tr>
+                                </Table>
                             </td>
                             <td>
                                 <div><h1 className="text-center">Persentase Penyelesaian Tepat Waktu</h1></div>
@@ -677,8 +674,9 @@ class Dashboard extends Component {
                                     </tr>
                                     <tr>
                                         <td style={{color: "red"}}>*Wajib diisi</td>
+					<td style={{color: "red"}}>Format: bulan_tahun</td>
                                         <td className="d-flex justify-content-end">
-                                            <Button variant="primary" className={classes.button1} onClick={this.handleCancel}>
+                                            <Button variant="primary" className={classes.button1} onClick={this.handleAfterSetPeriod}>
                                                 Simpan
                                             </Button>
                                         </td>
@@ -715,8 +713,9 @@ class Dashboard extends Component {
                                     </tr>
                                     <tr>
                                         <td style={{color: "red"}}>*Wajib diisi</td>
+					<td style={{color: "red"}}>Format: bulan_tahun</td>
                                         <td className="d-flex justify-content-end">
-                                            <Button variant="primary" className={classes.button1} onClick={this.handleCancel}>
+                                            <Button variant="primary" className={classes.button1} onClick={this.handleAfterSetPeriod}>
                                                 Simpan
                                             </Button>
                                         </td>
@@ -753,8 +752,9 @@ class Dashboard extends Component {
                                     </tr>
                                     <tr>
                                         <td style={{color: "red"}}>*Wajib diisi</td>
+					<td style={{color: "red"}}>Format: bulan_tahun</td>
                                         <td className="d-flex justify-content-end">
-                                            <Button variant="primary" className={classes.button1} onClick={this.handleCancel}>
+                                            <Button variant="primary" className={classes.button1} onClick={this.handleAfterSetPeriod}>
                                                 Simpan
                                             </Button>
                                         </td>

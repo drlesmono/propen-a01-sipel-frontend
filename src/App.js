@@ -118,7 +118,7 @@ class App extends Component {
                   {showInputDataOrder && (<Nav.Link href="/order/order" style={{color: "black"}} className="pl-5 pr-5">Input Data Order</Nav.Link>)}
                   {showOrderVerification && (<Nav.Link href="/order-verification" style={{color: "black"}} className="pl-5 pr-5">Verifikasi Order</Nav.Link>)}
                   {showProgressOrder && (<Nav.Link href="/order/progress" style={{color: "black"}} className="pl-5 pr-5">Progress Delivery</Nav.Link>)}
-                  {showChangeStatusOrder && (<Nav.Link href="/order/progress" style={{color: "black"}} className="pl-5 pr-5">Ubah Status</Nav.Link>)}
+                  {showChangeStatusOrder && (<Nav.Link href="/order/ubahStatus" style={{color: "black"}} className="pl-5 pr-5">Ubah Status</Nav.Link>)}
                   </div>
               </NavDropdown>
               <NavDropdown title="Produksi" id="collasible-nav-dropdown">
@@ -212,9 +212,9 @@ class App extends Component {
             <Route exact path="/orderPIMS/change/:id/:idPi/:idMs" component={ChangeOrderPIMS} />
             <Route exact path="/laporan/verifikasiLaporan" component={StatusPersetujuanLaporan} />
             <Route exact path="/order/unggah/:id" component={UnggahDokumenOrder} />
-            <Route exact path="/dashboard" component={Dashboard} />
-            <Route exact path="/laporan/finalisasi" component={FinalisasiLaporan} />
-            <Route exact path="order/ubahStatus" component={ChangeStatusOrder} />
+            <Route  path="/dashboard" component={Dashboard} />
+            <Route  path="/laporan/finalisasi" component={FinalisasiLaporan} />
+            <Route  path="/order/ubahStatus" component={ChangeStatusOrder} />
             <Route component={PageNotFound}/>
           </Switch>
         </div>

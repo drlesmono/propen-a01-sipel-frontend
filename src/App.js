@@ -39,6 +39,9 @@ import UpdateTaskProgressComponent from './components/ListTask/UpdateTaskProgres
 import ListNotVerifiedOrder from './components/OrderVerification/ListNotVerifiedOrder';
 import OrderDetails from './components/OrderVerification/OrderDetails';
 import OrderVerificationComponent from './components/OrderVerification/OrderVerificationComponent';
+import Dashboard from "./containers/Dashboard";
+import ChangeStatusOrder from "./containers/ChangeStatusOrder";
+import FinalisasiLaporan from "./containers/FinalisasiLaporan";
 
 class App extends Component {
   constructor(props) {
@@ -58,6 +61,9 @@ class App extends Component {
       showInputDataOrder: false,
       showPenjadwalanMaintenance: false,
       showStatusPersetujuanLaporan: false,
+      showDashboard: false,
+      showChangeStatusOrder: false,
+      showFinalisasiLaporan:false
     };
   }
 
@@ -81,9 +87,11 @@ class App extends Component {
         showInputDataOrder: user.roles.includes("ROLE_ADMIN", "ROLE_DATA_ENTRY",),
         showPenjadwalanMaintenance: user.roles.includes("ROLE_ADMIN"),
         showProgressOrder: user.roles.includes("ROLE_MANAGER"),
-        showBast: user.roles.includes("ROLE_ADMIN"),
+        showBast: user.roles.includes("ROLE_ADMIN", "ROLE_MANAGER"),
         showStatusPersetujuanLaporan: user.roles.includes("ROLE_MANAGER"),
-
+        showDashboard: user.roles.includes("ROLE_ADMIN"),
+        showChangeStatusOrder: user.roles.includes("ROLE_ADMIN"),
+        showFinalisasiLaporan: user.roles.includes("ROLE_ADMIN")
       });
     }
   }
@@ -95,7 +103,7 @@ class App extends Component {
 
   render() {
     const { currentUser, showPenjadwalanMaintenance, showPeriodeKontrak, showOrderVerification, showPenugasanEngineer, showMengelolaLaporan, showBoardAdmin, showHalamanAdmin, showDeliveryProgress, 
-    showLaporanAdmin, showLaporanFinance, showLaporanHead, showBast, showProgressOrder, showStatusPersetujuanLaporan, showInputDataOrder } = this.state;
+    showLaporanAdmin, showLaporanFinance, showLaporanHead, showBast, showProgressOrder, showStatusPersetujuanLaporan, showInputDataOrder, showFinalisasiLaporan, showDashboard, showChangeStatusOrder} = this.state;
 
     return (
       <div>
@@ -104,12 +112,13 @@ class App extends Component {
           <Navbar.Toggle aria-controls="responsive-navbar-nav" />
           <Navbar.Collapse id="responsive-navbar-nav">
               <Nav className="mr-auto">
-              <Nav.Link href="#dashboard">Dashboard</Nav.Link>
+                {showDashboard && (<Nav.Link href="/dashboard" style={{color: "black"}} className="pl-5 pr-5">Dashboard</Nav.Link>)}
               <NavDropdown title="Order" id="collasible-nav-dropdown">
                 <div className="d-flex justify-content-between">
                   {showInputDataOrder && (<Nav.Link href="/order/order" style={{color: "black"}} className="pl-5 pr-5">Input Data Order</Nav.Link>)}
                   {showOrderVerification && (<Nav.Link href="/order-verification" style={{color: "black"}} className="pl-5 pr-5">Verifikasi Order</Nav.Link>)}
                   {showProgressOrder && (<Nav.Link href="/order/progress" style={{color: "black"}} className="pl-5 pr-5">Progress Delivery</Nav.Link>)}
+                  {showChangeStatusOrder && (<Nav.Link href="/order/progress" style={{color: "black"}} className="pl-5 pr-5">Ubah Status</Nav.Link>)}
                   </div>
               </NavDropdown>
               <NavDropdown title="Produksi" id="collasible-nav-dropdown">
@@ -129,7 +138,7 @@ class App extends Component {
               {showLaporanHead && (<Nav.Link href="/laporan/head" style={{color: "black"}} className="pl-5 pr-5">Laporan</Nav.Link>)}
               {showBast && (<Nav.Link href="/laporan/create-bast" style={{color: "black"}} className="pl-5 pr-5">Laporan</Nav.Link>)}
               {showStatusPersetujuanLaporan && (<Nav.Link href="/laporan/verifikasiLaporan" style={{color: "black"}} className="pl-5 pr-5">Verifikasi Laporan</Nav.Link>)}
-
+              {showFinalisasiLaporan && (<Nav.Link href="/laporan/finalisasi" style={{color: "black"}} className="pl-5 pr-5">Finalisasi Laporan</Nav.Link>)}
               </div>
               </NavDropdown>
               //{showHalamanAdmin && (<Nav.Link href="/halaman/admin">Halaman Admin</Nav.Link>)}
@@ -203,6 +212,9 @@ class App extends Component {
             <Route exact path="/orderPIMS/change/:id/:idPi/:idMs" component={ChangeOrderPIMS} />
             <Route exact path="/laporan/verifikasiLaporan" component={StatusPersetujuanLaporan} />
             <Route exact path="/order/unggah/:id" component={UnggahDokumenOrder} />
+            <Route exact path="/dashboard" component={Dashboard} />
+            <Route exact path="/laporan/finalisasi" component={FinalisasiLaporan} />
+            <Route exact path="order/ubahStatus" component={ChangeStatusOrder} />
             <Route component={PageNotFound}/>
           </Switch>
         </div>

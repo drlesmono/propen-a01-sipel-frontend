@@ -92,7 +92,8 @@ class App extends Component {
         showStatusPersetujuanLaporan: user.roles.includes("ROLE_MANAGER"),
         // showDashboard: user.roles.includes("ROLE_ADMIN", "ROLE_MANAGER"),
         showChangeStatusOrder: user.roles.includes("ROLE_ADMIN"),
-        showFinalisasiLaporan: user.roles.includes("ROLE_ADMIN")
+        showFinalisasiLaporanAdmin: user.roles.includes("ROLE_ADMIN"),
+	showFinalisasiLaporanManager: user.roles.includes("ROLE_MANAGER")
       });
     }
   }
@@ -104,7 +105,7 @@ class App extends Component {
 
   render() {
     const { currentUser, showPenjadwalanMaintenance, showPeriodeKontrak, showOrderVerification, showPenugasanEngineer, showMengelolaLaporan, showHalamanAdmin, showDeliveryProgress, 
-    showLaporanAdmin, showLaporanFinance, showLaporanHead, showBast, showProgressOrder, showStatusPersetujuanLaporan, showInputDataOrderAdmin, showInputDataOrderDataEntry, showFinalisasiLaporan,  showChangeStatusOrder} = this.state;
+    showLaporanAdmin, showLaporanFinance, showLaporanHead, showBast, showProgressOrder, showStatusPersetujuanLaporan, showInputDataOrderAdmin, showInputDataOrderDataEntry, showFinalisasiLaporanAdmin,  showFinalisasiLaporanManager, showChangeStatusOrder} = this.state;
 
     return (
       <div>
@@ -135,7 +136,7 @@ class App extends Component {
               </div>
               
               </NavDropdown> : <></>}
-              {currentUser && (showMengelolaLaporan || showLaporanAdmin || showLaporanFinance || showLaporanHead || showBast || showStatusPersetujuanLaporan || showFinalisasiLaporan)? 
+              {currentUser && (showMengelolaLaporan || showLaporanAdmin || showLaporanFinance || showLaporanHead || showBast || showStatusPersetujuanLaporan || showFinalisasiLaporanAdmin || showFinalisasiLaporanManager)? 
               <NavDropdown title="Laporan"  id="collasible-nav-dropdown">
               <div className="d-flex justify-content-between">
               {showMengelolaLaporan && (<Nav.Link href="/laporan/daftarLaporan" style={{color: "black"}} className="pl-5 pr-5">Daftar Laporan</Nav.Link>)}
@@ -144,8 +145,8 @@ class App extends Component {
               {showLaporanHead && (<Nav.Link href="/laporan/head" style={{color: "black"}} className="pl-5 pr-5">Daftar BAST</Nav.Link>)}
               {showBast && (<Nav.Link href="/laporan/create-bast" style={{color: "black"}} className="pl-5 pr-5">Generate BAST</Nav.Link>)}
               {showStatusPersetujuanLaporan && (<Nav.Link href="/laporan/verifikasiLaporan" style={{color: "black"}} className="pl-5 pr-5">Verifikasi Laporan</Nav.Link>)}
-              {showFinalisasiLaporan && (<Nav.Link href="/laporan/finalisasi" style={{color: "black"}} className="pl-5 pr-5">Finalisasi Laporan</Nav.Link>)}
-
+              {showFinalisasiLaporanAdmin && (<Nav.Link href="/laporan/finalisasi" style={{color: "black"}} className="pl-5 pr-5">Finalisasi Laporan</Nav.Link>)}
+	      {showFinalisasiLaporanManager && (<Nav.Link href="/laporan/finalisasi" style={{color: "black"}} className="pl-5 pr-5">Finalisasi Laporan</Nav.Link>)}
               </div>
               </NavDropdown> : <></>}
               {showHalamanAdmin && (<Nav.Link href="/halaman/admin">Halaman Admin</Nav.Link>)}

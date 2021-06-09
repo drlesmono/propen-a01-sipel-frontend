@@ -61,6 +61,7 @@ class FinalisasiLaporan extends Component {
 
     async loadData() {
         try {
+	    console.log(authHeader())
             const orders = await APIConfig.get("/ordersVerifiedReport", { headers: authHeader() });
             const reports = await APIConfig.get("/reportsIrMr", { headers: authHeader() });
             const listIr = await APIConfig.get("/reports/ir", { headers: authHeader() });
@@ -297,7 +298,7 @@ class FinalisasiLaporan extends Component {
     // Apabila jenis file selain pdf, maka url download yang digunakan
     getUrl(report){
         //const BASE_URL = "https://propen-a01-sipel.herokuapp.com/report/";
-        const BASE_URL = "http://propen-a01-sipel.herokuapp.com/report/";
+        const BASE_URL = "http://propen-a01-local.herokuapp.com/report/";
         if(report.fileType === "application/pdf"){
             return BASE_URL+report.reportName+"/preview";
         }else{
@@ -306,7 +307,7 @@ class FinalisasiLaporan extends Component {
     }
 
     getToDownload(report){
-        const BASE_URL = "http://propen-a01-sipel.herokuapp.com/report/";
+        const BASE_URL = "http://propen-a01-local.herokuapp.com/report/";
         return BASE_URL+report.reportName;
     }
 

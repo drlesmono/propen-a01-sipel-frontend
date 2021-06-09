@@ -114,7 +114,7 @@ class App extends Component {
           <Navbar.Collapse id="responsive-navbar-nav">
               <Nav className="mr-auto">
                 {currentUser ?
-                <Nav.Link href="/dashboard" variant="dark" >Dashboard</Nav.Link>: <></>}
+                <Nav.Link href="/dashboard">Dashboard</Nav.Link>: <></>}
                 {currentUser && (showInputDataOrderAdmin || showInputDataOrderDataEntry || showOrderVerification || showProgressOrder || showChangeStatusOrder)?
               <NavDropdown title="Order" id="collasible-nav-dropdown">
                 <div className="d-flex justify-content-between">
@@ -159,23 +159,23 @@ class App extends Component {
                 </Nav.Link>
               </li>
               <li className="nav-item">
-                <a href="/login" className="nav-link" onClick={this.logOut}>
+                <Nav.Link href="/login" className="nav-link" onClick={this.logOut}>
                   LogOut
-                </a>
+                </Nav.Link>
               </li>
             </div>
           ) : (
             <div className="navbar-nav ml-auto">
               <li className="nav-item">
-                <Link to={"/login"} className="nav-link">
+                <Nav.Link href="/login" className="nav-link">
                   Login
-                </Link>
+                </Nav.Link>
               </li>
 
               <li className="nav-item">
-                <Link to={"/register"} className="nav-link">
+                <Nav.Link href="/register" className="nav-link">
                   Sign Up
-                </Link>
+                </Nav.Link>
               </li>
             </div>
           )}

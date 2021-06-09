@@ -296,7 +296,7 @@ class FinalisasiLaporan extends Component {
     // Apabila jenis file adalah pdf, maka url preview yang digunakan
     // Apabila jenis file selain pdf, maka url download yang digunakan
     getUrl(report){
-        //const BASE_URL = "https://propen-a01-sipel.herokuapp.com/report/";
+        // const BASE_URL = "https://propen-a01-sipel.herokuapp.com/report/";
         // const BASE_URL = "http://propen-a01-sipel.herokuapp.com/report/";
         const BASE_URL = "http://localhost:2020/report";
         if(report.fileType === "application/pdf"){
@@ -307,7 +307,8 @@ class FinalisasiLaporan extends Component {
     }
 
     getToDownload(report){
-        const BASE_URL = "http://propen-a01-sipel.herokuapp.com/report/";
+        // const BASE_URL = "http://propen-a01-sipel.herokuapp.com/report/";
+        const BASE_URL = "http://localhost:2020/report";
         return BASE_URL+report.reportName;
     }
 

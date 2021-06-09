@@ -431,7 +431,7 @@ class DetailOrder extends React.Component {
                 const data = {
                     name: this.state.listServiceNew[i].name,
                 };
-                await APIConfig.post(`/ms/${this.state.idOrderMs}/createService`, data);
+                await APIConfig.post(`/ms/${this.state.idOrderMs}/createService`, data, { headers: authHeader() });
                 this.loadData();
                 this.setState({ finishedSubmitAddService: true });
             }
@@ -464,7 +464,7 @@ class DetailOrder extends React.Component {
     async handleDelete(event){
         event.preventDefault();
         try{
-            await APIConfig.delete(`/order/document/${this.state.documentTarget.idDoc}/delete`);
+            await APIConfig.delete(`/order/document/${this.state.documentTarget.idDoc}/delete`, { headers: authHeader() });
             this.loadData();
         }catch (error){
             this.setState({ isError: true });

@@ -3,7 +3,7 @@ import APIConfig from "../../APIConfig";
 import CustomizedTables from "../../components/Table";
 import { Form, Button, Card, Table } from "react-bootstrap";
 import 'bootstrap/dist/css/bootstrap.min.css';
-import classes from "./style.css";
+import classes from "./styles.module.css";
 import jsPDF from "jspdf";
 import authHeader from '../../services/auth-header';
 
@@ -659,13 +659,13 @@ class ReportAdmin extends Component {
                     [this.getIsBast(report) === true ? this.getBastNum(report) : this.getReportNum(report), report.reportName, this.getOrderPO(report), this.getOrderOrg(report),
                         this.getDate(report.uploadedDate), this.getApproval(report), this.getIsBast(report) === true?
                         <div className="d-flex justify-content-center">
-                            <Button className={classes.button4} onClick={() => this.handlePreview(report)}>Preview</Button>
-                            <Button className={classes.button4} onClick={() => this.handleDownload(report)}>Unduh</Button>
+                            <Button className={classes.button4} onClick={() => this.handlePreview(report)}>Lihat</Button>
+                            <Button className={classes.button5} onClick={() => this.handleDownload(report)}>Unduh</Button>
                         </div>
                         :
                         <div className="d-flex justify-content-center">
-                            <Button className={classes.button4} href={this.getUrl(report)} target = "_blank">Preview</Button>
-                            <Button className={classes.button4} href={this.getToDownload(report)} target = "_blank">Unduh</Button>
+                            <Button className={classes.button4} href={this.getUrl(report)} target = "_blank">Lihat</Button>
+                            <Button className={classes.button5} href={this.getToDownload(report)} target = "_blank">Unduh</Button>
                         </div>
                     ]
                 )
@@ -673,13 +673,13 @@ class ReportAdmin extends Component {
                     [ this.getIsBast(report) === true ? this.getBastNum(report) : this.getReportNum(report), report.reportName, this.getOrderPO(report), this.getOrderOrg(report),
                         this.getDate(report.uploadedDate), this.getApproval(report), this.getIsBast(report) === true ?
                         <div className="d-flex justify-content-center">
-                            <Button className={classes.button4} onClick={() => this.handlePreview(report)}>Preview</Button>
-                            <Button className={classes.button4} onClick={() => this.handleDownload(report)}>Unduh</Button>
+                            <Button className={classes.button4} onClick={() => this.handlePreview(report)}>Lihat</Button>
+                            <Button className={classes.button5} onClick={() => this.handleDownload(report)}>Unduh</Button>
                         </div>
                         :
                         <div className="d-flex justify-content-center">
-                            <Button className={classes.button4} href={this.getUrl(report)} target = "_blank">Preview</Button>
-                            <Button className={classes.button4} href={this.getToDownload(report)} target = "_blank">Unduh</Button>
+                            <Button className={classes.button4} href={this.getUrl(report)} target = "_blank">Lihat</Button>
+                            <Button className={classes.button5} href={this.getToDownload(report)} target = "_blank">Unduh</Button>
                         </div>
                     ]);
         }

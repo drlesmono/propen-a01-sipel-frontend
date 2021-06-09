@@ -4,7 +4,7 @@ import CustomizedTables from "../../components/Table";
 import { Form, Button, Card, Table } from "react-bootstrap";
 import Modal from "react-bootstrap/Modal";
 import 'bootstrap/dist/css/bootstrap.min.css';
-import classes from "./style.css";
+import classes from "./styles.module.css";
 import CustomizedButtons from "../../components/Button";
 import jsPDF from "jspdf";
 import authHeader from '../../services/auth-header';
@@ -712,9 +712,9 @@ class ReportHead extends Component {
                         report.reportName, this.getOrderPO(report), this.getOrderOrg(report),
                         this.getDate(report.uploadedDate), this.getApproval(report),
                         [this.getApproval(report).toLowerCase() === "approved" ?
-                            <Button className={classes.button4} onClick={() => this.handleEdit(report)}>Ubah Status</Button>
+                            <Button className={classes.button5} onClick={() => this.handleEdit(report)}>Ubah Status</Button>
                             :
-                            <Button className={classes.button4} onClick={() => this.handleEdit(report)} hidden={true}></Button>,
+                            <Button className={classes.button5} onClick={() => this.handleEdit(report)} hidden={true}></Button>,
                             this.getIsBast(report) === true ?
                                 <Button className={classes.button4} onClick={() => this.handlePreview(report)}>Preview</Button>
                                 :

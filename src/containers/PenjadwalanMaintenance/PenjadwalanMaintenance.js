@@ -7,6 +7,7 @@ import * as moment from "moment";
 import { Button, Form } from "react-bootstrap";
 import Modal from "react-bootstrap/Modal";
 import authHeader from '../../services/auth-header';
+import axios from 'axios';
 
 class PenjadwalanMaintenance extends React.Component {
     constructor(props) {
@@ -60,11 +61,11 @@ class PenjadwalanMaintenance extends React.Component {
     }
 
     handleCreateSchedule = (idOrderMs) => {
-        this.props.history.push(`/produksi/maintenance/create/${idOrderMs}`);
+        this.props.history.push(`/produksi/maintenance/create/${idOrderMs}`, { headers: authHeader() });
     }
 
     handleLookSchedule = (idOrderMs) => {
-        this.props.history.push(`/produksi/maintenance/look-update/${idOrderMs}`);
+        this.props.history.push(`/produksi/maintenance/look-update/${idOrderMs}`, { headers: authHeader() });
     }
 
     handleFilter(event){
@@ -152,4 +153,4 @@ class PenjadwalanMaintenance extends React.Component {
     }
 }
 
-export default withRouter(PenjadwalanMaintenance);
+export default PenjadwalanMaintenance;

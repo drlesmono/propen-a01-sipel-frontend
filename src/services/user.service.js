@@ -4,6 +4,9 @@ import authHeader from './auth-header';
 const API_URL = 'https://propen-a01-sipel.herokuapp.com/api/test/';
 const API_URL_FILE = 'https://propen-a01-sipel.herokuapp.com/api/report/';
 
+// const API_URL = 'http://localhost:2020/api/test/';
+// const API_URL_FILE = 'http://localhost:2020/api/report/';
+
 class UserService {
   getPublicContent() {
     return axios.get(API_URL + 'all');

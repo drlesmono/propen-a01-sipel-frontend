@@ -182,8 +182,8 @@ class StatusPersetujuanLaporan extends Component {
     }
 
     getUrl(report){
-        //const BASE_URL = "https://propen-a01-sipel.herokuapp.com/report/";
-		const BASE_URL = "http://localhost:2020/report/";
+        const BASE_URL = "https://propen-a01-sipel.herokuapp.com/report/";
+		// const BASE_URL = "http://localhost:2020/report/";
         if(report.fileType === "application/pdf"){
             return BASE_URL+report.reportName+"/preview";
         }else{
@@ -282,8 +282,8 @@ class StatusPersetujuanLaporan extends Component {
             const dataIr = {
                 notes: this.state.notes,
             }
-            await APIConfig.put(`/report/update/${this.state.reportTarget.idReport}`, dataReport);
-            await APIConfig.put(`/update/notes/${this.state.reportIRtarget.idInstallationReport}`, dataIr);
+            await APIConfig.put(`/report/update/${this.state.reportTarget.idReport}`, dataReport, { headers: authHeader() });
+            await APIConfig.put(`/update/notes/${this.state.reportIRtarget.idInstallationReport}`, dataIr, { headers: authHeader() });
             this.loadData();
             this.setState({ finishedSubmitChangeStatus: true });
         } catch(error) {

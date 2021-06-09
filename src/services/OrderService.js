@@ -3,7 +3,11 @@ import authHeader from './auth-header';
 
 const ORDER_NOT_VERIFIED_API_BASE_URL = "https://propen-a01-sipel.herokuapp.com/api/v1/order-verification";
 const ORDER_DETAILS_API_BASE_URL = "https://propen-a01-sipel.herokuapp.com/api/v1/order-details";
-const ORDER_VERIFICATION_API_BASE_URL = "https://propen-a01-sipel.herokuapp.com/api/v1/verification"
+const ORDER_VERIFICATION_API_BASE_URL = "https://propen-a01-sipel.herokuapp.com/api/v1/verification";
+
+// const ORDER_NOT_VERIFIED_API_BASE_URL = "http://localhost:2020/api/v1/order-verification";
+// const ORDER_DETAILS_API_BASE_URL = "http://localhost:2020/api/v1/order-details";
+// const ORDER_VERIFICATION_API_BASE_URL = "http://localhost:2020/api/v1/verification"
 
 class OrderService {
 

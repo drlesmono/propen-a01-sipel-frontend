@@ -79,8 +79,8 @@ class CreateOrder extends React.Component {
 
     async loadData() {
         try {
-            const listOrder  = await APIConfig.get("/orderList");
-            const listOrderMS  = await APIConfig.get("/orders/ms");
+            const listOrder  = await APIConfig.get("/orderList", { headers: authHeader() });
+            const listOrderMS  = await APIConfig.get("/orders/ms", { headers: authHeader() });
             this.setState({ orders: listOrder.data });
             this.setState({ orderTarget: this.state.orders[this.state.orders.length - 1] });
             this.setState({ ordersMS: listOrderMS.data });
@@ -281,7 +281,7 @@ class CreateOrder extends React.Component {
                 dateOrder: new Date(),
                 verified: this.state.verified
             }
-            await APIConfig.post("/order/tambah", data);
+            await APIConfig.post("/order/tambah", data, { headers: authHeader() });
             this.loadData();
             this.setState( { isSubmitOrder: true });
         } catch (error) {
@@ -370,9 +370,9 @@ class CreateOrder extends React.Component {
                 startPI: this.state.startPI,
                 deadline: this.state.deadline,
                 percentage: this.state.percentage,
-                close: this.state.close,
+                close: this.state.close
             }
-            await APIConfig.post(`/order/tambah/PI/${this.state.orderTarget.idOrder}`, data);
+            await APIConfig.post(`/order/tambah/PI/${this.state.orderTarget.idOrder}`, data, { headers: authHeader() });
             this.loadData();
             this.setState({ finishSubmitOrder: true });
             this.handleCancel(event);
@@ -462,9 +462,9 @@ class CreateOrder extends React.Component {
             const data = {
                 actualStart: this.state.actualStart,
                 actualEnd: this.state.actualEnd,
-                activated: this.state.activated,
+                activated: this.state.activated
             };
-            await APIConfig.post(`/order/tambah/MS/${this.state.orderTarget.idOrder}`, data);
+            await APIConfig.post(`/order/tambah/MS/${this.state.orderTarget.idOrder}`, data, { headers: authHeader() });
             this.loadData();
             this.setState({ isSubmitOrderMS: true});
             this.setState({ isSubmitOrder: false });
@@ -624,15 +624,15 @@ class CreateOrder extends React.Component {
                 startPI: this.state.startPI,
                 deadline: this.state.deadline,
                 percentage: this.state.percentage,
-                close: this.state.close,
+                close: this.state.close
             }
             const dataMS = {
                 actualStart: this.state.actualStart,
                 actualEnd: this.state.actualEnd,
-                activated: this.state.activated,
+                activated: this.state.activated
             };
-            await APIConfig.post(`/order/tambah/PI/${this.state.orderTarget.idOrder}`, dataPI);
-            await APIConfig.post(`/order/tambah/MS/${this.state.orderTarget.idOrder}`, dataMS);
+            await APIConfig.post(`/order/tambah/PI/${this.state.orderTarget.idOrder}`, dataPI, { headers: authHeader() });
+            await APIConfig.post(`/order/tambah/MS/${this.state.orderTarget.idOrder}`, dataMS, { headers: authHeader() });
             this.loadData();
             this.setState({ isSubmitOrderMS: true});
             this.setState({ isSubmitOrder: false });

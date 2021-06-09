@@ -1,7 +1,3 @@
-.search{
-    width: 20%;
-}
-
 .button1{
     background-color: #FD693E !important;
     outline-color:  #FD693E !important;
@@ -71,6 +67,7 @@
     box-shadow: none !important;
 }
 
+
 .button5{
     background-color: #DA552F !important;
     outline-color:  #DA552F !important;
@@ -86,6 +83,7 @@
 .button5:focus{
     box-shadow: none !important;
 }
+
 
 .buttonUpload{
     width: 50% !important;
@@ -104,8 +102,8 @@
 
 .card{
     background-color: #ffffff !important;
-    outline-color:  #F7873F !important;
-    border-color:  #F7873F !important;
+    outline-color:  #2F3F58 !important;
+    border-color:  #2F3F58 !important;
     color: white;
 }
 
@@ -141,8 +139,6 @@
     height: 200% !important;
 }
 .content{
-    width: 85%;
-    max-width: 85%;
 }
 .gap{
     alignment: right;
@@ -152,4 +148,7 @@
 }
 .x{
     margin: 20px;
+}
+#nameFill{
+    font-size: 15px;
 }

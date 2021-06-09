@@ -74,6 +74,40 @@
 .button3:focus {
     box-shadow: none !important;
 }
+
+.button4{
+    background-color: #F7873F !important;
+    outline-color:  #F7873F !important;
+    border-color:  #F7873F !important;
+}
+
+.button4:hover{
+    background-color: #F7873F !important;
+    outline-color:  #F7873F !important;
+    border-color:  #F7873F!important;
+}
+
+.button4:focus{
+    box-shadow: none !important;
+}
+
+
+.button5{
+    background-color: #DA552F !important;
+    outline-color:  #DA552F !important;
+    border-color:  #DA552F !important;
+}
+
+.button5:hover{
+    background-color: #DA552F !important;
+    outline-color:  #DA552F!important;
+    border-color:  #DA552F!important;
+}
+
+.button5:focus{
+    box-shadow: none !important;
+}
+
 .container{
     padding: 2%;
     background-color: white;

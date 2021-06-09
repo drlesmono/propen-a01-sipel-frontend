@@ -22,7 +22,10 @@
     background-color: #FD693E !important;
     outline-color:  #FD693E !important;
     border-color:  #FD693E !important;
-    color: white;
+    color: white !important;
+    height: min-content !important;
+    margin: 0% !important;
+    padding: 0% !important;
 }
 
 .closeButton{

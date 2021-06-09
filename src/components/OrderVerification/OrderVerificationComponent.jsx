@@ -53,7 +53,8 @@ class OrderVerificationComponent extends Component {
         e.preventDefault();
         let order = {idOrder: this.state.idOrder, nama_verifikasi: this.state.nama_verifikasi};
         console.log('order => ' + JSON.stringify(order));
-        const URL = "http://localhost:2020/api/v1/order/verification";
+        const URL = "https://propen-a01-sipel/api/v1/order/verification";
+        // const URL = "http://localhost:2020/api/v1/order/verification";
         axios.put(URL, order, { headers: authHeader() });
         this.props.history.push(`/order-verification`)
     }

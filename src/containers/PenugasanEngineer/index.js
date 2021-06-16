@@ -50,7 +50,7 @@ class PenugasanEngineer extends Component {
             const listPi = await APIConfig.get("/orders/pi", { headers: authHeader() });
             const listMs = await APIConfig.get("/orders/ms", { headers: authHeader() });
             this.setState({ ordersVerified: orders.data, engineers: engineers.data, listPi: listPi.data, listMs: listMs.data});
-            
+            console.log(listMs.data);
         } catch (error) {
             this.setState({ isError: true });
             console.log(error);
@@ -241,7 +241,7 @@ class PenugasanEngineer extends Component {
         }
 
         if(order.managedService === true){
-            if(this.getMs(order.idOrder).listService !== null){
+            if(this.getListService(order) !== null){
                 const picMs = this.getPICMS(order.idOrder);
                 const servicesEngineer = this.getListService(order).map(service => service.idUser === null ? null : service.idUser.id);
                 this.setState({
@@ -262,7 +262,12 @@ class PenugasanEngineer extends Component {
             isError: false, 
             isSuccess: false,
             isFailed: false,
-            messageError: null
+            messageError: null,
+            orderTarget: null,
+            engineers: [],
+            picEngineerPi: null,
+            picEngineerMs: null,
+            servicesEngineer: []
         });
         this.loadData();
     }
@@ -436,7 +441,7 @@ class PenugasanEngineer extends Component {
                                             <td>Services</td> :
                                             <td><p className="d-flex">Services<p style={{color: "red"}}>*</p></p></td> }
                                             <td className="d-flex">
-                                                : {this.getMs(orderTarget.idOrder).listService === null ? <p style={{color: "red"}}>Belum terdapat service</p> :
+                                                : { this.getListService(orderTarget) === null ? <p style={{color: "red"}}>Belum terdapat service</p> :
                                                 <><CustomizedTables headers={tableServiceHeaders} rows={tableServiceRows}></CustomizedTables></>}
                                             </td>
                                         </tr>

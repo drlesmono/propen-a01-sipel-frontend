@@ -40,7 +40,8 @@ class PeriodeKontrak extends Component {
             isSuccess: false,
             listPi: [],
             listMs: [],
-            messageError: null
+            messageError: null,
+            isExtendSuccess: false
         };
         this.handleEdit = this.handleEdit.bind(this);
         this.handleCancel = this.handleCancel.bind(this);
@@ -147,10 +148,12 @@ class PeriodeKontrak extends Component {
         }
 
         if(this.state.isExtend){
-            this.setState({orderTarget: newOrder, services: services})
+            this.setState({orderTarget: newOrder, services: services, isExtendSuccess: true, isExtend: false})
+        }else{
+            this.setState({isSuccess: true, isEdit: false})
         }
         
-        this.setState({isFailed: false, isValid: true, isSuccess: true, isExtend: false, isEdit: false, timeRemaining: this.getTimeRemaining(this.state.actualStart, this.state.actualEnd)});
+        this.setState({isFailed: false, isValid: true, timeRemaining: this.getTimeRemaining(this.state.actualStart, this.state.actualEnd)});
     }
 
     // validasi form
@@ -192,13 +195,13 @@ class PeriodeKontrak extends Component {
     handleReport(event){
         event.preventDefault();
 
-        if(this.state.isExtend){
+        if(this.state.isExtendSuccess){
             this.setState({isReportExtend: true, isAdded: false});
         }else{
             this.setState({isReport: true});
         }
 
-        this.setState({isSuccess: false, isFailed: false, isValid: true});
+        this.setState({isSuccess: false, isFailed: false, isValid: true, isExtendSuccess: false});
     }
 
     // Mengambil data dengan format "tanggal bulan(dalam huruf abjad) tahun"
@@ -343,6 +346,7 @@ class PeriodeKontrak extends Component {
             actualEnd: null,
             isFailed: false,
             isSuccess: false,
+            isExtendSuccess: false,
             isError: false,
             messageError: null
         });
@@ -472,7 +476,7 @@ class PeriodeKontrak extends Component {
     }
 
     render() {
-        const { ordersVerified, isEdit, isExtend, orderTarget, engineers, actualStart, actualEnd, picEngineerMs, timeRemaining, isSuccess, isFailed, isError, messageError,
+        const { ordersVerified, isEdit, isExtend, isExtendSuccess, orderTarget, engineers, actualStart, actualEnd, picEngineerMs, timeRemaining, isSuccess, isFailed, isError, messageError,
                 isReport, isReportExtend, orderFiltered, isFiltered, services } = this.state;
         
         // Judul untuk setiap kolom di tabel daftar order
@@ -531,7 +535,7 @@ class PeriodeKontrak extends Component {
                 >
                     <Modal.Header closeButton onClick={this.handleCancel}>
                         <Modal.Title id="contained-modal-title-vcenter">
-                            {isEdit? title : titleExtend}
+                            {isEdit || isReport ? title : titleExtend}
                         </Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
@@ -626,7 +630,7 @@ class PeriodeKontrak extends Component {
 
                 {/* Menampilkan modal berisi notifikasi ketika berhasil menyimpan data atau error */}
                 <Modal
-                    show={isSuccess || isError}
+                    show={isSuccess || isExtendSuccess || isError}
                     dialogClassName="modal-90w"
                     aria-labelledby="contained-modal-title-vcenter"
                 >
@@ -636,9 +640,9 @@ class PeriodeKontrak extends Component {
                         </Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
-                        {isSuccess?
+                        {isSuccess  || isExtendSuccess ?
                         <>
-                            <div className="d-flex justify-content-center">{isEdit? "Periode Kontrak" : "Perpanjangan Periode Kontrak"} berhasil disimpan.</div><br></br>
+                            <div className="d-flex justify-content-center">{isExtendSuccess? "Perpanjangan Periode Kontrak" : "Periode Kontrak"} berhasil disimpan.</div><br></br>
                             <div className="d-flex justify-content-center">
                                 <Button variant="primary" className={classes.button1} onClick={this.handleReport}>
                                     Kembali

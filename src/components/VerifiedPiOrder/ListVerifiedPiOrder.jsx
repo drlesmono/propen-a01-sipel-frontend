@@ -13,10 +13,19 @@ class ListVerifiedPiOrder extends Component {
 
         }
         this.retrieveListTask = this.retrieveListTask.bind(this);
+        this.getDate = this.getDate.bind(this);
     }
 
     retrieveListTask(id){
         this.props.history.push(`/list-task/${id}`); 
+
+    }
+
+    getDate(date) {
+        let oldDate = new Date(date);
+        const month = ["Januari", "Februari", "Maret", "April", "Mei", "Juni",
+                        "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
+        return oldDate.getDate() + " " + month[oldDate.getMonth()] + " " + oldDate.getFullYear();
 
     }
 
@@ -35,6 +44,8 @@ class ListVerifiedPiOrder extends Component {
             <div>
             <div>
                 <h2 className="text-center">Daftar Proyek Instalasi</h2>
+                <br></br>
+                <br></br>
                 <div className = "row">
                     <table className = "table table-striped table-bordered">
 
@@ -53,7 +64,7 @@ class ListVerifiedPiOrder extends Component {
                                     piOrder =>
                                     <tr key = {piOrder.idOrderPi}>
                                         <td>{piOrder.orderName}</td>
-                                        <td>{piOrder.deadline}</td>
+                                        <td>{this.getDate(piOrder.deadline)}</td>
                                         <td>{piOrder.percentage + "%"}</td>
                                         <td>
                                             <button onClick = { () => this.retrieveListTask(piOrder.idOrderPi) } className="btn btn-info">Lihat Task</button>

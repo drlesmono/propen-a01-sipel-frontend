@@ -45,6 +45,7 @@ class ListTaskComponent extends Component {
         
     }
 
+
     addTask(idPi){
         this.props.history.push(`/add-task/${idPi}`); //diubah sblmnya idOrder
     }
@@ -52,10 +53,13 @@ class ListTaskComponent extends Component {
     //dibutton tambah jadi idPi, sblmnya id doang
     //edit task jadi nambah idPi
     render() {
+        const {piTarget} = this.state;
         return (
             <div className={classes.container}>
             <div>
                 <h2 className="text-center">Daftar Task Order</h2>
+                <br></br>
+                <br></br>
                 <div className="row">
                     <button onClick = { () => this.addTask(this.state.id) } className="btn btn-primary">+ Tambah Task</button>
                 </div>

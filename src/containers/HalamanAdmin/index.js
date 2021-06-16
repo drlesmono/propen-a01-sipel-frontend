@@ -96,7 +96,10 @@ class HalamanAdmin extends Component {
             isFailed: false,
             isConfirmDelete: false,
             isDelete: false,
-            messageError: null
+            messageError: null,
+            usernameTarget: "",
+            role_name: ""
+            
         });
         this.loadData();
     }
@@ -113,23 +116,26 @@ class HalamanAdmin extends Component {
         e.preventDefault();
         let user = {username: this.state.userTarget.username, role_name: this.state.role_name};
         console.log('user => ' + JSON.stringify(user));
-        // const URL = "https://propen-a01-sipel.herokuapp.com/api/v1/user/updateRole";
         const URL = "http://localhost:2020/api/v1/user/updateRole";
         axios.put(URL, user, { headers: authHeader() });
-        this.setState({isSuccess: true});
+        this.setState({
+            isSuccess: true,
+            usernameTarget: "",
+            role_name: ""});
     }
 
     handleDelete() {
         
         let user = {username: this.state.userTarget.username};
         console.log('user => ' + JSON.stringify(user));
-        // const URL = "https://propen-a01-sipel.herokuapp.com/api/v1/delete-user/";
         const URL = "http://localhost:2020/api/v1/delete-user/";
         const usr = this.state.userTarget.username;
         axios.delete(URL+usr, { headers: authHeader() });
         
         this.setState({
             isDelete: true,
+            usernameTarget: "",
+            role_name: ""
         });
         
     }
@@ -146,16 +152,20 @@ class HalamanAdmin extends Component {
 
     render() {
         const { isEdit, users, usersFiltered, isConfirmDelete, isFailed, messageError, userTarget, role_name, isError, isSuccess, isDelete, isFiltered } = this.state;
-        const tableHeaders = ['Nomor', 'Username', 'Role', 'Aksi'];                  
+        const tableHeaders = ['Nomor', 'Username', 'Role', 'Fullname', 'Email', 'Aksi'];                  
         const tableRows = isFiltered ? usersFiltered.map((user) =>
                         [  <div className="d-flex justify-content-center">{user.username}</div>,
                             <div className="d-flex justify-content-center">{user.role_name}</div>,
+                            <div className="d-flex justify-content-center">{user.fullname}</div>,
+                            <div className="d-flex justify-content-center">{user.email}</div>,
                             <div className="d-flex justify-content-center">
                             <Button className={classes.button4} onClick={() => this.handleEdit(user)}>Ubah Role</Button>
                             <Button className="btn btn-danger" onClick={() => this.handleConfirmDelete(user)} style={{marginLeft: "5px"}}>Hapus Role</Button></div>])
                         : users.map((user) =>
                         [ <div className="d-flex justify-content-center">{user.username}</div>,
                         <div className="d-flex justify-content-center">{user.role_name}</div>,
+                        <div className="d-flex justify-content-center">{user.fullname}</div>,
+                        <div className="d-flex justify-content-center">{user.email}</div>,
                         <div className="d-flex justify-content-center">
                             <Button className={classes.button4} onClick={() => this.handleEdit(user)}>Ubah Role</Button>
                             <Button className="btn btn-danger" onClick={() => this.handleConfirmDelete(user)} style={{marginLeft: "5px"}}>Hapus Role</Button>
@@ -200,7 +210,7 @@ class HalamanAdmin extends Component {
                                                 as="select"
                                                 size="lg"
                                                 name="role_name"
-                                                value={ this.state.role_name }
+                                                value={ this.state.value }
                                                 onChange={this.handleChangeField}>
                                                 <option value="None">None</option>
                                                 <option value="Admin">Admin</option>
@@ -260,7 +270,7 @@ class HalamanAdmin extends Component {
                     </Modal.Header>
                     <Modal.Body>
                                 <br></br>
-                                <div className="d-flex justify-content-center"><strong>Apakah Anda yakin untuk mengahpus pengguna?</strong></div><br></br>
+                                <div className="d-flex justify-content-center"><strong>Apakah Anda yakin untuk menghapus pengguna?</strong></div><br></br>
                                 <div className="d-flex justify-content-center">
                                 </div> 
                                 <div className="d-flex justify-content-center">

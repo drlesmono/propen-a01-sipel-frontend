@@ -36,12 +36,11 @@ import ListTaskComponent from './components/ListTask/ListTaskComponent';
 import CreateTaskComponent from './components/ListTask/CreateTaskComponent';
 import UpdateTaskComponent from './components/ListTask/UpdateTaskComponent';
 import UpdateTaskProgressComponent from './components/ListTask/UpdateTaskProgressComponent';
-import ListNotVerifiedOrder from './components/OrderVerification/ListNotVerifiedOrder';
-import OrderDetails from './components/OrderVerification/OrderDetails';
-import OrderVerificationComponent from './components/OrderVerification/OrderVerificationComponent';
 import Dashboard from "./containers/Dashboard";
 import ChangeStatusOrder from "./containers/ChangeStatusOrder";
 import FinalisasiLaporan from "./containers/FinalisasiLaporan";
+import UnverifiedOrders from "./containers/UnverifiedOrders/UnverifiedOrders";
+import DetailUnverifiedOrder from "./containers/DetailUnverifiedOrder/DetailUnverifiedOrder";
 
 class App extends Component {
   constructor(props) {
@@ -63,7 +62,8 @@ class App extends Component {
       showStatusPersetujuanLaporan: false,
       showDashboard: false,
       showChangeStatusOrder: false,
-      showFinalisasiLaporan:false
+      showFinalisasiLaporan: false,
+      showOrderVerification: false
     };
   }
 
@@ -75,12 +75,12 @@ class App extends Component {
       this.setState({
         currentUser: user,
         showPeriodeKontrak: user.roles.includes("ROLE_ADMIN"),
+        showOrderVerification: user.roles.includes("ROLE_ADMIN"),
         showPenugasanEngineer: user.roles.includes("ROLE_ADMIN"),
         showMengelolaLaporan: user.roles.includes("ROLE_ENGINEER"),
 		    showBoardAdmin: user.roles.includes("ROLE_ADMIN"),
         showHalamanAdmin: user.roles.includes("ROLE_ADMIN"),
         showDeliveryProgress: user.roles.includes("ROLE_ENGINEER"),
-        showOrderVerification: user.roles.includes("ROLE_ADMIN"),
         showLaporanAdmin: user.roles.includes("ROLE_ADMIN"),
         showLaporanFinance: user.roles.includes("ROLE_FINANCE"),
         showLaporanHead: user.roles.includes("ROLE_MANAGER"),
@@ -119,7 +119,7 @@ class App extends Component {
               <NavDropdown title="Order" id="collasible-nav-dropdown">
                 <div className="d-flex justify-content-between">
                   {(showInputDataOrderAdmin || showInputDataOrderDataEntry) && (<Nav.Link href="/order/order" style={{color: "black"}} className="pl-5 pr-5">Input Data Order</Nav.Link>)}
-                  {showOrderVerification && (<Nav.Link href="/order-verification" style={{color: "black"}} className="pl-5 pr-5">Verifikasi Order</Nav.Link>)}
+                  {showOrderVerification && (<Nav.Link href="/order/verification" style={{color: "black"}} className="pl-5 pr-5">Verifikasi Order</Nav.Link>)}
                   {showProgressOrder && (<Nav.Link href="/order/progress" style={{color: "black"}} className="pl-5 pr-5">Progress Delivery</Nav.Link>)}
                   {showChangeStatusOrder && (<Nav.Link href="/order/ubahStatus" style={{color: "black"}} className="pl-5 pr-5">Ubah Status</Nav.Link>)}
                   </div>
@@ -201,9 +201,7 @@ class App extends Component {
               <Route path = "/add-task/:id" component = {CreateTaskComponent}></Route>
               <Route path = "/update-task/:idPi/:idTask" component = {UpdateTaskComponent}></Route>
               <Route path = "/add-progress/:idPi/:idTask" component = {UpdateTaskProgressComponent}></Route>
-              <Route path = "/order-details/:idOrder" component = {OrderDetails}></Route>
-              <Route exact path = "/order-verification" component = {ListNotVerifiedOrder}></Route>
-              <Route exact path = "/verification/:idOrder" component = {OrderVerificationComponent}></Route>
+              <Route exact path="/order/verification" component={UnverifiedOrders} />
               <Route path = "/order/progress" component = {Progress}></Route>
               <Route path = "/laporan/finance" component = {ReportFinance}></Route>
               <Route path = "/laporan/head" component = {ReportHead}></Route>
@@ -215,6 +213,7 @@ class App extends Component {
               <Route path="/produksi/maintenance/look-update/:id" component={LookUpdateMaintenance} />
               <Route path="/order/create" component={CreateOrder} />
               <Route path="/order/detail/:id" component={DetailOrder} />
+              <Route exact path="/order/verification/detail/:id" component={DetailUnverifiedOrder} />
               <Route path="/orderPI/change/:id/:idPi" component={ChangeOrderPI} />
               <Route path="/orderMS/change/:id/:idMs" component={ChangeOrderMS} />
               <Route path="/orderPIMS/change/:id/:idPi/:idMs" component={ChangeOrderPIMS} />

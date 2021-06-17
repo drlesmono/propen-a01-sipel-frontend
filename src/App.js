@@ -202,8 +202,8 @@ class App extends Component {
               <Route path = "/add-task/:id" component = {CreateTaskComponent}></Route>
               <Route path = "/update-task/:idPi/:idTask" component = {UpdateTaskComponent}></Route>
               <Route path = "/add-progress/:idPi/:idTask" component = {UpdateTaskProgressComponent}></Route>
-              <Route exact path="/order/status/verification" component={UnverifiedOrders} />
-              <Route exact path="/order/verification/detail/:id" component={DetailUnverifiedOrder} />
+              <Route path="/order/status/verification" component={UnverifiedOrders} />
+              <Route path="/order/verification/detail/:id" component={DetailUnverifiedOrder} />
               <Route path = "/order/progress" component = {Progress}></Route>
               <Route path = "/laporan/finance" component = {ReportFinance}></Route>
               <Route path = "/laporan/head" component = {ReportHead}></Route>

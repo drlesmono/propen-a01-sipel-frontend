@@ -148,7 +148,7 @@ class DetailUnverifiedOrder extends React.Component {
     }
 
     handleBack = () => {
-        this.props.history.push(`/order/verification`);
+        this.props.history.push(`/order/status/verification`);
     }
 
     handleLookDetail() {

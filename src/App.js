@@ -62,8 +62,8 @@ class App extends Component {
       showStatusPersetujuanLaporan: false,
       showDashboard: false,
       showChangeStatusOrder: false,
-      showFinalisasiLaporan: false,
-      showOrderVerification: false
+      showFinalisasiLaporan:false,
+      showOrderStatusVerification: false
     };
   }
 
@@ -75,12 +75,12 @@ class App extends Component {
       this.setState({
         currentUser: user,
         showPeriodeKontrak: user.roles.includes("ROLE_ADMIN"),
-        showOrderVerification: user.roles.includes("ROLE_ADMIN"),
         showPenugasanEngineer: user.roles.includes("ROLE_ADMIN"),
         showMengelolaLaporan: user.roles.includes("ROLE_ENGINEER"),
 		    showBoardAdmin: user.roles.includes("ROLE_ADMIN"),
         showHalamanAdmin: user.roles.includes("ROLE_ADMIN"),
         showDeliveryProgress: user.roles.includes("ROLE_ENGINEER"),
+        showOrderVerification: user.roles.includes("ROLE_ADMIN"),
         showLaporanAdmin: user.roles.includes("ROLE_ADMIN"),
         showLaporanFinance: user.roles.includes("ROLE_FINANCE"),
         showLaporanHead: user.roles.includes("ROLE_MANAGER"),
@@ -92,6 +92,7 @@ class App extends Component {
         showStatusPersetujuanLaporan: user.roles.includes("ROLE_MANAGER"),
         // showDashboard: user.roles.includes("ROLE_ADMIN", "ROLE_MANAGER"),
         showChangeStatusOrder: user.roles.includes("ROLE_ADMIN"),
+        showOrderStatusVerification: user.roles.includes("ROLE_ADMIN"),
         showFinalisasiLaporan: user.roles.includes("ROLE_ADMIN")
       });
     }
@@ -104,7 +105,7 @@ class App extends Component {
 
   render() {
     const { currentUser, showPenjadwalanMaintenance, showPeriodeKontrak, showOrderVerification, showPenugasanEngineer, showMengelolaLaporan, showHalamanAdmin, showDeliveryProgress, 
-    showLaporanAdmin, showLaporanFinance, showLaporanHead, showBast, showProgressOrder, showStatusPersetujuanLaporan, showInputDataOrderAdmin, showInputDataOrderDataEntry, showFinalisasiLaporan,  showChangeStatusOrder} = this.state;
+    showLaporanAdmin, showOrderStatusVerification, showLaporanFinance, showLaporanHead, showBast, showProgressOrder, showStatusPersetujuanLaporan, showInputDataOrderAdmin, showInputDataOrderDataEntry, showFinalisasiLaporan,  showChangeStatusOrder} = this.state;
 
     return (
       <div>
@@ -119,7 +120,7 @@ class App extends Component {
               <NavDropdown title="Order" id="collasible-nav-dropdown">
                 <div className="d-flex justify-content-between">
                   {(showInputDataOrderAdmin || showInputDataOrderDataEntry) && (<Nav.Link href="/order/order" style={{color: "black"}} className="pl-5 pr-5">Input Data Order</Nav.Link>)}
-                  {showOrderVerification && (<Nav.Link href="/order/verification" style={{color: "black"}} className="pl-5 pr-5">Verifikasi Order</Nav.Link>)}
+                  {showOrderStatusVerification && (<Nav.Link href="/order/status/verification" style={{color: "black"}} className="pl-5 pr-5">Verifikasi Order</Nav.Link>)}
                   {showProgressOrder && (<Nav.Link href="/order/progress" style={{color: "black"}} className="pl-5 pr-5">Progress Delivery</Nav.Link>)}
                   {showChangeStatusOrder && (<Nav.Link href="/order/ubahStatus" style={{color: "black"}} className="pl-5 pr-5">Ubah Status</Nav.Link>)}
                   </div>
@@ -201,7 +202,8 @@ class App extends Component {
               <Route path = "/add-task/:id" component = {CreateTaskComponent}></Route>
               <Route path = "/update-task/:idPi/:idTask" component = {UpdateTaskComponent}></Route>
               <Route path = "/add-progress/:idPi/:idTask" component = {UpdateTaskProgressComponent}></Route>
-              <Route exact path="/order/verification" component={UnverifiedOrders} />
+              <Route exact path="/order/status/verification" component={UnverifiedOrders} />
+              <Route exact path="/order/verification/detail/:id" component={DetailUnverifiedOrder} />
               <Route path = "/order/progress" component = {Progress}></Route>
               <Route path = "/laporan/finance" component = {ReportFinance}></Route>
               <Route path = "/laporan/head" component = {ReportHead}></Route>
@@ -213,7 +215,6 @@ class App extends Component {
               <Route path="/produksi/maintenance/look-update/:id" component={LookUpdateMaintenance} />
               <Route path="/order/create" component={CreateOrder} />
               <Route path="/order/detail/:id" component={DetailOrder} />
-              <Route exact path="/order/verification/detail/:id" component={DetailUnverifiedOrder} />
               <Route path="/orderPI/change/:id/:idPi" component={ChangeOrderPI} />
               <Route path="/orderMS/change/:id/:idMs" component={ChangeOrderMS} />
               <Route path="/orderPIMS/change/:id/:idPi/:idMs" component={ChangeOrderPIMS} />

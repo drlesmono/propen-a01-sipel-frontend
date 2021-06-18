@@ -1,7 +1,7 @@
 import axios from "axios";
 
 // const API_URL = "https://propen-a01-sipel.herokuapp.com/api/auth/";
-const API_URL = "https://propen-a01-local.herokuapp.com/api/auth/";
+const API_URL = "http://localhost:2020/api/auth/";
 
 class AuthService {
   login(username, password) {

@@ -320,8 +320,8 @@ class StatusPersetujuanLaporan extends Component {
             const dataMr = {
                 notes: this.state.notes,
             }
-            await APIConfig.put(`/report/update/${this.state.reportTarget.idReport}`, dataReport);
-            await APIConfig.put(`/update/mr/notes/${this.state.reportMRtarget.idMaintenanceReport}`, dataMr);
+            await APIConfig.put(`/report/update/${this.state.reportTarget.idReport}`, dataReport, { headers: authHeader() });
+            await APIConfig.put(`/update/mr/notes/${this.state.reportMRtarget.idMaintenanceReport}`, dataMr, { headers: authHeader() });
             this.loadData();
             this.setState({ finishedSubmitChangeStatus: true });
         } catch(error) {

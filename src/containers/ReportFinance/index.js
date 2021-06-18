@@ -295,7 +295,9 @@ class ReportFinance extends Component {
     }
 
     getToDownload(report){
-            return report.urlFile;
+        // const BASE_URL = "https://propen-a01-sipel.herokuapp.com/report/";
+        const BASE_URL = "http://localhost:2020/report/";
+        return BASE_URL+report.reportName;
     }
 
     getNotes(report){

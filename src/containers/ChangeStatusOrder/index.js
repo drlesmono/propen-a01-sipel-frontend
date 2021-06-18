@@ -12,6 +12,8 @@ class ChangeStatusOrder extends Component {
         super(props);
         this.state = {
             ordersVerified: [],
+	    listPi: [],
+	    listMs: [],
             orderFiltered: [],
             isFiltered: false,
             isLoading: false,
@@ -41,9 +43,10 @@ class ChangeStatusOrder extends Component {
     async loadData() {
         try {
             const orders = await APIConfig.get("/ordersVerified", { headers: authHeader() } );
+            const listPi = await APIConfig.get("/orders/pi", { headers: authHeader() });
+            const listMs = await APIConfig.get("/orders/ms", { headers: authHeader() });
             // const services = await APIConfig.get("/services");
-            console.log(orders.data);
-            this.setState({ ordersVerified: orders.data});
+            this.setState({ ordersVerified: orders.data, listPi: listPi.data, listMs: listMs.data});
 
         } catch (error) {
             alert("Oops terjadi masalah pada server");
@@ -57,7 +60,7 @@ class ChangeStatusOrder extends Component {
         try {
             if(this.state.orderTarget.projectInstallation === true){
                 // console.log(this.state.orderTarget.idOrderPi);
-                const pi = this.state.orderTarget.idOrderPi;
+                const pi = this.getPi(this.state.orderTarget.idOrder);
                 if (this.state.statusPi === "Closed"){
                     if (pi.percentage === 100){
                         const dataPi = {
@@ -70,7 +73,7 @@ class ChangeStatusOrder extends Component {
                             status: this.state.statusPi
                         }
                         console.log(dataPi);
-                        await APIConfig.put(`/order/${this.state.orderTarget.idOrder}/pi/${this.state.orderTarget.idOrderPi.idOrderPi}/updateStatus`, dataPi, { headers: authHeader() });
+                        await APIConfig.put(`/order/${this.state.orderTarget.idOrder}/pi/${pi.idOrderPi}/updateStatus`, dataPi, { headers: authHeader() });
                         this.handleSubmitted(event, this.state.orderTarget)
                         this.setState({isEdit: false});
                     } else {
@@ -87,15 +90,15 @@ class ChangeStatusOrder extends Component {
                         status: this.state.statusPi
                     }
                     console.log(dataPi);
-                    await APIConfig.put(`/order/${this.state.orderTarget.idOrder}/pi/${this.state.orderTarget.idOrderPi.idOrderPi}/updateStatus`, dataPi, { headers: authHeader() });
+                    await APIConfig.put(`/order/${this.state.orderTarget.idOrder}/pi/${pi.idOrderPi}/updateStatus`, dataPi, { headers: authHeader() });
                     this.handleSubmitted(event, this.state.orderTarget)
                     this.setState({isEdit: false});
                 }
             }
             if(this.state.orderTarget.managedService === true){
-                const ms = this.state.orderTarget.idOrderMs;
+                const ms = this.getMs(this.state.orderTarget.idOrder);
                 if (this.state.statusMs === "Closed"){
-                    let listMaintenance = this.state.orderTarget.idOrderMs.listMaintenance;
+                    let listMaintenance = ms.listMaintenance;
                     for(let i=0; i<listMaintenance.length; i++){
                         let maintenance = listMaintenance[i];
                         let booleanStatus = false;
@@ -107,10 +110,10 @@ class ChangeStatusOrder extends Component {
                             dateMn: maintenance.dateMn,
                             maintained: booleanStatus
                         }
-                        await APIConfig.put(`/order/${this.state.orderTarget.idOrder}/ms/${this.state.orderTarget.idOrderMs.idOrderMs}/maintenance/${maintenance.idMaintenance}/updateStatus`, dataMaintenance, { headers: authHeader() });
+                        await APIConfig.put(`/order/${this.state.orderTarget.idOrder}/ms/${ms.idOrderMs}/maintenance/${maintenance.idMaintenance}/updateStatus`, dataMaintenance, { headers: authHeader() });
                     }
                     console.log(ms.listMaintenance);
-                    const msUpdated = await APIConfig.get(`/order/${this.state.orderTarget.idOrder}/ms/${this.state.orderTarget.idOrderMs.idOrderMs}`, { headers: authHeader() });
+                    const msUpdated = await APIConfig.get(`/order/${this.state.orderTarget.idOrder}/ms/${ms.idOrderMs}`, { headers: authHeader() });
                     console.log(msUpdated.data.listMaintenance);
                     let statusAllMaintenance = true;
                     let listMaintenanceChecked = msUpdated.data.listMaintenance;
@@ -134,14 +137,14 @@ class ChangeStatusOrder extends Component {
                             status: this.state.statusMs
                         }
                         // console.log(dataMs);
-                        await APIConfig.put(`/order/${this.state.orderTarget.idOrder}/ms/${this.state.orderTarget.idOrderMs.idOrderMs}/updateStatus`, dataMs, { headers: authHeader() });
+                        await APIConfig.put(`/order/${this.state.orderTarget.idOrder}/ms/${ms.idOrderMs}/updateStatus`, dataMs, { headers: authHeader() });
                         this.handleSubmitted(event, this.state.orderTarget)
                         this.setState({isEdit: false});
                     } else {
                         this.handleErrorMsClosed(event);
                     }
                 } else {
-                    let listMaintenance = this.state.orderTarget.idOrderMs.listMaintenance;
+                    let listMaintenance = ms.listMaintenance;
                     for(let i=0; i<listMaintenance.length; i++){
                         let maintenance = listMaintenance[i];
                         let booleanStatus = false;
@@ -153,7 +156,7 @@ class ChangeStatusOrder extends Component {
                             dateMn: maintenance.dateMn,
                             maintained: booleanStatus
                         }
-                        await APIConfig.put(`/order/${this.state.orderTarget.idOrder}/ms/${this.state.orderTarget.idOrderMs.idOrderMs}/maintenance/${maintenance.idMaintenance}/updateStatus`, dataMaintenance, { headers: authHeader() } );
+                        await APIConfig.put(`/order/${this.state.orderTarget.idOrder}/ms/${ms.idOrderMs}/maintenance/${maintenance.idMaintenance}/updateStatus`, dataMaintenance, { headers: authHeader() } );
                     }
 
                     const dataMs = {
@@ -167,7 +170,7 @@ class ChangeStatusOrder extends Component {
                         status: this.state.statusMs
                     }
                     // console.log(dataMs);
-                    await APIConfig.put(`/order/${this.state.orderTarget.idOrder}/ms/${this.state.orderTarget.idOrderMs.idOrderMs}/updateStatus`, { headers: authHeader() });
+                    await APIConfig.put(`/order/${this.state.orderTarget.idOrder}/ms/${ms.idOrderMs}/updateStatus`, { headers: authHeader() });
                     this.handleSubmitted(event, this.state.orderTarget)
                     this.setState({isEdit: false});
                 }
@@ -198,6 +201,26 @@ class ChangeStatusOrder extends Component {
         this.setState({isSubmitted: true, orderTarget: order});
     }
 
+    // Mengambil order jenis project installation yang dipilih
+    getPi(idOrder){
+        let pi = this.state.listPi.filter(pi => pi.idOrder.idOrder === idOrder );
+
+        if (pi.length !== 0) {
+            return pi[0];
+        }
+        return null;
+    }
+
+    // Mengambil order jenis managed services yang dipilih
+    getMs(idOrder){
+        let ms = this.state.listMs.filter(ms => ms.idOrder.idOrder === idOrder);
+
+        if (ms.length !== 0) {
+            return ms[0];
+        }
+        return null;
+    }
+
     checkTypeOrder(pi, ms){
         if(pi === true && ms === true){
             return "Project Installation, Managed Service";
@@ -210,10 +233,19 @@ class ChangeStatusOrder extends Component {
 
     checkStatus(order){
         if (order.projectInstallation === true){
-            return order.idOrderPi.status;
+            let pi = this.getPi(order.idOrder)
+	  console.log(order)
+	  console.log(pi)
+	    if (pi.status === null){
+		return "Inactive";	
+	    } else { return pi.status;}
+            
         }
         else if (order.managedService === true){
-            return order.idOrderMs.status;
+            let ms = this.getMs(order.idOrder)
+            if (ms.status === null){
+		return "Inactive";	
+	    } else { return ms.status;}
         }
     }
 
@@ -221,11 +253,12 @@ class ChangeStatusOrder extends Component {
         this.setState({isEdit: true, orderTarget: order, listMaintenance: listMaintenance});
         const statusMaintenancesUpdated = this.state.statusMaintenances;
         if (order.projectInstallation === true){
-            this.setState({statusPi: order.idOrderPi.status});
+            this.setState({statusPi: this.checkStatus(order)});
         }
         else if (order.managedService === true){
-            this.setState({statusMs: order.idOrderMs.status});
-            listMaintenance = order.idOrderMs.listMaintenance;
+            this.setState({statusMs: this.checkStatus(order)});
+	    let ms = this.getMs(order.idOrder);
+            listMaintenance = ms.listMaintenance;
             for(let i=0; i<listMaintenance.length; i++){
 
                 let maintenance = listMaintenance[i];
@@ -312,10 +345,11 @@ class ChangeStatusOrder extends Component {
 
 
         if(orderTarget !== null){
-            if(orderTarget.idOrderPi !== null){
+            if(orderTarget.projectInstallation === true){
             }
-            if(orderTarget.idOrderMs !== null){
-                tableMaintenanceRows = orderTarget.idOrderMs.listMaintenance.map((maintenance, index) => [
+            if(orderTarget.managedService === true){
+		let ms = this.getMs(orderTarget.idOrder);
+                tableMaintenanceRows = ms.listMaintenance.map((maintenance, index) => [
                     maintenance.dateMn,
                     <Form.Control
                         as="select"
@@ -328,7 +362,7 @@ class ChangeStatusOrder extends Component {
                         <option value="Maintained">Maintained</option>
                     </Form.Control>
                 ]);
-                listMaintenance = orderTarget.idOrderMs.listMaintenance.map((maintenance) => maintenance.idMaintenance);
+                listMaintenance = ms.listMaintenance.map((maintenance) => maintenance.idMaintenance);
             }
         }
 
@@ -364,7 +398,7 @@ class ChangeStatusOrder extends Component {
                                                 as="select"
                                                 size="lg"
                                                 name="statusPi"
-                                                value={ this.state.statusPi }
+                                                value={ this.checkStatus(orderTarget) }
                                                 onChange={this.handleChangeField}>
                                                 <option value="Inactive">Inactive</option>
                                                 <option value="In Progress">In Progress</option>
@@ -396,7 +430,7 @@ class ChangeStatusOrder extends Component {
                                                 as="select"
                                                 size="lg"
                                                 name="statusMs"
-                                                value={ this.state.statusMs }
+                                                value={ this.checkStatus(orderTarget) }
                                                 onChange={this.handleChangeField}>
                                                 <option value="Inactive">Inactive</option>
                                                 <option value="Active">Active</option>

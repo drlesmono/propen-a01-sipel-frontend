@@ -80,10 +80,6 @@
     border-color:  #DA552F!important;
 }
 
-.button5:focus{
-    box-shadow: none !important;
-}
-
 .buttonUpload{
     width: 50% !important;
 }

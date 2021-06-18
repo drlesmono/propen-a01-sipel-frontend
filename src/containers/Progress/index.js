@@ -2,11 +2,9 @@ import React, { Component } from "react";
 import APIConfig from "../../APIConfig";
 import CustomizedTables from "../../components/Table";
 import CustomizedButtons from "../../components/Button";
-import Modal from "../../components/Modal";
-import {Form, Card, Table} from "react-bootstrap";
-import { Input, FormControlLabel } from "@material-ui/core";
-import classes from "./style.css";
-import "./style.css";
+import {Form} from "react-bootstrap";
+import classes from "./styles.module.css";
+// import "./style.css";
 import authHeader from '../../services/auth-header';
 
 
@@ -109,7 +107,7 @@ class Progress extends Component {
         )
 
         return(
-            <div class="test">
+            <div className={classes.container}>
                 <div><h1 class="text-center">Daftar Progress</h1></div>
                 {isPi === true ?
                     <div>
@@ -132,7 +130,7 @@ class Progress extends Component {
                         <CustomizedButtons variant="contained" size="small" color="#2F3F58" onClick={(event)=>this.handlePi(event)}>Proyek Instalasi</CustomizedButtons>
                     </div>
                 }
-               <Form.Control type="text" size="sm" placeholder="Cari..." onChange={this.handleFilter} className="search"/>
+               <Form.Control type="text" size="sm" placeholder="Cari..." onChange={this.handleFilter} className={classes.search}/>
                 <CustomizedTables headers={tableHeaders} rows={tableRows} class="tbl"/>
             </div>
         );

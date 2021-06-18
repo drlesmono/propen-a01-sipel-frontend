@@ -45,4 +45,4 @@ class InstallationProjectService {
 
 }
 
-export default new InstallationProjectService()
+export default new InstallationProjectService();

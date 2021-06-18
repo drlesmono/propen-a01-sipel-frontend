@@ -1,5 +1,9 @@
 import React, { Component } from 'react'
 import InstallationProjectService from "../../services/InstallationProjectService";
+import Modal from "react-bootstrap/Modal";
+import 'bootstrap/dist/css/bootstrap.min.css';
+import { Button } from "react-bootstrap";
+import classes from "./styles.module.css";
 
 class UpdateTaskComponent extends Component {
     constructor(props) {
@@ -9,7 +13,8 @@ class UpdateTaskComponent extends Component {
             idPi: this.props.match.params.idPi,
             idTask: this.props.match.params.idTask,
             taskName: '',
-            description: ''
+            description: '',
+            isSuccess: false
 
         }
         this.changeTaskNameHandler = this.changeTaskNameHandler.bind(this);
@@ -37,10 +42,12 @@ class UpdateTaskComponent extends Component {
         let task = {taskName: this.state.taskName, description: this.state.description};
         console.log('task => ' + JSON.stringify(task));
         
-        InstallationProjectService.updateTaskModel(task, this.state.idTask).then( res => {
-            this.props.history.push(`/list-task/${this.state.idPi}`)
-        });
-        alert("Data Task Berhasil DiUbah");
+        InstallationProjectService.updateTaskModel(task, this.state.idTask).then( res => this.setState({isSuccess: true}) );
+        // .then( res => {
+        //     this.props.history.push(`/list-task/${this.state.idPi}`)
+        // });
+        // this.setState({isSuccess: true});
+        // alert("Data Task Berhasil DiUbah");
     }
 
     cancel(){
@@ -48,8 +55,30 @@ class UpdateTaskComponent extends Component {
     }
 
     render() {
+        const { isSuccess } = this.state;
+
         return (
             <div>
+                {/* Menampilkan modal berisi notifikasi ketika berhasil menyimpan data */}
+                <Modal
+                    show={isSuccess}
+                    dialogClassName="modal-90w"
+                    aria-labelledby="contained-modal-title-vcenter"
+                >
+                     <Modal.Header closeButton onClick={this.cancel.bind(this)}>
+                        <Modal.Title id="contained-modal-title-vcenter">
+                            Notification
+                        </Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>
+                        <div className="d-flex justify-content-center">Data Task Berhasil DiUbah.</div><br></br>
+                        <div className="d-flex justify-content-center">
+                            <Button variant="primary" className={classes.button1} onClick={this.cancel.bind(this)}>
+                                Kembali
+                            </Button>
+                        </div>
+                    </Modal.Body>
+                </Modal>
                 <br/><br/>
                 <div className="container">
                     <div className="row">

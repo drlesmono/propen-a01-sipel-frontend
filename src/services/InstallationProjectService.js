@@ -13,6 +13,12 @@ const ADD_TASK_API_BASE_URL = "https://propen-a01-sipel.herokuapp.com/api/v1/add
 const GET_TASK_API_BASE_URL = "https://propen-a01-sipel.herokuapp.com/api/v1/retrieve-task";
 const GET_PI_API_BASE_URL = "https://propen-a01-sipel.herokuapp.com/api/v1/order/detail/PI/";
 
+// const DELIVERY_PROGRESS_API_BASE_URL = "http://localhost:2020/api/v1/delivery-progress";
+// const LIST_TASK_API_BASE_URL = "http://localhost:2020/api/v1/list-task";
+// const ADD_TASK_API_BASE_URL = "http://localhost:2020/api/v1/addTask";
+// const GET_TASK_API_BASE_URL = "http://localhost:2020/api/v1/retrieve-task";
+// const GET_PI_API_BASE_URL = "http://localhost:2020/api/v1/order/detail/PI/";
+
 class InstallationProjectService {
 
     getVerifiedOrderPi(){

@@ -124,7 +124,7 @@ class UnverifiedOrders extends React.Component {
         if (this.state.flag === "Pending"){
             let order = {idOrder: this.state.orderTarget.idOrder, isVerified: false};
             console.log('order => ' + JSON.stringify(order));
-            const URL = "http://localhost:2020/api/v1/order/status/verification";
+            const URL = "https://propen-a01-sipel.herokuapp.com/api/v1/order/status/verification";
             axios.put(URL, order, { headers: authHeader() });
             this.setState({
             isSuccess: true});
@@ -133,7 +133,7 @@ class UnverifiedOrders extends React.Component {
         if (this.state.flag === "Verified"){
             let order = {idOrder: this.state.orderTarget.idOrder, isVerified: true};
             console.log('order => ' + JSON.stringify(order));
-            const URL = "http://localhost:2020/api/v1/order/status/verification";
+            const URL = "https://propen-a01-sipel.herokuapp.com/api/v1/order/status/verification";
             axios.put(URL, order, { headers: authHeader() });
             this.setState({
             isSuccess: true});

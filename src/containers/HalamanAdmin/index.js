@@ -116,7 +116,7 @@ class HalamanAdmin extends Component {
         e.preventDefault();
         let user = {username: this.state.userTarget.username, role_name: this.state.role_name};
         console.log('user => ' + JSON.stringify(user));
-        const URL = "http://localhost:2020/api/v1/user/updateRole";
+        const URL = "https://propen-a01-sipel.herokuapp.com/api/v1/user/updateRole";
         axios.put(URL, user, { headers: authHeader() });
         this.setState({
             isSuccess: true,
@@ -128,7 +128,7 @@ class HalamanAdmin extends Component {
         
         let user = {username: this.state.userTarget.username};
         console.log('user => ' + JSON.stringify(user));
-        const URL = "http://localhost:2020/api/v1/delete-user/";
+        const URL = "https://propen-a01-sipel.herokuapp.com/api/v1/delete-user/";
         const usr = this.state.userTarget.username;
         axios.delete(URL+usr, { headers: authHeader() });
         

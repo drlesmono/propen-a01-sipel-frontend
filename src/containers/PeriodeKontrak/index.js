@@ -66,10 +66,21 @@ class PeriodeKontrak extends Component {
             const engineers = await APIConfig.get("/engineers", { headers: authHeader() });
             const listPi = await APIConfig.get("/orders/pi", { headers: authHeader() });
             const listMs = await APIConfig.get("/orders/ms", { headers: authHeader() });
-            this.setState({ ordersVerified: orders.data, engineers: engineers.data, listPi: listPi.data, listMs: listMs.data});
+            this.setState({ engineers: engineers.data, listPi: listPi.data, listMs: listMs.data});
+            
+            const ordersStatusFiltered = orders.data.filter(order => this.checkStatusOrder(order)===true);
+            this.setState({ ordersVerified: ordersStatusFiltered })
         } catch (error) {
             this.setState({ isError: true });
             console.log(error);
+        }
+    }
+
+    checkStatusOrder(order){
+        let ms;
+        ms = this.getMs(order.idOrder);
+        if(ms.status==="Active"){
+            return true;
         }
     }
 

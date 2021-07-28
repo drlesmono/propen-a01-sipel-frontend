@@ -13,7 +13,7 @@ import authHeader from '../../services/auth-header';
 const initState = {
     statusApproval: "",
     isReject: false,
-    notes: null,
+    notes: "",
 }
 
 class StatusPersetujuanLaporan extends Component {
@@ -35,7 +35,7 @@ class StatusPersetujuanLaporan extends Component {
             maintenanceTarget: null,
             orderByPO: null,
             file: null,
-            notes: null,
+            notes: "",
             reportNum: null,
             statusApproval: "",
             reportIRtarget: null,
@@ -280,7 +280,7 @@ class StatusPersetujuanLaporan extends Component {
                 statusApproval: this.state.statusApproval,
             }
             const dataIr = {
-                notes: this.state.notes,
+                notes: "Manager : " + this.state.notes,
             }
             await APIConfig.put(`/report/update/${this.state.reportTarget.idReport}`, dataReport, { headers: authHeader() });
             await APIConfig.put(`/update/notes/${this.state.reportIRtarget.idInstallationReport}`, dataIr, { headers: authHeader() });
@@ -318,7 +318,7 @@ class StatusPersetujuanLaporan extends Component {
                 statusApproval: this.state.statusApproval,
             }
             const dataMr = {
-                notes: this.state.notes,
+                notes: "Manager : " + this.state.notes,
             }
             await APIConfig.put(`/report/update/${this.state.reportTarget.idReport}`, dataReport, { headers: authHeader() });
             await APIConfig.put(`/update/mr/notes/${this.state.reportMRtarget.idMaintenanceReport}`, dataMr, { headers: authHeader() });

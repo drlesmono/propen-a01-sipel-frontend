@@ -64,11 +64,48 @@ class LaporanInstalasiMaintenance extends Component {
             const listMr = await APIConfig.get("/reports/mr", { headers: authHeader() });
             const listPi = await APIConfig.get("/orders/pi", { headers: authHeader() });
             const listMs = await APIConfig.get("/orders/ms", { headers: authHeader() });
-            this.setState({ ordersVerified: orders.data, reports: reports.data, listIr: listIr.data, 
-                            listMr: listMr.data, listPi: listPi.data, listMs: listMs.data});
+            
+            this.setState({ listIr: listIr.data, listMr: listMr.data, listPi: listPi.data, listMs: listMs.data});
+            const ordersStatusFiltered = orders.data.filter(order => this.checkStatusOrder(order)===true);
+            const reportsNotSigned = reports.data.filter(report => report.signed === false);
+            this.setState({ ordersVerified: ordersStatusFiltered, reports: reportsNotSigned});
         } catch (error) {
             this.setState({ isError: true, messageError: "Oops terjadi masalah pada server" });
             console.log(error);
+        }
+    }
+
+    // Mengecek tipe order berjenis project installation, managed service, atau keduanya
+    checkTypeOrder(pi, ms){
+        if(pi === true && ms === true){
+            return "Project Installation, Managed Service";
+        }else if(pi === true){
+            return "Project Installation";
+        }else if(ms === true){
+            return "Managed Service";
+        }
+    }
+
+    checkStatusOrder(order){
+        let type = this.checkTypeOrder(order.projectInstallation, order.managedService);
+        let pi;
+        let ms;
+        if(type==="Project Installation"){
+            pi = this.getPi(order.idOrder);
+            if(pi.status==="In Progress" || pi.status==="On Hold"){
+                return true;
+            }
+        }else if(type==="Managed Service"){
+            ms = this.getMs(order.idOrder);
+            if(ms.status==="Active"){
+                return true;
+            }
+        }else{
+            pi = this.getPi(order.idOrder);
+            ms = this.getMs(order.idOrder);
+            if(pi.status==="In Progress" || pi.status==="On Hold" || type==="Managed Service"){
+                return true;
+            }
         }
     }
 

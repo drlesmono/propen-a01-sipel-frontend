@@ -131,7 +131,7 @@ class LaporanInstalasiMaintenance extends Component {
                 const dataInstallationReport = {
                     idInstallationReport: null,
                     irNum: null,
-                    notes: this.state.notes,
+                    notes: "Engineer : " + this.state.notes,
                     idOrderPi: this.getPi(parseInt(this.state.orderByPO, 10)).idOrderPi
                 }
                 await APIConfig.post(`/report/${newReport.idReport}/installation/upload`, dataInstallationReport, { headers: authHeader() });
@@ -139,7 +139,7 @@ class LaporanInstalasiMaintenance extends Component {
                 const dataMaintenanceReport = {
                     idMaintenanceReport: null,
                     mrNum: null,
-                    notes: this.state.notes,
+                    notes: "Engineer : " + this.state.notes,
                     idMaintenance: parseInt(this.state.maintenanceTarget, 10)
                 }
                 await APIConfig.post(`/report/${newReport.idReport}/maintenance/upload`, dataMaintenanceReport, { headers: authHeader() });

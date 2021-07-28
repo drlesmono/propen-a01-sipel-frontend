@@ -41,6 +41,7 @@ import ChangeStatusOrder from "./containers/ChangeStatusOrder";
 import FinalisasiLaporan from "./containers/FinalisasiLaporan";
 import UnverifiedOrders from "./containers/UnverifiedOrders/UnverifiedOrders";
 import DetailUnverifiedOrder from "./containers/DetailUnverifiedOrder/DetailUnverifiedOrder";
+import UpdateSequence from "./containers/UpdateSequence"
 
 class App extends Component {
   constructor(props) {
@@ -52,6 +53,7 @@ class App extends Component {
       showPenugasanEngineer: false,
       showMengelolaLaporan: false,
 	    showBoardAdmin: false,
+      showUpdateSequence: false,
       showHalamanAdmin: false,
       showDeliveryProgress: false,
       showBast: false,
@@ -93,7 +95,8 @@ class App extends Component {
         // showDashboard: user.roles.includes("ROLE_ADMIN", "ROLE_MANAGER"),
         showChangeStatusOrder: user.roles.includes("ROLE_ADMIN"),
         showOrderStatusVerification: user.roles.includes("ROLE_ADMIN"),
-        showFinalisasiLaporan: user.roles.includes("ROLE_ADMIN")
+        showFinalisasiLaporan: user.roles.includes("ROLE_ADMIN"),
+        showUpdateSequence: user.roles.includes("ROLE_ADMIN")
       });
     }
   }
@@ -105,7 +108,7 @@ class App extends Component {
 
   render() {
     const { currentUser, showPenjadwalanMaintenance, showPeriodeKontrak, showOrderVerification, showPenugasanEngineer, showMengelolaLaporan, showHalamanAdmin, showDeliveryProgress, 
-    showLaporanAdmin, showOrderStatusVerification, showLaporanFinance, showLaporanHead, showBast, showProgressOrder, showStatusPersetujuanLaporan, showInputDataOrderAdmin, showInputDataOrderDataEntry, showFinalisasiLaporan,  showChangeStatusOrder} = this.state;
+    showLaporanAdmin, showOrderStatusVerification, showLaporanFinance, showLaporanHead, showBast, showProgressOrder, showStatusPersetujuanLaporan, showInputDataOrderAdmin, showInputDataOrderDataEntry, showFinalisasiLaporan,  showChangeStatusOrder, showUpdateSequence} = this.state;
 
     return (
       <div>
@@ -150,6 +153,7 @@ class App extends Component {
               </div>
               </NavDropdown> : <></>}
               {showHalamanAdmin && (<Nav.Link href="/halaman/admin">Halaman Admin</Nav.Link>)}
+                {showUpdateSequence && (<Nav.Link href="/order/changesequence">Ubah Sequence Order</Nav.Link>)}
               </Nav>
 
               {currentUser ? (
@@ -223,6 +227,7 @@ class App extends Component {
               <Route path="/dashboard" component={Dashboard} />
               <Route path="/laporan/finalisasi" component={FinalisasiLaporan} />
               <Route path="/order/ubahStatus" component={ChangeStatusOrder} />
+              <Route path="/order/changesequence" component={UpdateSequence} />
               <Route component={PageNotFound}/>
             </Switch>
           </Router>

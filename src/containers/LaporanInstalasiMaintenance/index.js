@@ -128,13 +128,18 @@ class LaporanInstalasiMaintenance extends Component {
             response = await APIConfig.post(`/report/upload`, dataReport, { headers: authHeader() });
             newReport = response.data.result;
 
+            let notes = this.state.notes;
+            if(notes !== null){
+                notes = "Engineer : " + this.state.notes;
+            }
+
             // Apabila report berjenis installation, maka masuk ke if
             // Apabila report berjenis maintenance, maka masuk ke else
             if(this.state.isInstallationReport){
                 const dataInstallationReport = {
                     idInstallationReport: null,
                     irNum: null,
-                    notes: "Engineer : " + this.state.notes,
+                    notes: notes,
                     idOrderPi: this.getPi(parseInt(this.state.orderByPO, 10)).idOrderPi
                 }
                 await APIConfig.post(`/report/${newReport.idReport}/installation/upload`, dataInstallationReport, { headers: authHeader() });
@@ -142,7 +147,7 @@ class LaporanInstalasiMaintenance extends Component {
                 const dataMaintenanceReport = {
                     idMaintenanceReport: null,
                     mrNum: null,
-                    notes: "Engineer : " + this.state.notes,
+                    notes: notes,
                     idMaintenance: parseInt(this.state.maintenanceTarget, 10)
                 }
                 await APIConfig.post(`/report/${newReport.idReport}/maintenance/upload`, dataMaintenanceReport, { headers: authHeader() });
@@ -466,13 +471,15 @@ class LaporanInstalasiMaintenance extends Component {
         // Isi tabel daftar laporan yang disesuaikan dengan yang dicari
         if(reports.length !== 0){
             tableRows = isFiltered ? reportsFiltered.map((report) =>
-                        [ this.getReportNum(report), report.reportName, this.getOrder(report).noPO, this.getOrder(report).clientOrg, 
+                        [ this.getReportNum(report), report.reportName, this.getOrder(report) === null? null : this.getOrder(report).noPO, 
+                        this.getOrder(report) === null? null : this.getOrder(report).clientOrg, 
                         this.getDate(report.uploadedDate), this.getNotes(report), 
                         <div className="d-flex justify-content-center"><Button className={classes.button2}
                         onClick={() => this.handleConfirmDelete(report)}>hapus</Button><span>&nbsp;&nbsp;</span>
                         <Button className={classes.button4} href={this.getUrl(report)} target = "_blank">lihat</Button></div>])
                         : reports.map((report) =>
-                        [ this.getReportNum(report), report.reportName, this.getOrder(report).noPO, this.getOrder(report).clientOrg, 
+                        [ this.getReportNum(report), report.reportName, this.getOrder(report) === null? null : this.getOrder(report).noPO, 
+                        this.getOrder(report) === null? null : this.getOrder(report).clientOrg, 
                         this.getDate(report.uploadedDate), this.getNotes(report), 
                         <div className="d-flex justify-content-center"><Button className={classes.button2}
                         onClick={() => this.handleConfirmDelete(report)}>hapus</Button><span>&nbsp;&nbsp;</span>

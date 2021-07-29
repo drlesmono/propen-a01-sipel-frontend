@@ -3,7 +3,7 @@ import APIConfig from "../../APIConfig";
 import CustomizedTables from "../../components/Table";
 import CustomizedButtons from "../../components/Button";
 import Modal from "../../components/Modal";
-import { Form } from "react-bootstrap";
+import { Form, Button } from "react-bootstrap";
 import classes from "../LaporanInstalasiMaintenance/styles.module.css";
 import authHeader from "../../services/auth-header";
 
@@ -332,13 +332,11 @@ class ChangeStatusOrder extends Component {
             order.clientName,
             this.checkTypeOrder(order.projectInstallation, order.managedService),
             this.checkStatus(order),
-            <CustomizedButtons
-                variant="contained"
-                size="small"
-                color="#FD693E"
+            <Button 
+                className={classes.button1}
                 onClick={() => this.handleEdit(order, listMaintenance)}>
                 Ubah
-            </CustomizedButtons>
+            </Button>
         ]);
         const tableMaintenanceHeaders = ['No.', 'Tanggal Maintenance', 'Status'];
         let tableMaintenanceRows;
@@ -367,9 +365,9 @@ class ChangeStatusOrder extends Component {
         }
 
         return (
-            <div>
-                <h1>Daftar Order</h1>
-                <div className={classes.search}><Form.Control type="text" size="sm" placeholder="Cari..." onChange={this.handleFilter}/></div>
+            <div className={classes.container}>
+                <div><h1 className="text-center">Daftar Order</h1></div>
+                <div className="d-flex justify-content-end" style={{padding: 5}}><Form.Control type="text" size="sm" placeholder="Cari..." onChange={this.handleFilter} className={classes.search}/></div>
                 <CustomizedTables headers={tableHeaders} rows={tableRows}/>
                 <Modal show={isEdit} handleCloseModal={this.handleCancel}>
                     <div><h3 id='titleform' >Form Ubah Status Order</h3></div>
@@ -444,9 +442,9 @@ class ChangeStatusOrder extends Component {
                                     </>: <></>}
                             </table>
                             <div style={{alignItems:'right'}}>
-                                <CustomizedButtons variant="contained" size="medium" color="#FD693E" onClick={this.handleSubmit}>
+                            <Button className={classes.button1} onClick={this.handleSubmit}>
                                     Simpan
-                                </CustomizedButtons>
+                                </Button>
                             </div>
                         </Form></>
                         : <></> }
@@ -461,9 +459,9 @@ class ChangeStatusOrder extends Component {
                             </h3>
                         </div></> : <></>}
                     <div style={{alignItems:'right'}}>
-                        <CustomizedButtons variant="contained" size="medium" color="#FD693E" onClick={this.handleCancel}>
+                        <Button className={classes.button1} onClick={this.handleCancel}>
                             Ok
-                        </CustomizedButtons>
+                        </Button>
                     </div>
                 </Modal>
             </div>

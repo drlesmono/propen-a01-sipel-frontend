@@ -65,7 +65,7 @@ class PenugasanEngineer extends Component {
         let ms;
         if(type==="Project Installation"){
             pi = this.getPi(order.idOrder);
-            if(pi.status==="In Progress" || pi.status==="On Hold"){
+            if(pi.status==="In Progress" || pi.status==="In Progress"){
                 return true;
             }
         }else if(type==="Managed Service"){
@@ -76,7 +76,7 @@ class PenugasanEngineer extends Component {
         }else{
             pi = this.getPi(order.idOrder);
             ms = this.getMs(order.idOrder);
-            if(pi.status==="In Progress" || pi.status==="On Hold" || type==="Managed Service"){
+            if(pi.status==="In Progress" || pi.status==="On Hold" || ms.status==="Active"){
                 return true;
             }
         }

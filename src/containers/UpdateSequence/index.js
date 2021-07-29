@@ -7,6 +7,7 @@ import {Form, Card, Table, Button} from "react-bootstrap";
 import { Input, FormControlLabel } from "@material-ui/core";
 import "./style.css";
 import classes from "./styles.module.css";
+import authHeader from "../../services/auth-header";
 
 
 class UpdateSequence extends Component {
@@ -27,7 +28,7 @@ class UpdateSequence extends Component {
 
     async loadData() {
         try {
-            const seq = await APIConfig.get("/order/resetSeq");
+            const seq = await APIConfig.get("/order/resetSeq", { headers: authHeader() });
             this.state = {
                 sequence: seq.data,
             };
@@ -62,7 +63,7 @@ class UpdateSequence extends Component {
 
         if(test === true){
             try{
-                APIConfig.put(`/order/resetSeq/1`, val);
+                APIConfig.put(`/order/resetSeq/1`, val, { headers: authHeader() });
 
             }catch (error) {
                 alert("Oops terjadi masalah pada server");

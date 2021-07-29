@@ -49,7 +49,7 @@ class ReportFinance extends Component {
         try {
             const orders = await APIConfig.get("/ordersVerifiedReport", { headers: authHeader() });
             const order = await APIConfig.get("/laporan/order", { headers: authHeader() });
-            const reports = await APIConfig.get("/reports", { headers: authHeader() });
+            const reports = await APIConfig.get("/reports/finance", { headers: authHeader() });
             const listIr = await APIConfig.get("/reports/ir", { headers: authHeader() });
             const listMr = await APIConfig.get("/reports/mr", { headers: authHeader() });
             const listPi = await APIConfig.get("/orders/pi", { headers: authHeader() });

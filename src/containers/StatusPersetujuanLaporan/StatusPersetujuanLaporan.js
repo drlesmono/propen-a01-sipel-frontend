@@ -46,6 +46,9 @@ class StatusPersetujuanLaporan extends Component {
             finishedSubmitChangeStatus: false,
             isError: false,
             isCancelToVerif: false,
+            isNotes: false,
+            role: null,
+            notesPreview: null
         };
         this.handleChangeField = this.handleChangeField.bind(this);
         this.handleFilter = this.handleFilter.bind(this);
@@ -59,6 +62,7 @@ class StatusPersetujuanLaporan extends Component {
         this.handleAfterError = this.handleAfterError.bind(this);
         this.cancelChange = this.cancelChange.bind(this);
         this.handleConfirmToCancel = this.handleConfirmToCancel.bind(this);
+        this.handleCancel = this.handleCancel.bind(this);
     }
 
     componentDidMount() {
@@ -191,23 +195,58 @@ class StatusPersetujuanLaporan extends Component {
         }
     }
 
+    // Mengambil catatan untuk report
     getNotes(report){
+        let notes="";
         if(report.reportType === "installation"){
             const ir = this.getIr(report.idReport);
             if(ir !== null){
                 if(ir.notes !== null){
-                    return ir.notes;
+                    let splitNotes=ir.notes.split(' ');
+                    if(splitNotes.length > 7){
+                        for(let i=0; i<7; i++){
+                            notes = notes + splitNotes[i] + " ";
+                        }
+                        return <div>{notes}... <a style={{color: "red"}} onClick={() => this.handleOpenNotes(ir.notes)}>more</a></div>;
+                    }
+
+                    return <div>{ir.notes}</div>;
                 }
             }
         }else{
             const mr = this.getMr(report.idReport);
             if(mr !== null){
                 if(mr.notes !== null){
-                    return mr.notes;
+                    let splitNotes=mr.notes.split(' ');
+                    if(splitNotes.length > 7){
+                        for(let i=0; i<7; i++){
+                            notes = notes + splitNotes[i] + " ";
+                        }
+                        return <div>{notes}... <a style={{color: "red"}} onClick={() => this.handleOpenNotes(mr.notes)}>more</a></div>;
+                    }
+
+                    return <div>{mr.notes}</div>;
                 }
             }
         }
-        return "-";
+
+        return <div>-</div>;
+    }
+
+    // Memunculkan modal notes
+    handleOpenNotes(notes){
+        let splitNotes=notes.split(':');
+        this.setState({ isNotes: true, role: splitNotes[0], notesPreview: splitNotes[1] });
+    }
+
+    handleCancel(event) {
+        event.preventDefault();
+        this.setState({
+            isNotes: false,
+            role: null,
+            notesPreview: null
+        });
+        this.loadData();
     }
 
     getReportType(report){
@@ -369,9 +408,8 @@ class StatusPersetujuanLaporan extends Component {
     }
 
     render() {
-        const { reports, reportsFiltered, reportTarget, isFiltered, reportNum, statusApproval, 
-            reportIRtarget, reportMRtarget, orderTarget, isChangeStatus, notes, isReject, isApprove,
-            finishedSubmitChangeStatus, isError, isCancelToVerif } = this.state;
+        const { reports, reportsFiltered, isFiltered,  isChangeStatus, notes, finishedSubmitChangeStatus,
+             isError, isCancelToVerif, isNotes, role, notesPreview} = this.state;
 
         const tableHeaders = ['No', 'Nomor Laporan', 'Nama Laporan', 'Nomor PO', 'Perusahaan Pelanggan', 'Status', 'Tanggal Dibuat', 'Catatan', 'Aksi'];
                   
@@ -588,6 +626,23 @@ class StatusPersetujuanLaporan extends Component {
                         <div className="text-center">
                             <Button className={classes.button2} onClick={() => this.handleAfterError()}>Kembali</Button>
                         </div>
+                    </Modal.Body>
+                </Modal>
+
+                {/* Menampilkan modal berisi catatan report */}
+                <Modal
+                    show={isNotes}
+                    dialogClassName="modal-90w"
+                    aria-labelledby="contained-modal-title-vcenter"
+                >
+                     <Modal.Header closeButton onClick={this.handleCancel}>
+                        <Modal.Title id="contained-modal-title-vcenter">
+                            Catatan
+                        </Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>
+                        <div>{role}:</div>
+                        <div>{notesPreview}</div>
                     </Modal.Body>
                 </Modal>
         </div>

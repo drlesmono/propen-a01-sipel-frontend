@@ -35,7 +35,10 @@ class LaporanInstalasiMaintenance extends Component {
             notes: null,
             isValid: true,
             messageError: null,
-            reportNum: null
+            reportNum: null,
+            isNotes: false,
+            role: null,
+            notes: null
         };
         this.handleChangeField = this.handleChangeField.bind(this);
         this.handleUpload = this.handleUpload.bind(this);
@@ -352,7 +355,10 @@ class LaporanInstalasiMaintenance extends Component {
             isValid: true,
             messageError: null,
             isFiltered: false,
-            reportNum: null
+            reportNum: null,
+            isNotes: false,
+            role: null,
+            notes: null
         });
         this.loadData();
     }
@@ -389,23 +395,46 @@ class LaporanInstalasiMaintenance extends Component {
 
     // Mengambil catatan untuk report
     getNotes(report){
+        let notes="";
         if(report.reportType === "installation"){
             const ir = this.getIr(report.idReport);
             if(ir !== null){
                 if(ir.notes !== null){
-                    return ir.notes;
+                    let splitNotes=ir.notes.split(' ');
+                    if(splitNotes.length > 7){
+                        for(let i=0; i<7; i++){
+                            notes = notes + splitNotes[i] + " ";
+                        }
+                        return <div>{notes}... <a style={{color: "red"}} onClick={() => this.handleOpenNotes(ir.notes)}>more</a></div>;
+                    }
+
+                    return <div>{ir.notes}</div>;
                 }
             }
         }else{
             const mr = this.getMr(report.idReport);
             if(mr !== null){
                 if(mr.notes !== null){
-                    return mr.notes;
+                    let splitNotes=mr.notes.split(' ');
+                    if(splitNotes.length > 7){
+                        for(let i=0; i<7; i++){
+                            notes = notes + splitNotes[i] + " ";
+                        }
+                        return <div>{notes}... <a style={{color: "red"}} onClick={() => this.handleOpenNotes(mr.notes)}>more</a></div>;
+                    }
+
+                    return <div>{mr.notes}</div>;
                 }
             }
         }
 
-        return "-";
+        return <div>-</div>;
+    }
+
+    // Memunculkan modal notes
+    handleOpenNotes(notes){
+        let splitNotes=notes.split(':');
+        this.setState({ isNotes: true, role: splitNotes[0], notes: splitNotes[1] });
     }
 
     // Menyaring list report sesuai dengan data yang dimasukkan pada form search
@@ -428,7 +457,7 @@ class LaporanInstalasiMaintenance extends Component {
 
     render() {
         const { reports, reportsFiltered, isMrUploaded, isInstallationReport, isUpload, isSuccess, isDelete, isDeleteSuccess, isFailed, isError,
-                listMaintenance, reportTarget, messageError, isFiltered, reportNum } = this.state;
+                listMaintenance, reportTarget, messageError, isFiltered, reportNum, isNotes, role, notes} = this.state;
         
         // Judul untuk setiap kolom di tabel daftar laporan
         const tableHeaders = ['No.', 'Nomor Laporan', 'Nama Laporan', 'Nomor PO', 'Perusahaan', 'Tanggal dibuat', 'Catatan', 'Aksi'];                  
@@ -440,20 +469,20 @@ class LaporanInstalasiMaintenance extends Component {
                         [ this.getReportNum(report), report.reportName, this.getOrder(report).noPO, this.getOrder(report).clientOrg, 
                         this.getDate(report.uploadedDate), this.getNotes(report), 
                         <div className="d-flex justify-content-center"><Button className={classes.button2}
-                        onClick={() => this.handleConfirmDelete(report)}>hapus</Button>
+                        onClick={() => this.handleConfirmDelete(report)}>hapus</Button><span>&nbsp;&nbsp;</span>
                         <Button className={classes.button4} href={this.getUrl(report)} target = "_blank">lihat</Button></div>])
                         : reports.map((report) =>
                         [ this.getReportNum(report), report.reportName, this.getOrder(report).noPO, this.getOrder(report).clientOrg, 
                         this.getDate(report.uploadedDate), this.getNotes(report), 
                         <div className="d-flex justify-content-center"><Button className={classes.button2}
-                        onClick={() => this.handleConfirmDelete(report)}>hapus</Button>
+                        onClick={() => this.handleConfirmDelete(report)}>hapus</Button><span>&nbsp;&nbsp;</span>
                         <Button className={classes.button4} href={this.getUrl(report)} target = "_blank">lihat</Button></div>]);
         }
 
         return (
             <div className={classes.container}>
 
-                {/* Menampilkan daftar laporan */}
+                {/* Menampilkan daftar report */}
                 <div><h1 className="text-center">Daftar Laporan</h1></div>
                 <div className="d-flex justify-content-between" style={{padding: 5}}>
                     <div className={classes.containerButtonUpload}>
@@ -464,7 +493,7 @@ class LaporanInstalasiMaintenance extends Component {
                 </div>
                 <div>{ reports.length !== 0 ? <CustomizedTables headers={tableHeaders} rows={tableRows}/> : <p className="text-center" style={{color: "red"}}>Belum terdapat laporan </p>}</div>
                 
-                 {/* Menampilkan modal berisi form upload laporan */}
+                 {/* Menampilkan modal berisi form upload report */}
                 <Modal
                     show={isUpload}
                     dialogClassName="modal-90w"
@@ -560,7 +589,7 @@ class LaporanInstalasiMaintenance extends Component {
                     </Modal.Body>
                 </Modal>
 
-                 {/* Menampilkan modal berisi konfirmasi hapus laporan */}
+                 {/* Menampilkan modal berisi konfirmasi hapus report */}
                 <Modal
                     show={isDelete}
                     dialogClassName="modal-90w"
@@ -624,6 +653,23 @@ class LaporanInstalasiMaintenance extends Component {
                             </Button>
                         </div>
                         </>}
+                    </Modal.Body>
+                </Modal>
+
+                {/* Menampilkan modal berisi catatan report */}
+                <Modal
+                    show={isNotes}
+                    dialogClassName="modal-90w"
+                    aria-labelledby="contained-modal-title-vcenter"
+                >
+                     <Modal.Header closeButton onClick={this.handleCancel}>
+                        <Modal.Title id="contained-modal-title-vcenter">
+                            Catatan
+                        </Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>
+                        <div>{role}:</div>
+                        <div>{notes}</div>
                     </Modal.Body>
                 </Modal>
         </div>

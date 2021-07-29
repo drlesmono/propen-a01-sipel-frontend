@@ -499,13 +499,13 @@ class PeriodeKontrak extends Component {
                         this.getDate(this.getMs(order.idOrder).actualStart), this.getDate(this.getMs(order.idOrder).actualEnd),
                         this.getTimeRemaining(this.getMs(order.idOrder).actualStart, this.getMs(order.idOrder).actualEnd),
                         <div className="justify-content-between"><Button className={classes.button1} onClick={() => this.handleEdit(order, "perbarui")}>perbarui</Button>
-                        <Button className={classes.button2} onClick={() => this.handleEdit(order, "perpanjang")}>perpanjang</Button></div>])
+                        <span>&nbsp;&nbsp;</span><Button className={classes.button2} onClick={() => this.handleEdit(order, "perpanjang")}>perpanjang</Button></div>])
                         : ordersVerified.map((order) =>
                         [order.noPO === null ? "-" : order.noPO, order.orderName, 
                         this.getDate(this.getMs(order.idOrder).actualStart), this.getDate(this.getMs(order.idOrder).actualEnd),
                         this.getTimeRemaining(this.getMs(order.idOrder).actualStart, this.getMs(order.idOrder).actualEnd),
                         <div className="justify-content-between"><Button className={classes.button1} onClick={() => this.handleEdit(order, "perbarui")}>perbarui</Button>
-                        <Button className={classes.button2} onClick={() => this.handleEdit(order, "perpanjang")}>perpanjang</Button></div>])
+                        <span>&nbsp;&nbsp;</span><Button className={classes.button2} onClick={() => this.handleEdit(order, "perpanjang")}>perpanjang</Button></div>])
 
         // Judul untuk setiap kolom di tabel service
         const tableServiceHeaders = ['No.', 'Nama Service', 'Engineer'];

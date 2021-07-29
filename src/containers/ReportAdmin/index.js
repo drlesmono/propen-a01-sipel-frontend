@@ -602,8 +602,7 @@ class ReportAdmin extends Component {
     }
 
     render() {
-        const { reports, reportsFiltered, isMrUploaded, isInstallationReport, isUpload, isSuccess, isDelete, isDeleteSuccess, isFailed, isError,
-            listMaintenance, reportTarget, messageError, isFiltered, reportNum, bastList, orderList, isPreview } = this.state;
+        const { reports, reportsFiltered, reportTarget, isFiltered, bastList, orderList, isPreview } = this.state;
         const tableHeaders = ['No.', 'Nomor Laporan', 'Nama Laporan', 'Nomor PO', 'Perusahaan', 'Tanggal dibuat', 'Status', 'Aksi'];
         let tableRows = [];
 
@@ -661,12 +660,12 @@ class ReportAdmin extends Component {
                     [this.getIsBast(report) === true ? this.getBastNum(report) : this.getReportNum(report), report.reportName, this.getOrderPO(report), this.getOrderOrg(report),
                         this.getDate(report.uploadedDate), this.getApproval(report), this.getIsBast(report) === true?
                         <div className="d-flex justify-content-center">
-                            <Button className={classes.button4} onClick={() => this.handlePreview(report)}>Lihat</Button>
+                            <Button className={classes.button4} onClick={() => this.handlePreview(report)}>Lihat</Button><span>&nbsp;&nbsp;</span>
                             <Button className={classes.button5} onClick={() => this.handleDownload(report)}>Unduh</Button>
                         </div>
                         :
                         <div className="d-flex justify-content-center">
-                            <Button className={classes.button4} href={this.getUrl(report)} target = "_blank">Lihat</Button>
+                            <Button className={classes.button4} href={this.getUrl(report)} target = "_blank">Lihat</Button><span>&nbsp;&nbsp;</span>
                             <Button className={classes.button5} href={this.getToDownload(report)} target = "_blank">Unduh</Button>
                         </div>
                     ]
@@ -676,11 +675,12 @@ class ReportAdmin extends Component {
                         this.getDate(report.uploadedDate), this.getApproval(report), this.getIsBast(report) === true ?
                         <div className="d-flex justify-content-center">
                             <Button className={classes.button4} onClick={() => this.handlePreview(report)}>Lihat</Button>
+                            <span>&nbsp;&nbsp;</span>
                             <Button className={classes.button5} onClick={() => this.handleDownload(report)}>Unduh</Button>
                         </div>
                         :
                         <div className="d-flex justify-content-center">
-                            <Button className={classes.button4} href={this.getUrl(report)} target = "_blank">Lihat</Button>
+                            <Button className={classes.button4} href={this.getUrl(report)} target = "_blank">Lihat</Button><span>&nbsp;&nbsp;</span>
                             <Button className={classes.button5} href={this.getToDownload(report)} target = "_blank">Unduh</Button>
                         </div>
                     ]);

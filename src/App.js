@@ -185,7 +185,7 @@ class App extends Component {
 </Navbar.Collapse>
 </Navbar>
 
-        <div className="container mt-3">
+        <div className="mt-3" style={{margin: 90}}>
           <Router>
             <Switch>
               <Route exact path={["/"]} component={Home} />

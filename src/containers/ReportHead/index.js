@@ -4,10 +4,10 @@ import CustomizedTables from "../../components/Table";
 import { Form, Button, Card, Table } from "react-bootstrap";
 import Modal from "react-bootstrap/Modal";
 import 'bootstrap/dist/css/bootstrap.min.css';
-import classes from "./styles.module.css";
+import "./style.css";
 import CustomizedButtons from "../../components/Button";
 import jsPDF from "jspdf";
-import authHeader from '../../services/auth-header';
+import classes from "./styles.module.css";
 
 class ReportHead extends Component {
     constructor(props) {
@@ -51,15 +51,15 @@ class ReportHead extends Component {
 
     async loadData() {
         try {
-            const orders = await APIConfig.get("/ordersVerifiedReport", { headers: authHeader() });
-            const order = await APIConfig.get("/laporan/order", { headers: authHeader() });
-            const reports = await APIConfig.get("/reports/all", { headers: authHeader() });
-            const listIr = await APIConfig.get("/reports/ir", { headers: authHeader() });
-            const listMr = await APIConfig.get("/reports/mr", { headers: authHeader() });
-            const listPi = await APIConfig.get("/orders/pi", { headers: authHeader() });
-            const listMs = await APIConfig.get("/orders/ms", { headers: authHeader() });
-            const listTerm = await APIConfig.get("/orders/ms/perc", { headers: authHeader() });
-            const bast = await APIConfig.get("/laporan/bast", { headers: authHeader() });
+            const orders = await APIConfig.get("/ordersVerifiedReport");
+            const order = await APIConfig.get("/laporan/order");
+            const reports = await APIConfig.get("/reports/all");
+            const listIr = await APIConfig.get("/reports/ir");
+            const listMr = await APIConfig.get("/reports/mr");
+            const listPi = await APIConfig.get("/orders/pi");
+            const listMs = await APIConfig.get("/orders/ms");
+            const listTerm = await APIConfig.get("/orders/ms/perc");
+            const bast = await APIConfig.get("/laporan/bast");
             this.setState({ ordersVerified: orders.data, reports: reports.data, listIr: listIr.data,
                 listMr: listMr.data, listPi: listPi.data, listMs: listMs.data, bastList: bast.data, orderList: order.data,
                 termList: listTerm.data});
@@ -89,15 +89,14 @@ class ReportHead extends Component {
     async handleAccept(event){
         //retrieve data from current state
         const report = this.state.reportTarget
-
+        report.notes = this.state.notes
         try{
             this.setState({
                 isChange: true,
                 isEdit: false
             });
             // put mapping to backend, along with data retrieved from current state
-            APIConfig.put(`/laporan/accept/${this.state.reportTarget.idReport}`, report, { headers: authHeader() });
-            console.log(report);
+            APIConfig.put(`/laporan/accept/${this.state.reportTarget.idReport}`, report);
         }catch (error) {
             alert("Oops terjadi masalah pada server");
 
@@ -106,12 +105,13 @@ class ReportHead extends Component {
 
     async handleReject(event){
         const report = this.state.reportTarget
+        report.notes = this.state.notes
         try{
             this.setState({
                 isChange: true,
                 isEdit: false
             });
-            APIConfig.put(`/laporan/reject/${this.state.reportTarget.idReport}`, report, { headers: authHeader() });
+            APIConfig.put(`/laporan/reject/${this.state.reportTarget.idReport}`, report);
         }catch (error) {
             alert("Oops terjadi masalah pada server");
             console.log(error);
@@ -189,7 +189,6 @@ class ReportHead extends Component {
             let idMs = 0;
             for(let i=0; i<bastList.length; i++){
                 if(bastList[i].idReport === idChecker){
-                    console.log(bastList[i])
                     idPi = bastList[i].idOrderPi;
                     idMs = bastList[i].idOrderMs;
                 }
@@ -253,7 +252,6 @@ class ReportHead extends Component {
             let idMs = 0;
             for(let i=0; i<bastList.length; i++){
                 if(bastList[i].idReport === idChecker){
-                    console.log(bastList[i])
                     idPi = bastList[i].idOrderPi;
                     idMs = bastList[i].idOrderMs;
                 }
@@ -340,19 +338,15 @@ class ReportHead extends Component {
     }
 
     getUrl(report){
-        // const BASE_URL = "https://propen-a01-sipel.herokuapp.com/report/";
-		const BASE_URL = "http://localhost:2020/report/";
         if(report.fileType === "application/pdf"){
-            return BASE_URL+report.reportName+"/preview";
+            return report.urlFile+"/preview";
         }else{
-            return BASE_URL+report.reportName;
+            return report.urlFile;
         }
     }
 
     getToDownload(report){
-        // const BASE_URL = "https://propen-a01-sipel.herokuapp.com/report/";
-        const BASE_URL = "http://localhost:2020/report/";
-        return BASE_URL+report.reportName;
+        return report.urlFile;
     }
 
     getNotes(report){
@@ -655,7 +649,7 @@ class ReportHead extends Component {
 
     render() {
         const { reports, reportsFiltered, isMrUploaded, isInstallationReport, isUpload, isSuccess, isDelete, isDeleteSuccess, isFailed, isError,
-            listMaintenance, reportTarget, messageError, isFiltered, reportNum, bastList, orderList, isPreview, isChange, isEdit } = this.state;
+            listMaintenance, reportTarget, messageError, isFiltered, reportNum, bastList, orderList, isPreview, isChange, isEdit, notes } = this.state;
         const tableHeaders = ['No.', 'Nomor Laporan', 'Nama Laporan', 'Nomor PO', 'Perusahaan', 'Tanggal dibuat', 'Status', 'Aksi'];
         let tableRows = [];
 
@@ -714,17 +708,17 @@ class ReportHead extends Component {
                         report.reportName, this.getOrderPO(report), this.getOrderOrg(report),
                         this.getDate(report.uploadedDate), this.getApproval(report),
                         [this.getApproval(report).toLowerCase() === "approved" ?
-                            <Button className={classes.button2} onClick={() => this.handleEdit(report)}>Ubah Status</Button>
+                            <Button className={classes.button4} onClick={() => this.handleEdit(report)}>Ubah Status</Button>
                             :
-                            <Button className={classes.button2} onClick={() => this.handleEdit(report)} hidden={true}></Button>,
+                            <Button className={classes.button4} onClick={() => this.handleEdit(report)} hidden={true}></Button>,
                             this.getIsBast(report) === true ?
                                 <Button className={classes.button4} onClick={() => this.handlePreview(report)}>Preview</Button>
                                 :
                                 <Button className={classes.button4} href={this.getUrl(report)} target = "_blank">Preview</Button>,
                             this.getIsBast(report) === true ?
-                                <Button className={classes.button5} onClick={() => this.handleDownload(report)}>Unduh</Button>
+                                <Button className={classes.button4} onClick={() => this.handleDownload(report)}>Unduh</Button>
                                 :
-                                <Button className={classes.button5} href={this.getToDownload(report)} target = "_blank">Unduh</Button>
+                                <Button className={classes.button4} href={this.getToDownload(report)} target = "_blank">Unduh</Button>
                         ]]
                 )
                 : reports.map((report) =>
@@ -732,17 +726,17 @@ class ReportHead extends Component {
                         report.reportName, this.getOrderPO(report), this.getOrderOrg(report),
                         this.getDate(report.uploadedDate), this.getApproval(report),
                         [this.getApproval(report).toLowerCase() === "approved" ?
-                            <Button className={classes.button2} onClick={() => this.handleEdit(report)} hidden={true}></Button>
+                            <Button className={classes.button4} onClick={() => this.handleEdit(report)} hidden={true}></Button>
                             :
-                            <Button className={classes.button2} onClick={() => this.handleEdit(report)}>Ubah Status</Button>,
+                            <Button className={classes.button4} onClick={() => this.handleEdit(report)}>Ubah Status</Button>,
                         this.getIsBast(report) === true ?
                             <Button className={classes.button4} onClick={() => this.handlePreview(report)}>Preview</Button>
                             :
                             <Button className={classes.button4} href={this.getUrl(report)} target = "_blank">Preview</Button>,
                         this.getIsBast(report) === true ?
-                            <Button className={classes.button5} onClick={() => this.handleDownload(report)}>Unduh</Button>
+                            <Button className={classes.button4} onClick={() => this.handleDownload(report)}>Unduh</Button>
                             :
-                            <Button className={classes.button5} href={this.getToDownload(report)} target = "_blank">Unduh</Button>
+                            <Button className={classes.button4} href={this.getToDownload(report)} target = "_blank">Unduh</Button>
                     ]]
                 );
         }
@@ -764,6 +758,9 @@ class ReportHead extends Component {
                         <tr>
                             <td><p style={{ marginTop: 0, marginBottom: 15, color:"midnightblue", fontWeight:"bolder", fontSize:"medium" }}>Status Laporan </p></td>
                             <td><p style={{ marginTop: 0, marginBottom: 15, color: "coral", fontWeight:"bolder", fontSize:"medium" }}>: {status}</p></td>
+                        </tr>
+                        <tr>
+                            <td><Form.Control type="text" size="sm" name="notes" className={classes.notes} onChange={this.handleChangeField} placeholder="Tambahkan catatan..."/></td>
                         </tr>
                         <tr>
                             <td style={{ marginTop: 0, marginBottom: 15}}><CustomizedButtons variant="contained" size="small" color="#2F3F58" onClick={(event)=>this.handleAccept(event)}>Setujui</CustomizedButtons></td>

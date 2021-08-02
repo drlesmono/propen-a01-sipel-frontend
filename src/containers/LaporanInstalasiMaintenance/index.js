@@ -106,7 +106,7 @@ class LaporanInstalasiMaintenance extends Component {
         }else{
             pi = this.getPi(order.idOrder);
             ms = this.getMs(order.idOrder);
-            if(pi.status==="In Progress" || pi.status==="On Hold" || type==="Managed Service"){
+            if(pi.status==="In Progress" || pi.status==="On Hold" || ms.status==="Active"){
                 return true;
             }
         }

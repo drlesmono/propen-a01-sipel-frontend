@@ -4,7 +4,6 @@ import CustomizedTables from "../../components/Table";
 import { Form, Button, Card, Table } from "react-bootstrap";
 import Modal from "react-bootstrap/Modal";
 import 'bootstrap/dist/css/bootstrap.min.css';
-import "./style.css";
 import CustomizedButtons from "../../components/Button";
 import jsPDF from "jspdf";
 import classes from "./styles.module.css";

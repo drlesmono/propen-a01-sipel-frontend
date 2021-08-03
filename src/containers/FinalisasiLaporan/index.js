@@ -87,7 +87,7 @@ class FinalisasiLaporan extends Component {
             dataReport.append("reportType", this.state.isInstallationReport ? "installation" : "maintenance");
             dataReport.append("file", this.state.file);
             console.log(dataReport);
-            response = await APIConfig.post(`/report/upload`, dataReport, { headers: authHeader() });
+            response = await APIConfig.post(`/report/finalize`, dataReport, { headers: authHeader() });
             newReport = response.data.result;
 
             if(this.state.isInstallationReport){
@@ -296,7 +296,7 @@ class FinalisasiLaporan extends Component {
     // Apabila jenis file adalah pdf, maka url preview yang digunakan
     // Apabila jenis file selain pdf, maka url download yang digunakan
     getUrl(report){
-        const BASE_URL = "https://propen-a01-sipel.herokuapp.com/report/";
+        const BASE_URL = "https://propen-a01-local.herokuapp.com/report/";
         // const BASE_URL = "http://localhost:2020/report/";
         if(report.fileType === "application/pdf"){
             return BASE_URL+report.reportName+"/preview";
@@ -306,7 +306,7 @@ class FinalisasiLaporan extends Component {
     }
 
     getToDownload(report){
-        const BASE_URL = "http://propen-a01-sipel.herokuapp.com/report/";
+        const BASE_URL = "http://propen-a01-local.herokuapp.com/report/";
         // const BASE_URL = "http://localhost:2020/report/";
         return BASE_URL+report.reportName;
     }

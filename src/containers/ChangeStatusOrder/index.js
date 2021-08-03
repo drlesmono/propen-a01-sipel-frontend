@@ -249,6 +249,23 @@ class ChangeStatusOrder extends Component {
         }
     }
 
+    checkClosedForRender(order, listMaintenance){
+        let pi = this.getPi(order.idOrder)
+        if (pi.status == "Closed") {
+            return "Order is Closed"
+        } else {
+            return(
+                <CustomizedButtons
+                    variant="contained"
+                    size="small"
+                    color="#FD693E"
+                    onClick={() => this.handleEdit(order, listMaintenance)}>
+                    Ubah
+                </CustomizedButtons>
+            );
+        }
+    }
+
     handleEdit(order, listMaintenance) {
         this.setState({isEdit: true, orderTarget: order, listMaintenance: listMaintenance});
         const statusMaintenancesUpdated = this.state.statusMaintenances;
@@ -288,6 +305,8 @@ class ChangeStatusOrder extends Component {
         }
         this.setState({ orderFiltered : newOrderList });
     }
+
+
 
     handleCancel(event) {
         event.preventDefault();
@@ -333,23 +352,16 @@ class ChangeStatusOrder extends Component {
             order.clientName,
             this.checkTypeOrder(order.projectInstallation, order.managedService),
             this.checkStatus(order),
-            <CustomizedButtons
-                variant="contained"
-                size="small"
-                color="#FD693E"
-                onClick={() => this.handleEdit(order, listMaintenance)}>
-                Ubah
-            </CustomizedButtons>
+            this.checkClosedForRender(order, listMaintenance)
         ]);
         const tableMaintenanceHeaders = ['No.', 'Tanggal Maintenance', 'Status'];
         let tableMaintenanceRows;
 
 
         if(orderTarget !== null){
-            if(orderTarget.projectInstallation === true){
-            }
+            if(orderTarget.projectInstallation === true){}
             if(orderTarget.managedService === true){
-		let ms = this.getMs(orderTarget.idOrder);
+		        let ms = this.getMs(orderTarget.idOrder);
                 tableMaintenanceRows = ms.listMaintenance.map((maintenance, index) => [
                     maintenance.dateMn,
                     <Form.Control

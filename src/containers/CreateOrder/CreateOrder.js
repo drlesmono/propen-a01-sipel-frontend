@@ -281,6 +281,7 @@ class CreateOrder extends React.Component {
                 dateOrder: new Date(),
                 verified: this.state.verified
             }
+            console.log("masuk ke post")
             await APIConfig.post("/order/tambah", data, { headers: authHeader() });
             this.loadData();
             this.setState( { isSubmitOrder: true });

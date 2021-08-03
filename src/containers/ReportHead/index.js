@@ -706,37 +706,37 @@ class ReportHead extends Component {
                     [ this.getIsBast(report) === true ? this.getBastNum(report) : this.getReportNum(report),
                         report.reportName, this.getOrderPO(report), this.getOrderOrg(report),
                         this.getDate(report.uploadedDate), this.getApproval(report),
-                        [this.getApproval(report).toLowerCase() === "approved" ?
-                            <Button className={classes.button4} onClick={() => this.handleEdit(report)}>Ubah Status</Button>
-                            :
-                            <Button className={classes.button4} onClick={() => this.handleEdit(report)} hidden={true}></Button>,
-                            this.getIsBast(report) === true ?
-                                <Button className={classes.button4} onClick={() => this.handlePreview(report)}>Preview</Button>
-                                :
-                                <Button className={classes.button4} href={this.getUrl(report)} target = "_blank">Preview</Button>,
-                            this.getIsBast(report) === true ?
-                                <Button className={classes.button4} onClick={() => this.handleDownload(report)}>Unduh</Button>
-                                :
-                                <Button className={classes.button4} href={this.getToDownload(report)} target = "_blank">Unduh</Button>
-                        ]]
+                        <Table borderless size="sm">
+                            <tr> 
+                                { this.getApproval(report).toLowerCase() === "approved" ?
+                                <td><Button className={classes.button4} onClick={() => this.handleEdit(report)}>Ubah Status</Button></td>
+                                :<td></td>}
+                                { this.getIsBast(report) === true ?
+                                <td><Button className={classes.button4} onClick={() => this.handlePreview(report)}>Preview</Button></td>
+                                :<td><Button className={classes.button4} href={this.getUrl(report)} target = "_blank">Preview</Button></td>}
+                                { this.getIsBast(report) === true ?
+                                <td><Button className={classes.button4} onClick={() => this.handleDownload(report)}>Unduh</Button></td>
+                                :<td><Button className={classes.button4} href={this.getToDownload(report)} target = "_blank">Unduh</Button></td>}
+                            </tr>
+                        </Table>]
                 )
                 : reports.map((report) =>
                     [ this.getIsBast(report) === true ? this.getBastNum(report) : this.getReportNum(report),
                         report.reportName, this.getOrderPO(report), this.getOrderOrg(report),
                         this.getDate(report.uploadedDate), this.getApproval(report),
-                        [this.getApproval(report).toLowerCase() === "approved" ?
-                            <Button className={classes.button4} onClick={() => this.handleEdit(report)} hidden={true}></Button>
-                            :
-                            <Button className={classes.button4} onClick={() => this.handleEdit(report)}>Ubah Status</Button>,
-                        this.getIsBast(report) === true ?
-                            <Button className={classes.button4} onClick={() => this.handlePreview(report)}>Preview</Button>
-                            :
-                            <Button className={classes.button4} href={this.getUrl(report)} target = "_blank">Preview</Button>,
-                        this.getIsBast(report) === true ?
-                            <Button className={classes.button4} onClick={() => this.handleDownload(report)}>Unduh</Button>
-                            :
-                            <Button className={classes.button4} href={this.getToDownload(report)} target = "_blank">Unduh</Button>
-                    ]]
+                        <Table borderless size="sm">
+                            <tr>
+                                {this.getApproval(report).toLowerCase() === "approved" ?
+                                <td></td>
+                                :<td><Button className={classes.button4} onClick={() => this.handleEdit(report)}>Ubah Status</Button></td>}
+                                {this.getIsBast(report) === true ?
+                                <td><Button className={classes.button4} onClick={() => this.handlePreview(report)}>Preview</Button></td>
+                                :<td><Button className={classes.button4} href={this.getUrl(report)} target = "_blank">Preview</Button></td>}
+                                {this.getIsBast(report) === true ?
+                                <td><Button className={classes.button4} onClick={() => this.handleDownload(report)}>Unduh</Button></td>
+                                :<td><Button className={classes.button4} href={this.getToDownload(report)} target = "_blank">Unduh</Button></td>}
+                            </tr>
+                        </Table>]
                 );
         }
 

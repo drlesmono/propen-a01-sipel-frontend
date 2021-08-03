@@ -498,14 +498,22 @@ class PeriodeKontrak extends Component {
                         [order.noPO === null ? "-" : order.noPO, order.orderName, 
                         this.getDate(this.getMs(order.idOrder).actualStart), this.getDate(this.getMs(order.idOrder).actualEnd),
                         this.getTimeRemaining(this.getMs(order.idOrder).actualStart, this.getMs(order.idOrder).actualEnd),
-                        <div className="justify-content-between"><Button className={classes.button1} onClick={() => this.handleEdit(order, "perbarui")}>perbarui</Button>
-                        <span>&nbsp;&nbsp;</span><Button className={classes.button2} onClick={() => this.handleEdit(order, "perpanjang")}>perpanjang</Button></div>])
+                        <Table borderless size="sm">
+                            <tr>
+                                <td><Button className={classes.button1} onClick={() => this.handleEdit(order, "perbarui")}>perbarui</Button></td>
+                                <td><Button className={classes.button2} onClick={() => this.handleEdit(order, "perpanjang")}>perpanjang</Button></td>
+                            </tr>
+                        </Table>])
                         : ordersVerified.map((order) =>
                         [order.noPO === null ? "-" : order.noPO, order.orderName, 
                         this.getDate(this.getMs(order.idOrder).actualStart), this.getDate(this.getMs(order.idOrder).actualEnd),
                         this.getTimeRemaining(this.getMs(order.idOrder).actualStart, this.getMs(order.idOrder).actualEnd),
-                        <div className="justify-content-between"><Button className={classes.button1} onClick={() => this.handleEdit(order, "perbarui")}>perbarui</Button>
-                        <span>&nbsp;&nbsp;</span><Button className={classes.button2} onClick={() => this.handleEdit(order, "perpanjang")}>perpanjang</Button></div>])
+                        <Table borderless size="sm">
+                            <tr>
+                                <td><Button className={classes.button1} onClick={() => this.handleEdit(order, "perbarui")}>perbarui</Button></td>
+                                <td><Button className={classes.button2} onClick={() => this.handleEdit(order, "perpanjang")}>perpanjang</Button></td>
+                            </tr>
+                        </Table>])
 
         // Judul untuk setiap kolom di tabel service
         const tableServiceHeaders = ['No.', 'Nama Service', 'Engineer'];

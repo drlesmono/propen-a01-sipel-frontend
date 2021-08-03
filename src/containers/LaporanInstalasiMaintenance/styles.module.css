@@ -1,4 +1,5 @@
 .search{
+    margin-top: 4%;
     width: 20%;
 }
 
@@ -92,7 +93,9 @@
 }
 
 .containerButtonUpload{
-    width: 20% !important;
+    margin-right: 50% !important;
+    margin-bottom: 0% !important;
+    display: flex;
 }
 
 /* .file::after{

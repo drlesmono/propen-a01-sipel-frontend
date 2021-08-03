@@ -474,16 +474,22 @@ class LaporanInstalasiMaintenance extends Component {
                         [ this.getReportNum(report), report.reportName, this.getOrder(report) === null? null : this.getOrder(report).noPO, 
                         this.getOrder(report) === null? null : this.getOrder(report).clientOrg, 
                         this.getDate(report.uploadedDate), this.getNotes(report), 
-                        <div className="d-flex justify-content-center"><Button className={classes.button2}
-                        onClick={() => this.handleConfirmDelete(report)}>hapus</Button><span>&nbsp;&nbsp;</span>
-                        <Button className={classes.button4} href={this.getUrl(report)} target = "_blank">lihat</Button></div>])
+                        <Table borderless size="sm">
+                            <tr>
+                                <td><Button className={classes.button2} onClick={() => this.handleConfirmDelete(report)}>hapus</Button></td>
+                                <td><Button className={classes.button4} href={this.getUrl(report)} target = "_blank">lihat</Button></td>
+                            </tr>
+                        </Table>])
                         : reports.map((report) =>
                         [ this.getReportNum(report), report.reportName, this.getOrder(report) === null? null : this.getOrder(report).noPO, 
                         this.getOrder(report) === null? null : this.getOrder(report).clientOrg, 
                         this.getDate(report.uploadedDate), this.getNotes(report), 
-                        <div className="d-flex justify-content-center"><Button className={classes.button2}
-                        onClick={() => this.handleConfirmDelete(report)}>hapus</Button><span>&nbsp;&nbsp;</span>
-                        <Button className={classes.button4} href={this.getUrl(report)} target = "_blank">lihat</Button></div>]);
+                        <Table borderless size="sm">
+                            <tr>
+                                <td><Button className={classes.button2} onClick={() => this.handleConfirmDelete(report)}>hapus</Button></td>
+                                <td><Button className={classes.button4} href={this.getUrl(report)} target = "_blank">lihat</Button></td>
+                            </tr>
+                        </Table>]);
         }
 
         return (
@@ -492,9 +498,12 @@ class LaporanInstalasiMaintenance extends Component {
                 {/* Menampilkan daftar report */}
                 <div><h1 className="text-center">Daftar Laporan</h1></div>
                 <div className="d-flex justify-content-between" style={{padding: 5}}>
-                    <div className={classes.containerButtonUpload}>
-                        <Button size="sm" className={[classes.button1, classes.buttonUpload].join(" ")} onClick={() => this.handleUpload("instalasi")}>Unggah Laporan Instalasi</Button>
-                        <Button size="sm" className={[classes.button5, classes.buttonUpload].join(" ")} onClick={() => this.handleUpload("maintenance")}>Unggah Laporan Maintenance</Button>
+                    <div className="m-0 p-0">
+                        <div className={classes.containerButtonUpload}>
+                            <Button size="sm" className={[classes.button1, classes.buttonUpload].join(" ")} onClick={() => this.handleUpload("instalasi")}>Unggah Laporan Instalasi</Button>
+                            <span>&nbsp;&nbsp;</span>
+                            <Button size="sm" className={[classes.button5, classes.buttonUpload].join(" ")} onClick={() => this.handleUpload("maintenance")}>Unggah Laporan Maintenance</Button>
+                        </div>
                     </div>
                     <div className={classes.search}><Form.Control type="text" size="sm" placeholder="Cari..." onChange={this.handleFilter}/></div>
                 </div>

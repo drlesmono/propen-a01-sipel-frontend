@@ -650,29 +650,37 @@ class ReportFinance extends Component {
             tableRows = isFiltered ? reportsFiltered.map((report) =>
                     [this.getIsBast(report) === true ? this.getBastNum(report) : this.getReportNum(report), report.reportName, this.getOrderPO(report), this.getOrderOrg(report),
                         this.getDate(report.uploadedDate), this.getNotes(report), this.getIsBast(report) === true?
-                        <div className="d-flex justify-content-center">
-                            <Button className={classes.button4} onClick={() => this.handlePreview(report)}>Lihat</Button><span>&nbsp;&nbsp;</span>
-                            <Button className={classes.button5} onClick={() => this.handleDownload(report)}>Unduh</Button>
-                        </div>
+                        <Table borderless size="sm">
+                            <tr>
+                                <td className={classes.button4} onClick={() => this.handlePreview(report)}>Lihat</td>
+                                <td className={classes.button5} onClick={() => this.handleDownload(report)}>Unduh</td>
+                            </tr>
+                        </Table>
                         :
-                        <div className="d-flex justify-content-center">
-                        <Button className={classes.button4} href={this.getUrl(report)} target = "_blank">Lihat</Button><span>&nbsp;&nbsp;</span>
-                        <Button className={classes.button5} href={this.getToDownload(report)} target = "_blank">Unduh</Button>
-        </div>
+                        <Table borderless size="sm">
+                            <tr>
+                                <td className={classes.button4} href={this.getUrl(report)} target = "_blank">Lihat</td>
+                                <td className={classes.button5} href={this.getToDownload(report)} target = "_blank">Unduh</td>
+                            </tr>
+                        </Table>
                     ]
                 )
                 : reports.map((report) =>
                     [ this.getIsBast(report) === true ? this.getBastNum(report) : this.getReportNum(report), report.reportName, this.getOrderPO(report), this.getOrderOrg(report),
                         this.getDate(report.uploadedDate), this.getNotes(report), this.getIsBast(report) === true ?
-                        <div className="d-flex justify-content-center">
-                            <Button className={classes.button4} onClick={() => this.handlePreview(report)}>Preview</Button><span>&nbsp;&nbsp;</span>
-                            <Button className={classes.button4} onClick={() => this.handleDownload(report)}>Unduh</Button>
-                        </div>
+                        <Table borderless size="sm">
+                            <tr>
+                                <td className={classes.button4} onClick={() => this.handlePreview(report)}>Preview</td>
+                                <td className={classes.button4} onClick={() => this.handleDownload(report)}>Unduh</td>
+                            </tr>
+                        </Table>
                         :
-                        <div className="d-flex justify-content-center">
-                            <Button className={classes.button4} href={this.getUrl(report)} target = "_blank">Preview</Button><span>&nbsp;&nbsp;</span>
-                            <Button className={classes.button4} href={this.getToDownload(report)} target = "_blank">Unduh</Button>
-                        </div>
+                        <Table borderless size="sm">
+                            <tr>
+                                <td className={classes.button4} href={this.getUrl(report)} target = "_blank">Preview</td>
+                                <td className={classes.button4} href={this.getToDownload(report)} target = "_blank">Unduh</td>
+                            </tr>
+                        </Table>
                     ]);
         }
 

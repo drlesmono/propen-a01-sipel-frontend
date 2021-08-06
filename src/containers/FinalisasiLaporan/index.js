@@ -66,9 +66,9 @@ class FinalisasiLaporan extends Component {
             const listIr = await APIConfig.get("/reports/ir", { headers: authHeader() });
             const listMr = await APIConfig.get("/reports/mr", { headers: authHeader() });
             const listPi = await APIConfig.get("/orders/pi", { headers: authHeader() });
-            // const listMs = await APIConfig.get("/orders/ms");
+            const listMs = await APIConfig.get("/orders/ms", { headers: authHeader() });
             this.setState({ ordersVerified: orders.data, reports: reports.data, listIr: listIr.data,
-                listMr: listMr.data, listPi: listPi.data});
+                listMr: listMr.data, listPi: listPi.data, listMs: listMs.data});
         } catch (error) {
             this.setState({ isError: true, messageError: "Oops terjadi masalah pada server" });
             console.log(error);
@@ -91,25 +91,29 @@ class FinalisasiLaporan extends Component {
             newReport = response.data.result;
 
             if(this.state.isInstallationReport){
+                console.log(this.state.orderByPO)
+                console.log(this.state.reportTarget.reportType)
+                console.log(this.getOrder(this.state.reportTarget))
                 const dataInstallationReport = {
                     idInstallationReport: null,
                     irNum: null,
                     notes: this.state.notes,
-                    idOrderPi: this.getPi(parseInt(this.state.orderByPO, 10)).idOrderPi
+                    idOrderPi: this.getPi(this.getOrder(this.state.reportTarget).idOrder).idOrderPi
                 }
-                await APIConfig.post(`/report/${newReport.idReport}/installation/upload`, dataInstallationReport, { headers: authHeader() });
+                console.log(dataInstallationReport);
+                await APIConfig.post(`/report/${newReport.idReport}/installation/finalize`, dataInstallationReport, { headers: authHeader() });
             }else{
                 const dataMaintenanceReport = {
                     idMaintenanceReport: null,
                     mrNum: null,
                     notes: this.state.notes,
-                    idMaintenance: parseInt(this.state.maintenanceTarget, 10)
+                    idMaintenance: this.getMr(this.state.reportTarget.idReport).idMaintenance.idMaintenance
                 }
                 console.log(dataMaintenanceReport);
-                await APIConfig.post(`/report/${newReport.idReport}/maintenance/upload`, dataMaintenanceReport, { headers: authHeader() });
+                await APIConfig.post(`/report/${newReport.idReport}/maintenance/finalize`, dataMaintenanceReport, { headers: authHeader() });
             }
 
-            this.setState({reportTarget: newReport});
+            // this.setState({reportTarget: newReport});
             this.loadData();
         } catch (error) {
             console.log(error);
@@ -124,6 +128,10 @@ class FinalisasiLaporan extends Component {
         if(this.state.isInstallationReport){
             this.setState({orderByPO: this.getIr(this.state.reportTarget.idReport).idOrderPi.idOrder.noPO});
         }
+        if(this.state.isMaintenanceReport){
+            console.log(this.getMr(this.state.reportTarget.idReport).idMaintenance.idMaintenance)
+            this.setState({orderByPO: this.getOrder(this.state.reportTarget).noPO});
+        }
         if(this.state.orderByPO === null || this.state.orderByPO === ""){
             return this.setState({isFailed: true, messageError: "Nomor PO wajib diisi"});
         }
@@ -133,9 +141,7 @@ class FinalisasiLaporan extends Component {
         }
 
         this.setState({isFailed: false, messageError: null});
-        if(this.state.isInstallationReport === false){
-            return this.handleMrUpload(event);
-        }
+
         this.handleSubmit(event);
     }
 
@@ -197,6 +203,26 @@ class FinalisasiLaporan extends Component {
         return null;
     }
 
+    // Mengambil order jenis project installation yang dipilih
+    getPi(idOrder){
+        let pi = this.state.listPi.filter(pi => pi.idOrder.idOrder === idOrder );
+
+        if (pi.length !== 0) {
+            return pi[0];
+        }
+        return null;
+    }
+
+    // Mengambil order jenis managed services yang dipilih
+    getMs(idOrder){
+        let ms = this.state.listMs.filter(ms => ms.idOrder.idOrder === idOrder);
+
+        if (ms.length !== 0) {
+            return ms[0];
+        }
+        return null;
+    }
+
     getIr(idReport){
         let ir = this.state.listIr.filter(ir => ir.idReport.idReport === idReport);
         if (ir.length !== 0) {
@@ -227,12 +253,16 @@ class FinalisasiLaporan extends Component {
     }
 
     handleUpload(type){
-        if(type === "instalasi"){
-            this.setState({isInstallationReport: true});
+        if (this.state.reportTarget.reportType === "installation") {
+            this.setState({isInstallationReport: true})
+        }
+        if (this.state.reportTarget.reportType === "maintenance") {
+            this.setState({isMaintenanceReport: true})
         }
         this.setState({isUpload: true, isReadyToFinalize: false});
         console.log(this.state.isReadyToFinalize);
         console.log(this.state.reportTarget);
+
     }
 
     handleMrUpload(event){
@@ -241,13 +271,12 @@ class FinalisasiLaporan extends Component {
         this.setState({listMaintenance: ms.listMaintenance, isUpload: false, isInstallationReport: false, isMrUploaded: true});
     }
 
-
-
     handleCancel(event) {
         event.preventDefault();
         this.setState({
             listMaintenance: [],
             isInstallationReport: false,
+            isMaintenanceReport: false,
             isMrUploaded: false,
             isReadyToFinalize: false,
             isUpload: false,
@@ -290,6 +319,9 @@ class FinalisasiLaporan extends Component {
         });
         console.log(this.state.isReadyToFinalize);
         console.log(this.state.reportTarget);
+
+
+
     }
 
     // Mendapatkan url sesuai dengan jenis file
@@ -381,6 +413,7 @@ class FinalisasiLaporan extends Component {
         let tableRows = [];
 
         if(reports.length !== 0){
+            console.log(reports)
             tableRows = isFiltered ? reportsFiltered.map((report) =>
                     [
                         this.getReportNum(report),
@@ -460,7 +493,7 @@ class FinalisasiLaporan extends Component {
                             </table>
                                 <div className={classes.containerButtonUpload}>
                                     <Button size="sm" className={classes.button4} href={this.getUrl(reportTarget)} target = "_blank">Lihat</Button>
-                                    <Button size="sm" className={[classes.button1, classes.buttonUpload].join(" ")} onClick={() => this.handleUpload("instalasi")}>Unggah</Button>
+                                    <Button size="sm" className={[classes.button1, classes.buttonUpload].join(" ")} onClick={() => this.handleUpload(reportTarget.reportType)}>Unggah</Button>
                                     <Button className={classes.button4} href={this.getToDownload(reportTarget)} target = "_blank">Unduh</Button>
                                 </div>
                             </> : <></>}
@@ -497,7 +530,7 @@ class FinalisasiLaporan extends Component {
                                         <td><p className="d-flex">Nomor PO</p></td>
                                         <td><p className="d-flex">
                                             {isInstallationReport ? this.getIr(reportTarget.idReport).idOrderPi.idOrder.noPO : ""}
-                                            {isMaintenanceReport ? this.getMr(reportTarget.idReport).idOrderMs.idOrder.noPO : ""}
+                                            {isMaintenanceReport ? this.getOrder(reportTarget).noPO : ""}
                                             {isBastReport ? "" : ""}
                                         </p></td>
                                     </tr>
@@ -509,7 +542,7 @@ class FinalisasiLaporan extends Component {
                                         <td style={{color: "red"}}>*Wajib diisi</td>
                                         <td className="d-flex justify-content-end">
                                             <Button variant="primary" className={classes.button1} onClick={this.handleValidation}>
-                                                {isInstallationReport ? "simpan" : "unggah"}
+                                                Unggah
                                             </Button>
                                         </td>
                                     </tr>

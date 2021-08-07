@@ -3,7 +3,7 @@ import APIConfig from "../../APIConfig";
 import CustomizedTables from "../../components/Table";
 import CustomizedButtons from "../../components/Button";
 import Modal from "../../components/Modal";
-import { Form, Button } from "react-bootstrap";
+import { Form } from "react-bootstrap";
 import classes from "../LaporanInstalasiMaintenance/styles.module.css";
 import authHeader from "../../services/auth-header";
 
@@ -12,8 +12,8 @@ class ChangeStatusOrder extends Component {
         super(props);
         this.state = {
             ordersVerified: [],
-	    listPi: [],
-	    listMs: [],
+            listPi: [],
+            listMs: [],
             orderFiltered: [],
             isFiltered: false,
             isLoading: false,
@@ -56,7 +56,7 @@ class ChangeStatusOrder extends Component {
 
     async handleSubmit(event) {
         event.preventDefault();
-        console.log(this.state.orderTarget);
+        // console.log(this.state.orderTarget);
         try {
             if(this.state.orderTarget.projectInstallation === true){
                 // console.log(this.state.orderTarget.idOrderPi);
@@ -72,7 +72,7 @@ class ChangeStatusOrder extends Component {
                             dateClosedPI: pi.dateClosedPI,
                             status: this.state.statusPi
                         }
-                        console.log(dataPi);
+                        // console.log(dataPi);
                         await APIConfig.put(`/order/${this.state.orderTarget.idOrder}/pi/${pi.idOrderPi}/updateStatus`, dataPi, { headers: authHeader() });
                         this.handleSubmitted(event, this.state.orderTarget)
                         this.setState({isEdit: false});
@@ -89,7 +89,7 @@ class ChangeStatusOrder extends Component {
                         dateClosedPI: pi.dateClosedPI,
                         status: this.state.statusPi
                     }
-                    console.log(dataPi);
+                    // console.log(dataPi);
                     await APIConfig.put(`/order/${this.state.orderTarget.idOrder}/pi/${pi.idOrderPi}/updateStatus`, dataPi, { headers: authHeader() });
                     this.handleSubmitted(event, this.state.orderTarget)
                     this.setState({isEdit: false});
@@ -112,9 +112,9 @@ class ChangeStatusOrder extends Component {
                         }
                         await APIConfig.put(`/order/${this.state.orderTarget.idOrder}/ms/${ms.idOrderMs}/maintenance/${maintenance.idMaintenance}/updateStatus`, dataMaintenance, { headers: authHeader() });
                     }
-                    console.log(ms.listMaintenance);
+                    // console.log(ms.listMaintenance);
                     const msUpdated = await APIConfig.get(`/order/${this.state.orderTarget.idOrder}/ms/${ms.idOrderMs}`, { headers: authHeader() });
-                    console.log(msUpdated.data.listMaintenance);
+                    // console.log(msUpdated.data.listMaintenance);
                     let statusAllMaintenance = true;
                     let listMaintenanceChecked = msUpdated.data.listMaintenance;
                     for(let i=0; i<listMaintenanceChecked.length; i++){
@@ -170,7 +170,7 @@ class ChangeStatusOrder extends Component {
                         status: this.state.statusMs
                     }
                     // console.log(dataMs);
-                    await APIConfig.put(`/order/${this.state.orderTarget.idOrder}/ms/${ms.idOrderMs}/updateStatus`, { headers: authHeader() });
+                    await APIConfig.put(`/order/${this.state.orderTarget.idOrder}/ms/${ms.idOrderMs}/updateStatus`, dataMs,{ headers: authHeader() });
                     this.handleSubmitted(event, this.state.orderTarget)
                     this.setState({isEdit: false});
                 }
@@ -234,18 +234,35 @@ class ChangeStatusOrder extends Component {
     checkStatus(order){
         if (order.projectInstallation === true){
             let pi = this.getPi(order.idOrder)
-	  console.log(order)
-	  console.log(pi)
-	    if (pi.status === null){
-		return "Inactive";	
-	    } else { return pi.status;}
-            
+            // console.log(order)
+            // console.log(pi)
+            if (pi.status === null){
+                return "Inactive";
+            } else { return pi.status;}
+
         }
         else if (order.managedService === true){
             let ms = this.getMs(order.idOrder)
             if (ms.status === null){
-		return "Inactive";	
-	    } else { return ms.status;}
+                return "Inactive";
+            } else { return ms.status;}
+        }
+    }
+
+    checkClosedForRender(order, listMaintenance){
+        let pi = this.getPi(order.idOrder)
+        if (pi.status == "Closed") {
+            return "Order is Closed"
+        } else {
+            return(
+                <CustomizedButtons
+                    variant="contained"
+                    size="small"
+                    color="#FD693E"
+                    onClick={() => this.handleEdit(order, listMaintenance)}>
+                    Ubah
+                </CustomizedButtons>
+            );
         }
     }
 
@@ -257,7 +274,7 @@ class ChangeStatusOrder extends Component {
         }
         else if (order.managedService === true){
             this.setState({statusMs: this.checkStatus(order)});
-	    let ms = this.getMs(order.idOrder);
+            let ms = this.getMs(order.idOrder);
             listMaintenance = ms.listMaintenance;
             for(let i=0; i<listMaintenance.length; i++){
 
@@ -268,7 +285,7 @@ class ChangeStatusOrder extends Component {
                     statusMaintenancesUpdated[i] = "Not Maintained";
                 }
             }
-            console.log(statusMaintenancesUpdated);
+            // console.log(statusMaintenancesUpdated);
             this.setState({statusMaintenances: statusMaintenancesUpdated})
         }
     }
@@ -289,6 +306,8 @@ class ChangeStatusOrder extends Component {
         this.setState({ orderFiltered : newOrderList });
     }
 
+
+
     handleCancel(event) {
         event.preventDefault();
         this.setState({
@@ -301,7 +320,8 @@ class ChangeStatusOrder extends Component {
 
     handleChangeField(event) {
         const { name, value } = event.target;
-        console.log(name, value);
+        console.log(name)
+        console.log(value)
         const statusMaintenancesUpdated = this.state.statusMaintenances;
         if( name.substring(0,17) === "statusMaintenance"){
             let index = Number(name.substring(17));
@@ -332,21 +352,16 @@ class ChangeStatusOrder extends Component {
             order.clientName,
             this.checkTypeOrder(order.projectInstallation, order.managedService),
             this.checkStatus(order),
-            <Button 
-                className={classes.button1}
-                onClick={() => this.handleEdit(order, listMaintenance)}>
-                Ubah
-            </Button>
+            this.checkClosedForRender(order, listMaintenance)
         ]);
         const tableMaintenanceHeaders = ['No.', 'Tanggal Maintenance', 'Status'];
         let tableMaintenanceRows;
 
 
         if(orderTarget !== null){
-            if(orderTarget.projectInstallation === true){
-            }
+            if(orderTarget.projectInstallation === true){}
             if(orderTarget.managedService === true){
-		let ms = this.getMs(orderTarget.idOrder);
+                let ms = this.getMs(orderTarget.idOrder);
                 tableMaintenanceRows = ms.listMaintenance.map((maintenance, index) => [
                     maintenance.dateMn,
                     <Form.Control
@@ -365,9 +380,9 @@ class ChangeStatusOrder extends Component {
         }
 
         return (
-            <div className={classes.container}>
-                <div><h1 className="text-center">Daftar Order</h1></div>
-                <div className="d-flex justify-content-end" style={{padding: 5}}><Form.Control type="text" size="sm" placeholder="Cari..." onChange={this.handleFilter} className={classes.search}/></div>
+            <div>
+                <h1>Daftar Order</h1>
+                <div className={classes.search}><Form.Control type="text" size="sm" placeholder="Cari..." onChange={this.handleFilter}/></div>
                 <CustomizedTables headers={tableHeaders} rows={tableRows}/>
                 <Modal show={isEdit} handleCloseModal={this.handleCancel}>
                     <div><h3 id='titleform' >Form Ubah Status Order</h3></div>
@@ -396,7 +411,7 @@ class ChangeStatusOrder extends Component {
                                                 as="select"
                                                 size="lg"
                                                 name="statusPi"
-                                                value={ this.checkStatus(orderTarget) }
+                                                value={ this.state.statusPi }
                                                 onChange={this.handleChangeField}>
                                                 <option value="Inactive">Inactive</option>
                                                 <option value="In Progress">In Progress</option>
@@ -428,7 +443,7 @@ class ChangeStatusOrder extends Component {
                                                 as="select"
                                                 size="lg"
                                                 name="statusMs"
-                                                value={ this.checkStatus(orderTarget) }
+                                                value={ this.state.statusMs }
                                                 onChange={this.handleChangeField}>
                                                 <option value="Inactive">Inactive</option>
                                                 <option value="Active">Active</option>
@@ -442,9 +457,9 @@ class ChangeStatusOrder extends Component {
                                     </>: <></>}
                             </table>
                             <div style={{alignItems:'right'}}>
-                            <Button className={classes.button1} onClick={this.handleSubmit}>
+                                <CustomizedButtons variant="contained" size="medium" color="#FD693E" onClick={this.handleSubmit}>
                                     Simpan
-                                </Button>
+                                </CustomizedButtons>
                             </div>
                         </Form></>
                         : <></> }
@@ -459,9 +474,9 @@ class ChangeStatusOrder extends Component {
                             </h3>
                         </div></> : <></>}
                     <div style={{alignItems:'right'}}>
-                        <Button className={classes.button1} onClick={this.handleCancel}>
+                        <CustomizedButtons variant="contained" size="medium" color="#FD693E" onClick={this.handleCancel}>
                             Ok
-                        </Button>
+                        </CustomizedButtons>
                     </div>
                 </Modal>
             </div>

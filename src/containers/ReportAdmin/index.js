@@ -55,6 +55,8 @@ class ReportAdmin extends Component {
             const listMs = await APIConfig.get("/orders/ms", { headers: authHeader() });
             const listTerm = await APIConfig.get("/orders/ms/perc", { headers: authHeader() });
             const bast = await APIConfig.get("/laporan/bast", { headers: authHeader() });
+            console.log(listPi.data)
+            console.log(bast.data)
             this.setState({ ordersVerified: orders.data, reports: reports.data, listIr: listIr.data,
                 listMr: listMr.data, listPi: listPi.data, listMs: listMs.data, bastList: bast.data, orderList: order.data,
                 termList: listTerm.data});
@@ -290,7 +292,7 @@ class ReportAdmin extends Component {
 
     getUrl(report){
         // const BASE_URL = "https://propen-a01-sipel.herokuapp.com/report/";
-		const BASE_URL = "http://localhost:2020/report/";
+		const BASE_URL = "https://propen-a01-sipel.herokuapp.com/report/";
         if(report.fileType === "application/pdf"){
             return BASE_URL+report.reportName+"/preview";
         }else{
@@ -300,7 +302,7 @@ class ReportAdmin extends Component {
 
     getToDownload(report){
         // const BASE_URL = "https://propen-a01-sipel.herokuapp.com/report/";
-        const BASE_URL = "http://localhost:2020/report/";
+        const BASE_URL = "https://propen-a01-sipel.herokuapp.com/report/";
         return BASE_URL+report.reportName;
     }
 
@@ -351,6 +353,7 @@ class ReportAdmin extends Component {
             this.setState({ isFiltered: false });
         }
     }
+
     async handleDownload(laporan){
         const report = laporan;
         //const nomor = report.reportName;
@@ -657,8 +660,13 @@ class ReportAdmin extends Component {
 
         if(reports.length !== 0){
             tableRows = isFiltered ? reportsFiltered.map((report) =>
-                    [this.getIsBast(report) === true ? this.getBastNum(report) : this.getReportNum(report), report.reportName, this.getOrderPO(report), this.getOrderOrg(report),
-                        this.getDate(report.uploadedDate), this.getApproval(report), this.getIsBast(report) === true?
+                    [this.getIsBast(report) === true ? this.getBastNum(report) : this.getReportNum(report),
+                        report.reportName,
+                        this.getOrderPO(report),
+                        this.getOrderOrg(report),
+                        this.getDate(report.uploadedDate),
+                        this.getApproval(report),
+                        this.getIsBast(report) === true?
                         <Table borderless size="sm">
                             <tr>
                                 <td><Button className={classes.button4} onClick={() => this.handlePreview(report)}>Lihat</Button></td>
@@ -675,8 +683,14 @@ class ReportAdmin extends Component {
                     ]
                 )
                 : reports.map((report) =>
-                    [ this.getIsBast(report) === true ? this.getBastNum(report) : this.getReportNum(report), report.reportName, this.getOrderPO(report), this.getOrderOrg(report),
-                        this.getDate(report.uploadedDate), this.getApproval(report), this.getIsBast(report) === true ?
+                    [ this.getIsBast(report) === true ?
+                        this.getBastNum(report) : this.getReportNum(report),
+                        report.reportName,
+                        this.getOrderPO(report),
+                        this.getOrderOrg(report),
+                        this.getDate(report.uploadedDate),
+                        this.getApproval(report),
+                        this.getIsBast(report) === true ?
                         <Table borderless size="sm">
                             <tr>
                                 <td className={classes.button4} onClick={() => this.handlePreview(report)}>Lihat</td>

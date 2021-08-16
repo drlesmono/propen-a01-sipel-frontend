@@ -42,6 +42,9 @@ import FinalisasiLaporan from "./containers/FinalisasiLaporan";
 import UnverifiedOrders from "./containers/UnverifiedOrders/UnverifiedOrders";
 import DetailUnverifiedOrder from "./containers/DetailUnverifiedOrder/DetailUnverifiedOrder";
 import UpdateSequence from "./containers/UpdateSequence"
+import OrderAndDoc from "./containers/OrderAndDoc/OrderAndDoc";
+import DetailOrderAndDoc from "./containers/OrderAndDoc/DetailOrderAndDoc";
+
 
 class App extends Component {
   constructor(props) {
@@ -65,7 +68,8 @@ class App extends Component {
       showDashboard: false,
       showChangeStatusOrder: false,
       showFinalisasiLaporan:false,
-      showOrderStatusVerification: false
+      showOrderStatusVerification: false,
+      showOrderDocFinance: false
     };
   }
 
@@ -96,7 +100,8 @@ class App extends Component {
         showChangeStatusOrder: user.roles.includes("ROLE_ADMIN"),
         showOrderStatusVerification: user.roles.includes("ROLE_ADMIN"),
         showFinalisasiLaporan: user.roles.includes("ROLE_ADMIN"),
-        showUpdateSequence: user.roles.includes("ROLE_ADMIN")
+        showUpdateSequence: user.roles.includes("ROLE_ADMIN"),
+        showOrderDocFinance: user.roles.includes("ROLE_FINANCE")
       });
     }
   }
@@ -108,7 +113,7 @@ class App extends Component {
 
   render() {
     const { currentUser, showPenjadwalanMaintenance, showPeriodeKontrak, showOrderVerification, showPenugasanEngineer, showMengelolaLaporan, showHalamanAdmin, showDeliveryProgress, 
-    showLaporanAdmin, showOrderStatusVerification, showLaporanFinance, showLaporanHead, showBast, showProgressOrder, showStatusPersetujuanLaporan, showInputDataOrderAdmin, showInputDataOrderDataEntry, showFinalisasiLaporan,  showChangeStatusOrder, showUpdateSequence} = this.state;
+    showLaporanAdmin, showOrderStatusVerification, showLaporanFinance, showLaporanHead, showBast, showProgressOrder, showStatusPersetujuanLaporan, showInputDataOrderAdmin, showInputDataOrderDataEntry, showFinalisasiLaporan,  showChangeStatusOrder, showUpdateSequence, showOrderDocFinance} = this.state;
 
     return (
       <div>
@@ -145,6 +150,7 @@ class App extends Component {
               {showMengelolaLaporan && (<Nav.Link href="/laporan/daftarLaporan" style={{color: "black"}} className="pl-5 pr-5">Daftar Laporan</Nav.Link>)}
               {showLaporanAdmin &&  (<Nav.Link href="/laporan/admin" style={{color: "black"}} className="pl-5 pr-5">Daftar Laporan</Nav.Link>)}
               {showLaporanFinance && (<Nav.Link href="/laporan/finance" style={{color: "black"}} className="pl-5 pr-5">Daftar Laporan</Nav.Link>)}
+                {showOrderDocFinance && (<Nav.Link href="/dokumen/order/finance" style={{color: "black"}} className="pl-5 pr-5">Daftar Order dan Dokumen</Nav.Link>)}
               {showLaporanHead && (<Nav.Link href="/laporan/head" style={{color: "black"}} className="pl-5 pr-5">Daftar BAST</Nav.Link>)}
               {showBast && (<Nav.Link href="/laporan/create-bast" style={{color: "black"}} className="pl-5 pr-5">Generate BAST</Nav.Link>)}
               {showStatusPersetujuanLaporan && (<Nav.Link href="/laporan/verifikasiLaporan" style={{color: "black"}} className="pl-5 pr-5">Verifikasi Laporan</Nav.Link>)}
@@ -208,8 +214,10 @@ class App extends Component {
               <Route path = "/add-progress/:idPi/:idTask" component = {UpdateTaskProgressComponent}></Route>
               <Route path="/order/status/verification" component={UnverifiedOrders} />
               <Route path="/order/verification/detail/:id" component={DetailUnverifiedOrder} />
+              <Route path="/dokumen/order/finance/:id" component={DetailOrderAndDoc} />
               <Route path = "/order/progress" component = {Progress}></Route>
               <Route path = "/laporan/finance" component = {ReportFinance}></Route>
+              <Route path="/dokumen/order/finance" component={OrderAndDoc}/>
               <Route path = "/laporan/head" component = {ReportHead}></Route>
               <Route path = "/laporan/admin" component = {ReportAdmin}></Route>
               <Route path = "/laporan/create-bast" component = {Bast}></Route>

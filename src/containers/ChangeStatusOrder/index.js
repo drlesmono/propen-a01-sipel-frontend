@@ -250,20 +250,57 @@ class ChangeStatusOrder extends Component {
     }
 
     checkClosedForRender(order, listMaintenance){
-        let pi = this.getPi(order.idOrder)
-        if (pi.status == "Closed") {
-            return "Order is Closed"
-        } else {
-            return(
-                <CustomizedButtons
-                    variant="contained"
-                    size="small"
-                    color="#FD693E"
-                    onClick={() => this.handleEdit(order, listMaintenance)}>
-                    Ubah
-                </CustomizedButtons>
-            );
+        if (order.projectInstallation === true && order.managedService === true){
+            let pi = this.getPi(order.idOrder)
+            let ms = this.getMs(order.idOrder)
+            if (pi.status == "Closed" && ms.status == "Closed"){
+                return "Order is Closed"
+            } else {
+                return(
+                    <CustomizedButtons
+                        variant="contained"
+                        size="small"
+                        color="#FD693E"
+                        onClick={() => this.handleEdit(order, listMaintenance)}>
+                        Ubah
+                    </CustomizedButtons>
+                );
+            }
+        } else if (order.projectInstallation === true) {
+            let pi = this.getPi(order.idOrder)
+            if (pi.status == "Closed") {
+                return "Order is Closed"
+            } else {
+                return(
+                    <CustomizedButtons
+                        variant="contained"
+                        size="small"
+                        color="#FD693E"
+                        onClick={() => this.handleEdit(order, listMaintenance)}>
+                        Ubah
+                    </CustomizedButtons>
+                );
+            }
+        } else if (order.managedService === true) {
+            let ms = this.getMs(order.idOrder)
+            if (ms.status == "Closed") {
+                return "Order is Closed"
+            } else {
+                return(
+                    <CustomizedButtons
+                        variant="contained"
+                        size="small"
+                        color="#FD693E"
+                        onClick={() => this.handleEdit(order, listMaintenance)}>
+                        Ubah
+                    </CustomizedButtons>
+                );
+            }
         }
+
+
+
+
     }
 
     handleEdit(order, listMaintenance) {
@@ -401,7 +438,7 @@ class ChangeStatusOrder extends Component {
                                     <td>Perusahaan</td>
                                     <td>: {orderTarget.clientOrg}</td>
                                 </tr>
-                                { orderTarget.projectInstallation ?
+                                { orderTarget.projectInstallation && this.checkStatus(orderTarget) !== "Closed"?
                                     <><tr>
                                         <td style={{fontWeight: 'bold'}}>Project Installation</td>
                                     </tr>
@@ -424,7 +461,7 @@ class ChangeStatusOrder extends Component {
                                                 <td style={{fontWeight: 'bold', color: "#fd693e"}}>Progress order belum 100%</td>
                                             </tr></> : <></>}
                                     </> : <></>}
-                                { orderTarget.managedService ?
+                                { orderTarget.managedService && this.checkStatus(orderTarget) !== "Closed"?
                                     <><tr>
                                         <td style={{fontWeight: 'bold'}}>Managed Service</td>
                                     </tr>

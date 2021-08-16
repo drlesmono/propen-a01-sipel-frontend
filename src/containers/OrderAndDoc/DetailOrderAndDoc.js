@@ -20,7 +20,7 @@ const initState = {
     name: "",
 }
 
-class DetailUnverifiedOrder extends React.Component {
+class DetailOrderAndDoc extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -148,7 +148,7 @@ class DetailUnverifiedOrder extends React.Component {
     }
 
     handleBack = () => {
-        this.props.history.push(`/order/status/verification`);
+        this.props.history.push(`/dokumen/order/finance`);
     }
 
     handleLookDetail() {
@@ -194,7 +194,7 @@ class DetailUnverifiedOrder extends React.Component {
     }
 
     handleAfterError = () => {
-        this.props.history.push(`/order/verification`);
+        this.props.history.push(`/dokumen/order/finance`);
         this.setState({ isError: false });
     }
 
@@ -222,7 +222,7 @@ class DetailUnverifiedOrder extends React.Component {
     getUrl(document){
 
         // const BASE_URL = "https://propen-a01-sipel.herokuapp.com/order/document/";
-		const BASE_URL = "https://propen-a01-sipel.herokuapp.com/order/document/";
+		const BASE_URL = "http://localhost:2020/order/document/";
         if(document.fileType === "application/pdf"){
             return BASE_URL+document.docName+"/preview";
         }else{
@@ -267,8 +267,9 @@ class DetailUnverifiedOrder extends React.Component {
             <div className={classes.container}>
             <div className="content">
             <br></br>
+            <div className="d-flex justify-content-center">
             <h1 className={classes.title}>Detail Order</h1>
-            <br></br>
+            </div>
             <div className="row" style={{ marginTop: 10 }}>
                 <div className="col-sm-1"></div>
                 <div className="col-sm-10">
@@ -380,4 +381,4 @@ class DetailUnverifiedOrder extends React.Component {
     }
 }
 
-export default withRouter(DetailUnverifiedOrder);
+export default withRouter(DetailOrderAndDoc);

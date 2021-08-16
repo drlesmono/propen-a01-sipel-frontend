@@ -37,11 +37,8 @@ class CreateTaskComponent extends Component {
         let task = {taskName: this.state.taskName, description: this.state.description};
         console.log('task => ' + JSON.stringify(task));
 
-        InstallationProjectService.createTask(task,this.state.id).then( this.setState({isSuccess: true}) );
-        // .then(res =>{
-        //     this.props.history.push(`/list-task/${this.state.id}`);
-        // });
-        // alert("Task Berhasil Ditambahkan");
+        InstallationProjectService.createTask(task,this.state.id).then( this.setState({isSuccess: true})
+        );
     }
 
     cancel(){

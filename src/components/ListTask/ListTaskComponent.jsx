@@ -1,7 +1,9 @@
 import React, { Component } from 'react'
 import InstallationProjectService from "../../services/InstallationProjectService";
-import APIConfig from "../../APIConfig";
 import classes from "./styles.module.css";
+import Modal from "react-bootstrap/Modal";
+import 'bootstrap/dist/css/bootstrap.min.css';
+import { Button } from "react-bootstrap";
 
 
 class ListTaskComponent extends Component {
@@ -9,9 +11,10 @@ class ListTaskComponent extends Component {
         super(props)
 
         this.state = {
-            id: this.props.match.params.id, //jangan diapus, sblmnya id doang, jadi idPi
-            //idTask: this.props.match.params.idTask,
-            listTask: []
+            id: this.props.match.params.id,
+            listTask: [],
+            orderName: "",
+            isDeleted: false
 
         }
         this.addTask = this.addTask.bind(this);
@@ -23,9 +26,8 @@ class ListTaskComponent extends Component {
 
     deleteTask(idTask){
         InstallationProjectService.deleteTask(idTask).then( res => {
-            this.setState({listTask: this.state.listTask.filter(task => task.idTask !== idTask)})
+            this.setState({listTask: this.state.listTask.filter(task => task.idTask !== idTask), isDeleted: true})
         });
-        alert("Task Berhasil Dihapus");
     }
 
     editTask(id, idTask){
@@ -40,24 +42,49 @@ class ListTaskComponent extends Component {
     componentDidMount(){
 
         InstallationProjectService.getListTaskByIdPi(this.state.id).then((res) => {
-            this.setState({ listTask: res.data});
+            this.setState({listTask: res.data});
+        });
+        InstallationProjectService.getPiNameByIdPi(this.state.id).then((res1) => {
+            this.setState({orderName: res1.data});
         });
         
     }
 
-
-    addTask(idPi){
-        this.props.history.push(`/add-task/${idPi}`); //diubah sblmnya idOrder
+    cancel(){
+        this.setState({ isDeleted: false});
     }
 
-    //dibutton tambah jadi idPi, sblmnya id doang
-    //edit task jadi nambah idPi
+
+    addTask(idPi){
+        this.props.history.push(`/add-task/${idPi}`);
+    }
+
     render() {
-        const {piTarget} = this.state;
+        const { isDeleted } = this.state;
         return (
             <div className={classes.container}>
             <div>
-                <h2 className="text-center">Daftar Task Order</h2>
+                {/* Menampilkan modal berisi notifikasi ketika berhasil menghapus data */}
+                <Modal
+                    show={isDeleted}
+                    dialogClassName="modal-90w"
+                    aria-labelledby="contained-modal-title-vcenter"
+                >
+                     <Modal.Header closeButton onClick={this.cancel.bind(this)}>
+                        <Modal.Title id="contained-modal-title-vcenter">
+                            Notification
+                        </Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>
+                        <div className="d-flex justify-content-center">Task Berhasil Dihapus.</div><br></br>
+                        <div className="d-flex justify-content-center">
+                            <Button variant="primary" className={classes.button1} onClick={this.cancel.bind(this)}>
+                                Kembali
+                            </Button>
+                        </div>
+                    </Modal.Body>
+                </Modal>
+                <h2 className="text-center">{"Daftar Task Order " + this.state.orderName }</h2>
                 <br></br>
                 <br></br>
                 <div className="row">

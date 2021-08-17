@@ -343,6 +343,14 @@ class ChangeStatusOrder extends Component {
         this.setState({ orderFiltered : newOrderList });
     }
 
+    getDate(date) {
+        let oldDate = new Date(date);
+        const month = ["Januari", "Februari", "Maret", "April", "Mei", "Juni",
+            "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
+        return oldDate.getDate() + " " + month[oldDate.getMonth()] + " " + oldDate.getFullYear();
+
+    }
+
 
 
     handleCancel(event) {
@@ -400,7 +408,7 @@ class ChangeStatusOrder extends Component {
             if(orderTarget.managedService === true){
                 let ms = this.getMs(orderTarget.idOrder);
                 tableMaintenanceRows = ms.listMaintenance.map((maintenance, index) => [
-                    maintenance.dateMn,
+                    this.getDate(maintenance.dateMn),
                     <Form.Control
                         as="select"
                         size="lg"

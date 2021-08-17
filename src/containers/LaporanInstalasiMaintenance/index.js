@@ -32,12 +32,15 @@ class LaporanInstalasiMaintenance extends Component {
             maintenanceTarget: null,
             orderByPO: null,
             file: null,
+            notes: null,
             isValid: true,
             messageError: null,
             reportNum: null,
             isNotes: false,
             role: null,
-            notes: null
+            perPage: 20,
+            currentPageNumber: 1,
+            isFiltered: false
         };
         this.handleChangeField = this.handleChangeField.bind(this);
         this.handleUpload = this.handleUpload.bind(this);
@@ -51,6 +54,7 @@ class LaporanInstalasiMaintenance extends Component {
         this.handleFilter = this.handleFilter.bind(this);
         this.handleValidation = this.handleValidation.bind(this);
         this.handleValidationMrUpload = this.handleValidationMrUpload.bind(this);
+        this.handlePageClick = this.handlePageClick.bind(this);
     }
 
     componentDidMount() {
@@ -66,14 +70,26 @@ class LaporanInstalasiMaintenance extends Component {
             const listMr = await APIConfig.get("/reports/mr", { headers: authHeader() });
             const listPi = await APIConfig.get("/orders/pi", { headers: authHeader() });
             const listMs = await APIConfig.get("/orders/ms", { headers: authHeader() });
-            
+
             this.setState({ listIr: listIr.data, listMr: listMr.data, listPi: listPi.data, listMs: listMs.data});
             const ordersStatusFiltered = orders.data.filter(order => this.checkStatusOrder(order)===true);
             const reportsNotSigned = reports.data.filter(report => report.signed === false);
-            this.setState({ ordersVerified: ordersStatusFiltered, reports: reportsNotSigned});
+            this.setState({ ordersVerified: ordersStatusFiltered, reports: reportsNotSigned,
+                perPage: this.setPerPage(reportsNotSigned.length)});
         } catch (error) {
             this.setState({ isError: true, messageError: "Oops terjadi masalah pada server" });
             console.log(error);
+        }
+    }
+
+    // Mengatur maksimal list yang ditampilkan
+    setPerPage(length){
+        let perPage = 20;
+        const multiple = Math.floor(length / 500);
+        if(multiple === 0){
+            return perPage;
+        }else{
+            return perPage * multiple;
         }
     }
 
@@ -115,7 +131,7 @@ class LaporanInstalasiMaintenance extends Component {
     async handleSubmit(event) {
         event.preventDefault();
 
-        try {   
+        try {
             let response;
             let newReport;
 
@@ -151,7 +167,7 @@ class LaporanInstalasiMaintenance extends Component {
                 }
                 await APIConfig.post(`/report/${newReport.idReport}/maintenance/upload`, dataMaintenanceReport, { headers: authHeader() });
             }
-            
+
             this.setState({reportTarget: newReport});
             this.loadData();
         } catch (error) {
@@ -235,8 +251,8 @@ class LaporanInstalasiMaintenance extends Component {
                 const maintenanceTarget = mr.idMaintenance;
                 for(let i=0; i<this.state.listMs.length; i++){
                     if(this.state.listMs[i].listMaintenance !== null){
-                        const listMaintenance = this.state.listMs[i].listMaintenance.filter(maintenance => 
-                                                maintenance.idMaintenance === maintenanceTarget.idMaintenance);
+                        const listMaintenance = this.state.listMs[i].listMaintenance.filter(maintenance =>
+                            maintenance.idMaintenance === maintenanceTarget.idMaintenance);
                         if(listMaintenance.length !== 0){
                             const ms = this.state.listMs[i];
                             return ms.idOrder;
@@ -332,7 +348,7 @@ class LaporanInstalasiMaintenance extends Component {
         let date = new Date(value);
 
         const monthNames = ["Januari", "Februari", "Maret", "April", "Mei", "Juni",
-                            "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
+            "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
 
         return date.getDate()+" "+monthNames[date.getMonth()]+" "+date.getFullYear();
     }
@@ -355,13 +371,13 @@ class LaporanInstalasiMaintenance extends Component {
             maintenanceTarget: null,
             orderByPO: null,
             file: null,
+            notes: null,
             isValid: true,
             messageError: null,
             isFiltered: false,
             reportNum: null,
             isNotes: false,
             role: null,
-            notes: null
         });
         this.loadData();
     }
@@ -388,7 +404,7 @@ class LaporanInstalasiMaintenance extends Component {
     // Apabila jenis file selain pdf, maka url download yang digunakan
     getUrl(report){
         // const BASE_URL = "https://propen-a01-sipel.herokuapp.com/report/";
-		const BASE_URL = "https://propen-a01-sipel.herokuapp.com/report/";
+        const BASE_URL = "http://localhost:2020/report/";
         if(report.fileType === "application/pdf"){
             return BASE_URL+report.reportName+"/preview";
         }else{
@@ -447,48 +463,65 @@ class LaporanInstalasiMaintenance extends Component {
 
         if( value !== "" ){
             newReportList = this.state.reports.filter(report => {
-                return (report.reportName.toLowerCase().includes(value.toLowerCase()) || 
-                this.getReportNum(report).toLowerCase().includes(value.toLowerCase()))
+                return (report.reportName.toLowerCase().includes(value.toLowerCase()) ||
+                    this.getReportNum(report).toLowerCase().includes(value.toLowerCase()))
             });
             this.setState({ isFiltered : true });
         }else{
-            this.setState({ isFiltered : false });
+            this.setState({ isFiltered : false, currentPageNumber : 1 });
         }
         this.setState({ reportsFiltered : newReportList });
     }
 
+    // Menghandle page number yang di click
+    handlePageClick(event){
+        const { id } = event.target;
+        this.setState({ currentPageNumber: Number(id) });
+    }
 
     render() {
-        const { reports, reportsFiltered, isMrUploaded, isInstallationReport, isUpload, isSuccess, isDelete, isDeleteSuccess, isFailed, isError,
-                listMaintenance, reportTarget, messageError, isFiltered, reportNum, isNotes, role, notes} = this.state;
-        
+        const { reports, reportsFiltered, isFiltered, isMrUploaded, isInstallationReport, isUpload, isSuccess, isDelete, isDeleteSuccess, isFailed, isError,
+            listMaintenance, reportTarget, messageError, reportNum, isNotes, role, notes, currentPageNumber, perPage} = this.state;
+        const lastIndex = currentPageNumber * perPage;
+        const firstIndex = lastIndex - perPage;
+        const currentPage = isFiltered ? reportsFiltered.slice(firstIndex, lastIndex) : reports.slice(firstIndex, lastIndex);
+
         // Judul untuk setiap kolom di tabel daftar laporan
-        const tableHeaders = ['No.', 'Nomor Laporan', 'Nama Laporan', 'Nomor PO', 'Perusahaan', 'Tanggal dibuat', 'Catatan', 'Aksi'];                  
+        const tableHeaders = ['No.', 'Nomor Laporan', 'Nama Laporan', 'Nomor PO', 'Perusahaan', 'Tanggal dibuat', 'Catatan', 'Aksi'];
         let tableRows = [];
-        
+
         // Isi tabel daftar laporan yang disesuaikan dengan yang dicari
-        if(reports.length !== 0){
-            tableRows = isFiltered ? reportsFiltered.map((report) =>
-                        [ this.getReportNum(report), report.reportName, this.getOrder(report) === null? null : this.getOrder(report).noPO, 
-                        this.getOrder(report) === null? null : this.getOrder(report).clientOrg, 
-                        this.getDate(report.uploadedDate), this.getNotes(report), 
-                        <Table borderless size="sm">
-                            <tr>
-                                <td><Button className={classes.button2} onClick={() => this.handleConfirmDelete(report)}>hapus</Button></td>
-                                <td><Button className={classes.button4} href={this.getUrl(report)} target = "_blank">lihat</Button></td>
-                            </tr>
-                        </Table>])
-                        : reports.map((report) =>
-                        [ this.getReportNum(report), report.reportName, this.getOrder(report) === null? null : this.getOrder(report).noPO, 
-                        this.getOrder(report) === null? null : this.getOrder(report).clientOrg, 
-                        this.getDate(report.uploadedDate), this.getNotes(report), 
-                        <Table borderless size="sm">
-                            <tr>
-                                <td><Button className={classes.button2} onClick={() => this.handleConfirmDelete(report)}>hapus</Button></td>
-                                <td><Button className={classes.button4} href={this.getUrl(report)} target = "_blank">lihat</Button></td>
-                            </tr>
-                        </Table>]);
+        if(currentPage.length !== 0){
+            tableRows = currentPage.map((report) =>
+                [ this.getReportNum(report), report.reportName, this.getOrder(report) === null? null : this.getOrder(report).noPO,
+                    this.getOrder(report) === null? null : this.getOrder(report).clientOrg,
+                    this.getDate(report.uploadedDate), this.getNotes(report),
+                    <Table borderless size="sm">
+                        <tr>
+                            <td><Button className={classes.button2} onClick={() => this.handleConfirmDelete(report)}>hapus</Button></td>
+                            <td><Button className={classes.button4} href={this.getUrl(report)} target = "_blank">lihat</Button></td>
+                        </tr>
+                    </Table>]);
         }
+
+        const pageNumber = [];
+        for(let i = 1; i <= Math.ceil( (isFiltered ? reportsFiltered.length : reports.length) / perPage) ; i++){
+            pageNumber.push(i);
+        }
+
+        const renderPageNumber = pageNumber.map(number => {
+            return(
+                <Button
+                    size="sm"
+                    key={number}
+                    id={number}
+                    onClick={this.handlePageClick}
+                    className={number === currentPageNumber ? classes.button1 : classes.button3}
+                >
+                    {number}
+                </Button>
+            )
+        });
 
         return (
             <div className={classes.container}>
@@ -505,9 +538,12 @@ class LaporanInstalasiMaintenance extends Component {
                     </div>
                     <div className={classes.search}><Form.Control type="text" size="sm" placeholder="Cari..." onChange={this.handleFilter}/></div>
                 </div>
-                <div>{ reports.length !== 0 ? <CustomizedTables headers={tableHeaders} rows={tableRows}/> : <p className="text-center" style={{color: "red"}}>Belum terdapat laporan </p>}</div>
-                
-                 {/* Menampilkan modal berisi form upload report */}
+                <div>{ currentPage.length !== 0 ? <CustomizedTables headers={tableHeaders} rows={tableRows}/> : <p className="text-center" style={{color: "red"}}>Belum terdapat laporan </p>}</div>
+
+                {/* Page Number */}
+                <div className={classes.pageNumber} >{renderPageNumber}</div>
+
+                {/* Menampilkan modal berisi form upload report */}
                 <Modal
                     show={isUpload}
                     dialogClassName="modal-90w"
@@ -518,69 +554,69 @@ class LaporanInstalasiMaintenance extends Component {
                             <Modal.Title id="contained-modal-title-vcenter">
                                 {isInstallationReport ? "Form Unggah Laporan Instalasi" : "Form Unggah Laporan Maintenance"}
                             </Modal.Title>
-                        : <></>}
+                            : <></>}
                     </Modal.Header>
-                        <Modal.Body>
-                               { isFailed ? 
-                               <Card body className={classes.card}>
-                                   <div className="d-flex justify-content-between">
-                                        <div>{messageError}</div>
-                                        <Button size="sm" className="bg-transparent border border-0 border-transparent" onClick={this.handleCloseNotif}>x</Button>
-                                    </div>
-                                </Card>
-                               : <></> }
-                            <p>
-                                <Form>
-                                    <Table borderless responsive="xl" size="sm">
-                                        <tr>
-                                            <td><p className="d-flex">Nomor PO<p style={{color: "red"}}>*</p></p></td>
-                                            <td><Form.Control as="select" size="sm" name="orderByPO" onChange={this.handleChangeField}>
-                                                    <option value='' style={{color: 'gray'}}>Pilih Nomor PO</option>
-                                                    {this.getListOrderFilter().map((order) => <option value={order.idOrder}>{order.noPO}</option>)}
-                                                </Form.Control></td>
-                                        </tr>
-                                        <tr>
-                                            <td><p className="d-flex">Laporan <p style={{color: "red"}}>*</p></p></td>
-                                            <td><Form.File name="file" onChange={this.handleChangeFile}/></td>
-                                        </tr>
-                                        <tr>
-                                            <td>Catatan</td>
-                                            <td><Form.Control type="text" size="sm" name="notes" className={classes.notes} onChange={this.handleChangeField} placeholder="Tambahkan catatan..."/></td>
-                                        </tr>
-                                        <tr>
-                                            <td style={{color: "red"}}>*Wajib diisi</td>
-                                            <td className="d-flex justify-content-end">
-                                                    <Button variant="primary" className={classes.button1} onClick={this.handleValidation}>
-                                                        {isInstallationReport ? "simpan" : "unggah"}
-                                                    </Button>
-                                            </td>
-                                        </tr>
-                                    </Table>
-                                </Form>
-                            </p>
+                    <Modal.Body>
+                        { isFailed ?
+                            <Card body className={classes.card}>
+                                <div className="d-flex justify-content-between">
+                                    <div>{messageError}</div>
+                                    <Button size="sm" className="bg-transparent border border-0 border-transparent" onClick={this.handleCloseNotif}>x</Button>
+                                </div>
+                            </Card>
+                            : <></> }
+                        <p>
+                            <Form>
+                                <Table borderless responsive="xl" size="sm">
+                                    <tr>
+                                        <td><p className="d-flex">Nomor PO<p style={{color: "red"}}>*</p></p></td>
+                                        <td><Form.Control as="select" size="sm" name="orderByPO" onChange={this.handleChangeField}>
+                                            <option value='' style={{color: 'gray'}}>Pilih Nomor PO</option>
+                                            {this.getListOrderFilter().map((order) => <option value={order.idOrder}>{order.noPO}</option>)}
+                                        </Form.Control></td>
+                                    </tr>
+                                    <tr>
+                                        <td><p className="d-flex">Laporan <p style={{color: "red"}}>*</p></p></td>
+                                        <td><Form.File name="file" onChange={this.handleChangeFile}/></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Catatan</td>
+                                        <td><Form.Control type="text" size="sm" name="notes" className={classes.notes} onChange={this.handleChangeField} placeholder="Tambahkan catatan..."/></td>
+                                    </tr>
+                                    <tr>
+                                        <td style={{color: "red"}}>*Wajib diisi</td>
+                                        <td className="d-flex justify-content-end">
+                                            <Button variant="primary" className={classes.button1} onClick={this.handleValidation}>
+                                                {isInstallationReport ? "simpan" : "unggah"}
+                                            </Button>
+                                        </td>
+                                    </tr>
+                                </Table>
+                            </Form>
+                        </p>
                     </Modal.Body>
                 </Modal>
 
-                 {/* Menampilkan modal berisi form pemilihan maintenance */}
+                {/* Menampilkan modal berisi form pemilihan maintenance */}
                 <Modal
                     show={isMrUploaded}
                     dialogClassName="modal-90w"
                     aria-labelledby="contained-modal-title-vcenter"
                 >
-                     <Modal.Header closeButton onClick={this.handleCancelMrUpload}>
-                            <Modal.Title id="contained-modal-title-vcenter">
-                                Form Pemilihan Maintenance
-                            </Modal.Title>
+                    <Modal.Header closeButton onClick={this.handleCancelMrUpload}>
+                        <Modal.Title id="contained-modal-title-vcenter">
+                            Form Pemilihan Maintenance
+                        </Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
-                        { isFailed ? 
+                        { isFailed ?
                             <Card body className={classes.card}>
                                 <div className="d-flex justify-content-between">
                                     <div>{messageError}</div>
-                                     <Button size="sm" className="bg-transparent border border-0 border-transparent" onClick={this.handleCloseNotif}>x</Button>
+                                    <Button size="sm" className="bg-transparent border border-0 border-transparent" onClick={this.handleCloseNotif}>x</Button>
                                 </div>
                             </Card>
-                        : <></> }
+                            : <></> }
                         <Form>
                             <Table borderless responsive="xl" size="sm">
                                 <tr>
@@ -593,9 +629,9 @@ class LaporanInstalasiMaintenance extends Component {
                                 <tr>
                                     <td style={{color: "red"}}>*Wajib diisi</td>
                                     <td className="d-flex justify-content-end">
-                                    <Button variant="primary" className={classes.button1} onClick={this.handleValidationMrUpload}>
-                                        simpan
-                                    </Button>
+                                        <Button variant="primary" className={classes.button1} onClick={this.handleValidationMrUpload}>
+                                            simpan
+                                        </Button>
                                     </td>
                                 </tr>
                             </Table>
@@ -603,30 +639,30 @@ class LaporanInstalasiMaintenance extends Component {
                     </Modal.Body>
                 </Modal>
 
-                 {/* Menampilkan modal berisi konfirmasi hapus report */}
+                {/* Menampilkan modal berisi konfirmasi hapus report */}
                 <Modal
                     show={isDelete}
                     dialogClassName="modal-90w"
                     aria-labelledby="contained-modal-title-vcenter"
                 >
-                     <Modal.Header closeButton onClick={this.handleCancel}>
+                    <Modal.Header closeButton onClick={this.handleCancel}>
                     </Modal.Header>
                     <Modal.Body>
-                        { isFailed ? 
-                               <Card body className={classes.card}>
-                                   <div className="d-flex justify-content-between">
-                                        <div>{messageError}</div>
-                                        <Button size="sm" className="bg-transparent border border-0 border-transparent" onClick={this.handleCloseNotif}>x</Button>
-                                    </div>
-                                </Card>
-                               : <></> }
+                        { isFailed ?
+                            <Card body className={classes.card}>
+                                <div className="d-flex justify-content-between">
+                                    <div>{messageError}</div>
+                                    <Button size="sm" className="bg-transparent border border-0 border-transparent" onClick={this.handleCloseNotif}>x</Button>
+                                </div>
+                            </Card>
+                            : <></> }
                         <div>Apakah Anda yakin menghapus laporan dengan nomor {reportNum === null? "" : reportNum} ?</div>
                         <div className="d-flex justify-content-center">
                             <Button className={classes.button3} onClick={this.handleCancel}>
-                                    Batal
+                                Batal
                             </Button>
                             <Button className={classes.button1} onClick={this.handleDelete}>
-                                    Hapus
+                                Hapus
                             </Button>
                         </div>
                     </Modal.Body>
@@ -638,35 +674,35 @@ class LaporanInstalasiMaintenance extends Component {
                     dialogClassName="modal-90w"
                     aria-labelledby="contained-modal-title-vcenter"
                 >
-                     <Modal.Header closeButton onClick={this.handleCancel}>
+                    <Modal.Header closeButton onClick={this.handleCancel}>
                         <Modal.Title id="contained-modal-title-vcenter">
                             Notification
                         </Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
                         {isSuccess || isDeleteSuccess ?
-                        <>
-                            {isDeleteSuccess ? 
-                                <><div className="d-flex justify-content-center">Laporan dengan nomor {reportNum} berhasil dihapus.</div><br></br>
+                            <>
+                                {isDeleteSuccess ?
+                                    <><div className="d-flex justify-content-center">Laporan dengan nomor {reportNum} berhasil dihapus.</div><br></br>
+                                        <div className="d-flex justify-content-center">
+                                            <Button variant="primary" className={classes.button1} onClick={this.handleCancel}>
+                                                Kembali
+                                            </Button></div></>
+                                    :<><div className="d-flex justify-content-center">Laporan {reportTarget.reportType === "installation" ? "Instalasi" : "Maintenace"} {reportTarget.reportName} pada order {this.getOrder(reportTarget) === null ? "" : this.getOrder(reportTarget).noPO} berhasil disimpan.</div><br></br>
+                                        <div className="d-flex justify-content-center">
+                                            <Button variant="primary" className={classes.button1} href={this.getUrl(reportTarget)} target="_blank">
+                                                lihat
+                                            </Button></div></>
+                                }
+                            </> :
+                            <>
+                                <div className="d-flex justify-content-center">{messageError}</div><br></br>
                                 <div className="d-flex justify-content-center">
-                                <Button variant="primary" className={classes.button1} onClick={this.handleCancel}>
-                                    Kembali
-                                </Button></div></>  
-                                :<><div className="d-flex justify-content-center">Laporan {reportTarget.reportType === "installation" ? "Instalasi" : "Maintenace"} {reportTarget.reportName} pada order {this.getOrder(reportTarget) === null ? "" : this.getOrder(reportTarget).noPO} berhasil disimpan.</div><br></br>
-                                <div className="d-flex justify-content-center">
-                                <Button variant="primary" className={classes.button1} href={this.getUrl(reportTarget)} target="_blank">
-                                    lihat
-                                </Button></div></>
-                            }
-                        </> :
-                        <>
-                        <div className="d-flex justify-content-center">{messageError}</div><br></br>
-                        <div className="d-flex justify-content-center">
-                            <Button variant="primary" className={classes.button1} onClick={this.handleCancel}>
-                                Kembali
-                            </Button>
-                        </div>
-                        </>}
+                                    <Button variant="primary" className={classes.button1} onClick={this.handleCancel}>
+                                        Kembali
+                                    </Button>
+                                </div>
+                            </>}
                     </Modal.Body>
                 </Modal>
 
@@ -676,7 +712,7 @@ class LaporanInstalasiMaintenance extends Component {
                     dialogClassName="modal-90w"
                     aria-labelledby="contained-modal-title-vcenter"
                 >
-                     <Modal.Header closeButton onClick={this.handleCancel}>
+                    <Modal.Header closeButton onClick={this.handleCancel}>
                         <Modal.Title id="contained-modal-title-vcenter">
                             Catatan
                         </Modal.Title>
@@ -686,7 +722,7 @@ class LaporanInstalasiMaintenance extends Component {
                         <div>{notes}</div>
                     </Modal.Body>
                 </Modal>
-        </div>
+            </div>
         );
     }
 }

@@ -146,3 +146,10 @@
 .notes{
     height: 200% !important;
 }
+
+.pageNumber{
+    margin-top: 2%;
+    justify-content: center;
+    align-content: center;
+    display: flex;
+}

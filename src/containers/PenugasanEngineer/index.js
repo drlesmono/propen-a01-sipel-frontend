@@ -365,8 +365,9 @@ class PenugasanEngineer extends Component {
                         this.checkTypeOrder(order.projectInstallation, order.managedService), 
                         this.getPICPI(order.idOrder) === null ? <p style={{color: "red", marginBottom: 0}}>Belum ditugaskan</p>  : this.getPICPI(order.idOrder).fullname, 
                         this.getPICMS(order.idOrder) === null ? <p style={{color: "red", marginBottom: 0}}>Belum ditugaskan</p> : this.getPICMS(order.idOrder).fullname,
-                        <div className="d-flex justify-content-center"><Button className={classes.button1}
-                        onClick={() => this.handleEdit(order)}>perbarui</Button></div>])
+                        <div className="d-flex justify-content-center">
+                            <Button className={classes.button1} onClick={() => this.handleEdit(order)}>perbarui</Button>
+                        </div>])
                         : ordersVerified.map((order) => this.checkStatusOrder(order)===true &&
                         [order.noPO === null ? "-" : order.noPO, order.orderName, 
                         this.checkTypeOrder(order.projectInstallation, order.managedService), 

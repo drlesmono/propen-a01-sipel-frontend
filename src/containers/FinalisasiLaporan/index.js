@@ -156,23 +156,22 @@ class FinalisasiLaporan extends Component {
         event.preventDefault();
         if(this.state.isInstallationReport){
             this.setState({
-                orderByPO: this.getIr(this.state.reportTarget.idReport).idOrderPi.idOrder.noPO,
+
                 irTarget: this.getIr(this.state.reportTarget.idReport)
             });
         }
         if(this.state.isMaintenanceReport){
             this.setState({
-                orderByPO: this.getOrder(this.state.reportTarget).noPO,
                 mrTarget: this.getMr(this.state.reportTarget.idReport)
             });
         }
         if(this.state.isBastReport){
             this.setState({
-                orderByPO: this.getOrder(this.state.reportTarget).noPO,
+
                 bastTarget: this.getBast(this.state.reportTarget.idReport)
             });
         }
-
+        console.log(this.state.orderByPO)
         this.handleValidationStage2(event);
     }
 
@@ -333,13 +332,13 @@ class FinalisasiLaporan extends Component {
 
     handleUpload(type){
         if (this.state.reportTarget.reportType === "installation") {
-            this.setState({isInstallationReport: true})
+            this.setState({isInstallationReport: true, orderByPO: this.getOrder(this.state.reportTarget).noPO})
         }
         if (this.state.reportTarget.reportType === "maintenance") {
-            this.setState({isMaintenanceReport: true})
+            this.setState({isMaintenanceReport: true, orderByPO: this.getOrder(this.state.reportTarget).noPO})
         }
         if (this.state.reportTarget.reportType === "BAST") {
-            this.setState({isBastReport: true})
+            this.setState({isBastReport: true, orderByPO: this.getOrder(this.state.reportTarget).noPO})
         }
         this.setState({isUpload: true, isReadyToFinalize: false});
         console.log(this.state.isReadyToFinalize);
@@ -750,7 +749,7 @@ class FinalisasiLaporan extends Component {
                         report.reportType,
                         <div className="d-flex justify-content-center">
                             <Button
-                                className={classes.button2}
+                                className={classes.button1}
                                 onClick={() => this.handleFinalize(report)}
                             >
                                 Finalize
@@ -766,7 +765,7 @@ class FinalisasiLaporan extends Component {
                         report.reportType,
                         <div className="d-flex justify-content-center">
                             <Button
-                                className={classes.button2}
+                                className={classes.button1}
                                 onClick={() => this.handleFinalize(report)}
                             >
                                 Finalize
@@ -811,18 +810,31 @@ class FinalisasiLaporan extends Component {
                                     <td>Nomor Dokumen</td>
                                     <td>: {this.getReportNum(reportTarget)}</td>
                                 </tr>
+                                <tr>
+                                    <td>
+                                        <div style={{alignItems:'left'}}>
+                                            <Button size="sm" className={classes.button4} href={this.getUrl(reportTarget)} target = "_blank">Lihat</Button>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div style={{alignItems:'center'}}>
+                                            <Button size="sm" className={[classes.button1, classes.buttonUpload].join(" ")} onClick={() => this.handleUpload(reportTarget.reportType)}>Unggah</Button>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        {reportTarget.reportType === "BAST" ?
+                                            <>
+                                                <div style={{alignItems:'right'}}>
+                                                    <Button className={classes.button4} onClick={() => this.getToDownloadBast(reportTarget)}>Unduh</Button>
+                                                </div>
+                                            </> : <>
+                                                <div style={{alignItems:'right'}}>
+                                                    <Button className={classes.button4} href={this.getToDownload(reportTarget)} target = "_blank">Unduh</Button>
+                                                </div>
+                                            </>}
+                                    </td>
+                                </tr>
                             </table>
-                                <div className={classes.containerButtonUpload}>
-                                    <Button size="sm" className={classes.button4} href={this.getUrl(reportTarget)} target = "_blank">Lihat</Button>
-                                    <Button size="sm" className={[classes.button1, classes.buttonUpload].join(" ")} onClick={() => this.handleUpload(reportTarget.reportType)}>Unggah</Button>
-                                    {reportTarget.reportType === "BAST" ?
-                                    <>
-                                        <Button className={classes.button4} onClick={() => this.getToDownloadBast(reportTarget)}>Unduh</Button>
-                                    </> : <>
-                                            <Button className={classes.button4} href={this.getToDownload(reportTarget)} target = "_blank">Unduh</Button>
-                                        </>}
-
-                                </div>
                             </> : <></>}
 
                     </Modal.Body>

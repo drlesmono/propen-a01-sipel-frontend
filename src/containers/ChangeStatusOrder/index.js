@@ -3,7 +3,7 @@ import APIConfig from "../../APIConfig";
 import CustomizedTables from "../../components/Table";
 import CustomizedButtons from "../../components/Button";
 import Modal from "../../components/Modal";
-import { Form } from "react-bootstrap";
+import { Form, Button, Card, Table  } from "react-bootstrap";
 import classes from "../LaporanInstalasiMaintenance/styles.module.css";
 import authHeader from "../../services/auth-header";
 
@@ -257,13 +257,11 @@ class ChangeStatusOrder extends Component {
                 return "Order is Closed"
             } else {
                 return(
-                    <CustomizedButtons
-                        variant="contained"
-                        size="small"
-                        color="#FD693E"
+                    <Button
+                        className={classes.button1}
                         onClick={() => this.handleEdit(order, listMaintenance)}>
                         Ubah
-                    </CustomizedButtons>
+                    </Button>
                 );
             }
         } else if (order.projectInstallation === true) {
@@ -272,13 +270,11 @@ class ChangeStatusOrder extends Component {
                 return "Order is Closed"
             } else {
                 return(
-                    <CustomizedButtons
-                        variant="contained"
-                        size="small"
-                        color="#FD693E"
+                    <Button
+                        className={classes.button1}
                         onClick={() => this.handleEdit(order, listMaintenance)}>
                         Ubah
-                    </CustomizedButtons>
+                    </Button>
                 );
             }
         } else if (order.managedService === true) {
@@ -287,13 +283,11 @@ class ChangeStatusOrder extends Component {
                 return "Order is Closed"
             } else {
                 return(
-                    <CustomizedButtons
-                        variant="contained"
-                        size="small"
-                        color="#FD693E"
+                    <Button
+                        className={classes.button1}
                         onClick={() => this.handleEdit(order, listMaintenance)}>
                         Ubah
-                    </CustomizedButtons>
+                    </Button>
                 );
             }
         }
@@ -502,9 +496,9 @@ class ChangeStatusOrder extends Component {
                                     </>: <></>}
                             </table>
                             <div style={{alignItems:'right'}}>
-                                <CustomizedButtons variant="contained" size="medium" color="#FD693E" onClick={this.handleSubmit}>
+                                <Button className={classes.button1} onClick={this.handleSubmit}>
                                     Simpan
-                                </CustomizedButtons>
+                                </Button>
                             </div>
                         </Form></>
                         : <></> }
@@ -519,9 +513,9 @@ class ChangeStatusOrder extends Component {
                             </h3>
                         </div></> : <></>}
                     <div style={{alignItems:'right'}}>
-                        <CustomizedButtons variant="contained" size="medium" color="#FD693E" onClick={this.handleCancel}>
+                        <Button className={classes.button1} onClick={this.handleCancel}>
                             Ok
-                        </CustomizedButtons>
+                        </Button>
                     </div>
                 </Modal>
             </div>

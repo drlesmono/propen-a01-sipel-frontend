@@ -34,15 +34,33 @@ class ReportFinance extends Component {
             orderList:[],
             isPreview: false,
             termList: [],
+            perPage: 20,
+            currentPageNumber: 1,
+            isFiltered: false
         };
         this.handleChangeField = this.handleChangeField.bind(this);
         this.handleFilter = this.handleFilter.bind(this);
         this.handlePreview = this.handlePreview.bind(this);
         this.handleDownload = this.handleDownload.bind(this);
+        this.handlePageClick = this.handlePageClick.bind(this);
     }
 
     componentDidMount() {
         this.loadData();
+    }
+    setPerPage(length){
+        let perPage = 20;
+        const multiple = Math.floor(length / 500);
+        if(multiple === 0){
+            return perPage;
+        }else{
+            return perPage * multiple;
+        }
+    }
+
+    handlePageClick(event){
+        const { id } = event.target;
+        this.setState({ currentPageNumber: Number(id) });
     }
 
     async loadData() {
@@ -59,6 +77,8 @@ class ReportFinance extends Component {
             this.setState({ ordersVerified: orders.data, reports: reports.data, listIr: listIr.data,
                 listMr: listMr.data, listPi: listPi.data, listMs: listMs.data, bastList: bast.data, orderList: order.data,
             termList: listTerm.data});
+            const reportAll = reports.data;
+            this.setState({perPage: this.setPerPage(reportAll.length)})
         } catch (error) {
             this.setState({ isError: true, messageError: "Oops terjadi masalah pada server" });
             console.log(error);
@@ -329,20 +349,20 @@ class ReportFinance extends Component {
         let laporanList = this.state.reports;
         if(value !== null){
             if(value === ""){
-                this.setState({ isFiltered: false });
+                this.setState({ isFiltered: false, currentPageNumber : 1});
             }
             else{
                 laporanList = this.state.reports.filter(laporan => {
                     return(laporan.reportType.toLowerCase().includes(value.toLowerCase()) ||
-                    laporan.reportName.toLowerCase().includes(value.toLowerCase()))
+                        laporan.reportName.toLowerCase().includes(value.toLowerCase()))
                 })
                 this.setState({ isFiltered: true,
-                    reportsFiltered: laporanList
                 });
             }
+            this.setState({reportsFiltered: laporanList})
         }
         else{
-            this.setState({ isFiltered: false });
+            this.setState({ isFiltered: false, currentPageNumber : 1 });
         }
     }
     async handleDownload(laporan){
@@ -594,7 +614,13 @@ class ReportFinance extends Component {
 
     render() {
         const { reports, reportsFiltered, reportTarget, isFiltered, bastList, orderList, isPreview } = this.state;
-        const tableHeaders = ['No.', 'Nomor Laporan', 'Nama Laporan', 'Nomor PO', 'Perusahaan', 'Tanggal dibuat', 'Catatan', 'Aksi'];
+        const { currentPageNumber, perPage} = this.state;
+        const tableHeaders = ['No.', 'Nomor Laporan', 'Nama Laporan', 'Nomor PO', 'Perusahaan', 'Tanggal dibuat', 'Status', 'Aksi'];
+
+        const lastIndex = currentPageNumber * perPage;
+        const firstIndex = lastIndex - perPage;
+        const currentPage = isFiltered ? reportsFiltered.slice(firstIndex, lastIndex) : reports.slice(firstIndex, lastIndex);
+
         let tableRows = [];
 
         let nomor, tipe, status, order, id, bast, mn, ms, pi, bastNum, dateHandover, picName, namaOrder, deskripsi;
@@ -646,8 +672,8 @@ class ReportFinance extends Component {
             }
         }
 
-        if(reports.length !== 0){
-            tableRows = isFiltered ? reportsFiltered.map((report) =>
+        if(currentPage.length !== 0){
+            tableRows = isFiltered ? currentPage.map((report) =>
                     [this.getIsBast(report) === true ? this.getBastNum(report) : this.getReportNum(report), report.reportName, this.getOrderPO(report), this.getOrderOrg(report),
                         this.getDate(report.uploadedDate), this.getNotes(report), this.getIsBast(report) === true?
                         <Table borderless size="sm">
@@ -665,7 +691,7 @@ class ReportFinance extends Component {
                         </Table>
                     ]
                 )
-                : reports.map((report) =>
+                : currentPage.map((report) =>
                     [ this.getIsBast(report) === true ? this.getBastNum(report) : this.getReportNum(report), report.reportName, this.getOrderPO(report), this.getOrderOrg(report),
                         this.getDate(report.uploadedDate), this.getNotes(report), this.getIsBast(report) === true ?
                         <Table borderless size="sm">
@@ -683,6 +709,24 @@ class ReportFinance extends Component {
                         </Table>
                     ]);
         }
+        const pageNumber = [];
+        for(let i = 1; i <= Math.ceil( (isFiltered ? reportsFiltered.length : reports.length) / perPage) ; i++){
+            pageNumber.push(i);
+        }
+
+        const renderPageNumber = pageNumber.map(number => {
+            return(
+                <Button
+                    size="sm"
+                    key={number}
+                    id={number}
+                    onClick={this.handlePageClick}
+                    className={number === currentPageNumber ? classes.button1 : classes.button3}
+                >
+                    {number}
+                </Button>
+            )
+        });
 
         return (
             <div id="content">
@@ -758,9 +802,15 @@ class ReportFinance extends Component {
                                     </tr>
                                 </table>
                             </div>
-                            <div>{ reports.length !== 0 ?
-                                <CustomizedTables headers={tableHeaders} rows={tableRows}/> :
+                            <div>{ currentPage.length !== 0 ?
+                                <div>
+                                    <CustomizedTables headers={tableHeaders} rows={tableRows}/>
+
+                                </div>
+                                :
                                 <p className="text-center" style={{color: "red"}}>Belum terdapat laporan </p>}
+                                <div className={classes.pageNumber} >{renderPageNumber}</div>
+
                             </div>
                         </div>
                     </div>

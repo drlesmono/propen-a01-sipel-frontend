@@ -31,24 +31,43 @@ class OrderAndDoc extends React.Component {
             isFailed: false,
             isSuccess: false,
             messageError: null,
-            ordersFiltered: []
+            ordersFiltered: [],
+            perPage: 20,
+            currentPageNumber: 1,
+
         };
         this.handleLookUpDetail = this.handleLookUpDetail.bind(this);
         this.handleFilter = this.handleFilter.bind(this);
         this.handleAfterError = this.handleAfterError.bind(this);
         this.handleCancel = this.handleCancel.bind(this);
         this.handleCloseNotif = this.handleCloseNotif.bind(this);
- 
+        this.handlePageClick = this.handlePageClick.bind(this);
     }
 
     componentDidMount() {
         this.loadData();
+    }
+    setPerPage(length){
+        let perPage = 20;
+        const multiple = Math.floor(length / 500);
+        if(multiple === 0){
+            return perPage;
+        }else{
+            return perPage * multiple;
+        }
+    }
+
+    handlePageClick(event){
+        const { id } = event.target;
+        this.setState({ currentPageNumber: Number(id) });
     }
 
     async loadData() {
         try {
             const listOrder  = await APIConfig.get("/orderList", { headers: authHeader() });
             this.setState({ orders: listOrder.data });
+            const all = listOrder.data;
+            this.setState({perPage: this.setPerPage(all.length)})
         } catch (error) {
             this.setState({ isError: true });
             alert("Oops terjadi masalah pada server");
@@ -132,13 +151,20 @@ class OrderAndDoc extends React.Component {
             });
             this.setState({ isFiltered : true });
         }else{
-            this.setState({ isFiltered : false });
+            this.setState({ isFiltered : false, currentPageNumber : 1 });
         }
         this.setState({ ordersFiltered : newOrders });
     }
 
+
+
+
     render() {
         const { orders, isError, isFiltered, ordersFiltered } = this.state;
+        const { currentPageNumber, perPage} = this.state;
+        const lastIndex = currentPageNumber * perPage;
+        const firstIndex = lastIndex - perPage;
+        const currentPage = isFiltered ? ordersFiltered.slice(firstIndex, lastIndex) : orders.slice(firstIndex, lastIndex);
 
         const tableHeaders = [
             'No', 
@@ -152,18 +178,36 @@ class OrderAndDoc extends React.Component {
             'Aksi',
         ];
 
-        const tableRows = isFiltered ? ordersFiltered.map((order) => [order.noPO, order.orderName, order.clientName, order.clientOrg,
+        const tableRows = isFiltered ? currentPage.map((order) => [order.noPO, order.orderName, order.clientName, order.clientOrg,
                         this.getDate(order.dateOrder), this.checkTypeOrder(order.projectInstallation, order.managedService), 
                         this.checkStatusOrder(order.verified),
                         <div className="d-flex justify-content-center align-items-center">
                         <Button className={classes.button1} onClick={() => this.handleLookUpDetail(order)}>Lihat Dokumen</Button>
                         </div>])
-                        : orders.map((order) => [order.noPO, order.orderName, order.clientName, order.clientOrg,
+                        : currentPage.map((order) => [order.noPO, order.orderName, order.clientName, order.clientOrg,
                         this.getDate(order.dateOrder), this.checkTypeOrder(order.projectInstallation, order.managedService), 
                         this.checkStatusOrder(order.verified),
                         <div className="d-flex justify-content-center align-items-center">
                         <Button className={classes.button1} onClick={() => this.handleLookUpDetail(order)}>Lihat Dokumen</Button>
                         </div>]);
+        const pageNumber = [];
+        for(let i = 1; i <= Math.ceil( (isFiltered ? ordersFiltered.length : orders.length) / perPage) ; i++){
+            pageNumber.push(i);
+        }
+
+        const renderPageNumber = pageNumber.map(number => {
+            return(
+                <Button
+                    size="sm"
+                    key={number}
+                    id={number}
+                    onClick={this.handlePageClick}
+                    className={number === currentPageNumber ? classes.button1 : classes.button3}
+                >
+                    {number}
+                </Button>
+            )
+        });
 
         return (
             <div className={classes.container}>
@@ -176,6 +220,7 @@ class OrderAndDoc extends React.Component {
             </div>
             <br></br>
             <CustomizedTables headers={tableHeaders} rows={tableRows} />
+            <div className={classes.pageNumber} >{renderPageNumber}</div>
 
             <Modal show={isError} dialogClassName="modal-90w" aria-labelledby="contained-modal-title-vcenter">
                 <Modal.Header>

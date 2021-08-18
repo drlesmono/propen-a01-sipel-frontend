@@ -8,7 +8,7 @@ const ManagedService = (props) => {
         idOrderMs,
         actualStart,
         actualEnd,
-        activated
+        status
     } = props;
     return (
         <div>
@@ -36,7 +36,7 @@ const ManagedService = (props) => {
             <div className="row">
                 <div className="col-sm-6">
                     <div className="form-group">
-                        <p style={{color: "black"}}>{`Status: ${activated}`}</p>
+                        <p style={{color: "black"}}>{`Status: ${status}`}</p>
                     </div>
                 </div>
             </div>

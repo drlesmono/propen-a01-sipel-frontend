@@ -82,7 +82,7 @@ class CreateOrder extends React.Component {
             const listOrder  = await APIConfig.get("/orderList", { headers: authHeader() });
             const listOrderMS  = await APIConfig.get("/orders/ms", { headers: authHeader() });
             this.setState({ orders: listOrder.data });
-            this.setState({ orderTarget: this.state.orders[this.state.orders.length - 1] });
+            this.setState({ orderTarget: this.state.orders[0] });
             this.setState({ ordersMS: listOrderMS.data });
             this.setState({ orderMSTarget: this.state.ordersMS[this.state.ordersMS.length - 1] });
             //console.log(this.state.orderTarget);

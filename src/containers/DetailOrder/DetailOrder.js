@@ -69,6 +69,8 @@ class DetailOrder extends React.Component {
             serviceTargetToDelete: null,
             isCancelChangeService: false,
             isCancelToAddService: false,
+            statusPI: "",
+            statusMS: "",
         }
         this.handleLookDetail = this.handleLookDetail.bind(this);
         this.handleLookService = this.handleLookService.bind(this);
@@ -217,6 +219,7 @@ class DetailOrder extends React.Component {
                 deadline: ordPI.deadline,
                 close: ordPI.close,
                 percentage: ordPI.percentage,
+                statusPI: ordPI.status,
             });
         }
         if (isMS === true) {
@@ -226,6 +229,7 @@ class DetailOrder extends React.Component {
                 actualStart: ordMS.actualStart,
                 actualEnd: ordMS.actualEnd,
                 activated: ordMS.activated,
+                statusMS: ordMS.status,
             });
             this.handleLookService();
         }
@@ -444,8 +448,8 @@ class DetailOrder extends React.Component {
     }
 
     getUrl(document){
-        // const BASE_URL = "https://propen-a01-sipel.herokuapp.com/order/document/";
-		const BASE_URL = "https://propen-a01-sipel.herokuapp.com/order/document/";
+        const BASE_URL = "https://propen-a01-sipel.herokuapp.com/order/document/";
+		// const BASE_URL = "http://localhost:2020/order/document/";
         if(document.fileType === "application/pdf"){
             return BASE_URL+document.docName+"/preview";
         }else{
@@ -572,7 +576,7 @@ class DetailOrder extends React.Component {
                                 startPI={this.getDate(this.state.startPI)}
                                 deadline={this.getDate(this.state.deadline)}
                                 percentage={this.state.percentage}
-                                close={this.checkClosedPI(this.state.close)} /><br></br>
+                                status={this.state.statusPI} /><br></br>
                             </>
                             : 
                                 <></>
@@ -592,7 +596,7 @@ class DetailOrder extends React.Component {
                                 idOrderMs={this.state.idOrderMs}
                                 actualStart={this.getDate(this.state.actualStart)}
                                 actualEnd={this.getDate(this.state.actualEnd)}
-                                activated={this.checkActivatedMS(this.state.activated)}/>
+                                status={this.state.statusMS} />
                             <br></br>
                             <div className="row">
                             <div className="col-sm-6">

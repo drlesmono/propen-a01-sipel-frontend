@@ -8,7 +8,7 @@ const ProjectInstallation = (props) => {
         startPI, 
         deadline,
         percentage,
-        close } = props;
+        status } = props;
     return (
         <div>
             <div className="row">
@@ -42,7 +42,7 @@ const ProjectInstallation = (props) => {
             <div className="row">
                 <div className="col-sm-6">
                     <div className="form-group">
-                        <p style={{color: "black"}}>{`Status: ${close}`}</p>
+                        <p style={{color: "black"}}>{`Status: ${status}`}</p>
                     </div>
                 </div>
             </div>

@@ -72,7 +72,8 @@ class LaporanInstalasiMaintenance extends Component {
             const listMs = await APIConfig.get("/orders/ms", { headers: authHeader() });
 
             this.setState({ listIr: listIr.data, listMr: listMr.data, listPi: listPi.data, listMs: listMs.data});
-            const ordersStatusFiltered = orders.data.filter(order => this.checkStatusOrder(order)===true);
+
+            const ordersStatusFiltered = orders.data.filter(order => this.checkStatusOrder(order) === true);
             const reportsNotSigned = reports.data.filter(report => report.signed === false);
             this.setState({ ordersVerified: ordersStatusFiltered, reports: reportsNotSigned,
                 perPage: this.setPerPage(reportsNotSigned.length)});
@@ -276,7 +277,6 @@ class LaporanInstalasiMaintenance extends Component {
     // Mengambil order jenis project installation yang dipilih
     getPi(idOrder){
         let pi = this.state.listPi.filter(pi => pi.idOrder.idOrder === idOrder );
-
         if (pi.length !== 0) {
             return pi[0];
         }
@@ -286,7 +286,6 @@ class LaporanInstalasiMaintenance extends Component {
     // Mengambil order jenis managed services yang dipilih
     getMs(idOrder){
         let ms = this.state.listMs.filter(ms => ms.idOrder.idOrder === idOrder);
-
         if (ms.length !== 0) {
             return ms[0];
         }
@@ -485,7 +484,10 @@ class LaporanInstalasiMaintenance extends Component {
         const lastIndex = currentPageNumber * perPage;
         const firstIndex = lastIndex - perPage;
         const currentPage = isFiltered ? reportsFiltered.slice(firstIndex, lastIndex) : reports.slice(firstIndex, lastIndex);
-
+        console.log(reports)
+        console.log(currentPageNumber)
+        console.log(perPage)
+        console.log(currentPage)
         // Judul untuk setiap kolom di tabel daftar laporan
         const tableHeaders = ['No.', 'Nomor Laporan', 'Nama Laporan', 'Nomor PO', 'Perusahaan', 'Tanggal dibuat', 'Catatan', 'Aksi'];
         let tableRows = [];

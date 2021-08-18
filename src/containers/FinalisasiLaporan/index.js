@@ -45,6 +45,8 @@ class FinalisasiLaporan extends Component {
             notes: null,
             isValid: true,
             messageError: null,
+            perPage: 20,
+            currentPageNumber: 1,
             reportNum: null
         };
         this.handleChangeField = this.handleChangeField.bind(this);
@@ -61,6 +63,7 @@ class FinalisasiLaporan extends Component {
         this.handleValidationStage2 = this.handleValidationStage2.bind(this);
         this.handleValidationMrUpload = this.handleValidationMrUpload.bind(this);
         this.handleFinalize = this.handleFinalize.bind(this);
+        this.handlePageClick = this.handlePageClick.bind(this);
     }
 
     componentDidMount() {
@@ -78,15 +81,25 @@ class FinalisasiLaporan extends Component {
             const listMs = await APIConfig.get("/orders/ms", { headers: authHeader() });
             const listBast = await APIConfig.get("/laporan/bast", { headers: authHeader() });
             const listTerm = await APIConfig.get("/orders/ms/perc", { headers: authHeader() });
-            console.log(listBast.data)
-            console.log(listIr.data)
-            console.log(listMs.data)
+            console.log(reports)
             this.setState({ ordersVerified: orders.data, reports: reports.data, listIr: listIr.data,
                 listMr: listMr.data, listPi: listPi.data, listMs: listMs.data, listBast: listBast.data,
-                termList: listTerm.data, orderList: order.data});
+                termList: listTerm.data, orderList: order.data, perPage: this.setPerPage(reports.data.length)});
         } catch (error) {
             this.setState({ isError: true, messageError: "Oops terjadi masalah pada server" });
             console.log(error);
+        }
+    }
+
+    // Mengatur maksimal list yang ditampilkan
+    setPerPage(length){
+        console.log(length)
+        let perPage = 20;
+        const multiple = Math.floor(length / 500);
+        if(multiple === 0){
+            return perPage;
+        }else{
+            return perPage * multiple;
         }
     }
 
@@ -690,9 +703,11 @@ class FinalisasiLaporan extends Component {
         return "-";
     }
 
+    // Menyaring list report sesuai dengan data yang dimasukkan pada form search
     handleFilter(event){
         let newReportList = this.state.reports;
         const { value } = event.target;
+
         if( value !== "" ){
             newReportList = this.state.reports.filter(report => {
                 return (report.reportName.toLowerCase().includes(value.toLowerCase()) ||
@@ -700,9 +715,15 @@ class FinalisasiLaporan extends Component {
             });
             this.setState({ isFiltered : true });
         }else{
-            this.setState({ isFiltered : false });
+            this.setState({ isFiltered : false, currentPageNumber : 1 });
         }
         this.setState({ reportsFiltered : newReportList });
+    }
+
+    // Menghandle page number yang di click
+    handlePageClick(event){
+        const { id } = event.target;
+        this.setState({ currentPageNumber: Number(id) });
     }
 
 
@@ -725,8 +746,16 @@ class FinalisasiLaporan extends Component {
             reportTarget,
             messageError,
             isFiltered,
-            reportNum
+            reportNum,
+            currentPageNumber,
+            perPage
         } = this.state;
+        console.log(this.state.perPage)
+        const lastIndex = currentPageNumber * perPage;
+        const firstIndex = lastIndex - perPage;
+        const currentPage = isFiltered ? reportsFiltered.slice(firstIndex, lastIndex) : reports.slice(firstIndex, lastIndex);
+        console.log(reports)
+        console.log(currentPage)
         const tableHeaders = [
             'No.',
             'Nomor Dokumen',
@@ -738,9 +767,9 @@ class FinalisasiLaporan extends Component {
         ];
         let tableRows = [];
 
-        if(reports.length !== 0){
+        if(currentPage.length !== 0){
             // console.log(reports)
-            tableRows = isFiltered ? reportsFiltered.map((report) =>
+            tableRows = isFiltered ? currentPage.map((report) =>
                     [
                         this.getReportNum(report),
                         report.reportName,
@@ -756,7 +785,7 @@ class FinalisasiLaporan extends Component {
                             </Button>
                         </div>
                     ])
-                : reports.map((report) =>
+                : currentPage.map((report) =>
                     [
                         this.getReportNum(report),
                         report.reportName,
@@ -774,17 +803,37 @@ class FinalisasiLaporan extends Component {
                     ]);
         }
 
+        const pageNumber = [];
+        for(let i = 1; i <= Math.ceil( (isFiltered ? reportsFiltered.length : reports.length) / perPage) ; i++){
+            pageNumber.push(i);
+        }
+
+        const renderPageNumber = pageNumber.map(number => {
+            return(
+                <Button
+                    size="sm"
+                    key={number}
+                    id={number}
+                    onClick={this.handlePageClick}
+                    className={number === currentPageNumber ? classes.button1 : classes.button3}
+                >
+                    {number}
+                </Button>
+            )
+        });
+
         return (
             <div className={classes.container}>
                 <div><h1 className="text-center">Daftar Laporan</h1></div>
                 <div className="d-flex justify-content-between" style={{padding: 5}}>
                     <div className={classes.search}><Form.Control type="text" size="sm" placeholder="Cari..." onChange={this.handleFilter}/></div>
                 </div>
-                <div>{ reports.length !== 0 ?
-                    <CustomizedTables headers={tableHeaders} rows={tableRows}/>
-                    :
-                    <p className="text-center" style={{color: "red"}}>Belum terdapat laporan </p>}
-                </div>
+
+                <div>{ currentPage.length !== 0 ? <CustomizedTables headers={tableHeaders} rows={tableRows}/> : <p className="text-center" style={{color: "red"}}>Belum terdapat laporan </p>}</div>
+
+                {/* Page Number */}
+                <div className={classes.pageNumber} >{renderPageNumber}</div>
+
                 <Modal
                     show={isReadyToFinalize}
                     dialogClassName="modal-90w"

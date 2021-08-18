@@ -1,4 +1,5 @@
 .search{
+    margin-top: 4%;
     width: 20%;
 }
 
@@ -11,7 +12,7 @@
 .button1:hover{
     background-color: #FD693E !important;
     outline-color:  #FD693E !important;
-    border-color:  #FD693E !important;
+    border-color:  #FD693E!important;
 }
 
 .button1:focus{
@@ -92,7 +93,9 @@
 }
 
 .containerButtonUpload{
-    width: 20% !important;
+    margin-right: 50% !important;
+    margin-bottom: 0% !important;
+    display: flex;
 }
 
 /* .file::after{
@@ -106,7 +109,10 @@
     background-color: #F7873F !important;
     outline-color:  #F7873F !important;
     border-color:  #F7873F !important;
-    color: white;
+    color: white !important;
+    height: min-content !important;
+    margin: 0% !important;
+    padding: 0% !important;
 }
 
 .closeButton{
@@ -139,4 +145,11 @@
 
 .notes{
     height: 200% !important;
+}
+
+.pageNumber{
+    margin-top: 2%;
+    justify-content: center;
+    align-content: center;
+    display: flex;
 }

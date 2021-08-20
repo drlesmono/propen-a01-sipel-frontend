@@ -44,6 +44,7 @@ import DetailUnverifiedOrder from "./containers/DetailUnverifiedOrder/DetailUnve
 import UpdateSequence from "./containers/UpdateSequence"
 import OrderAndDoc from "./containers/OrderAndDoc/OrderAndDoc";
 import DetailOrderAndDoc from "./containers/OrderAndDoc/DetailOrderAndDoc";
+import ChangeStatusMaintenance from "./containers/ChangeStatusMaintenance";
 
 
 class App extends Component {
@@ -69,7 +70,8 @@ class App extends Component {
       showChangeStatusOrder: false,
       showFinalisasiLaporan:false,
       showOrderStatusVerification: false,
-      showOrderDocFinance: false
+      showOrderDocFinance: false,
+      showChangeStatusMaintenance: false
     };
   }
 
@@ -101,7 +103,8 @@ class App extends Component {
         showOrderStatusVerification: user.roles.includes("ROLE_ADMIN"),
         showFinalisasiLaporan: user.roles.includes("ROLE_ADMIN"),
         showUpdateSequence: user.roles.includes("ROLE_ADMIN"),
-        showOrderDocFinance: user.roles.includes("ROLE_FINANCE")
+        showOrderDocFinance: user.roles.includes("ROLE_FINANCE"),
+        showChangeStatusMaintenance: user.roles.includes("ROLE_ADMIN")
       });
     }
   }
@@ -113,7 +116,8 @@ class App extends Component {
 
   render() {
     const { currentUser, showPenjadwalanMaintenance, showPeriodeKontrak, showOrderVerification, showPenugasanEngineer, showMengelolaLaporan, showHalamanAdmin, showDeliveryProgress, 
-    showLaporanAdmin, showOrderStatusVerification, showLaporanFinance, showLaporanHead, showBast, showProgressOrder, showStatusPersetujuanLaporan, showInputDataOrderAdmin, showInputDataOrderDataEntry, showFinalisasiLaporan,  showChangeStatusOrder, showUpdateSequence, showOrderDocFinance} = this.state;
+    showLaporanAdmin, showOrderStatusVerification, showLaporanFinance, showLaporanHead, showBast, showProgressOrder, showStatusPersetujuanLaporan, showInputDataOrderAdmin, showInputDataOrderDataEntry,
+      showFinalisasiLaporan,  showChangeStatusOrder, showUpdateSequence, showOrderDocFinance, showChangeStatusMaintenance} = this.state;
 
     return (
       <div>
@@ -130,7 +134,8 @@ class App extends Component {
                   {(showInputDataOrderAdmin || showInputDataOrderDataEntry) && (<Nav.Link href="/order/order" style={{color: "black"}} className="pl-5 pr-5">Input Data Order</Nav.Link>)}
                   {showOrderStatusVerification && (<Nav.Link href="/order/status/verification" style={{color: "black"}} className="pl-5 pr-5">Verifikasi Order</Nav.Link>)}
                   {showProgressOrder && (<Nav.Link href="/order/progress" style={{color: "black"}} className="pl-5 pr-5">Progress Delivery</Nav.Link>)}
-                  {showChangeStatusOrder && (<Nav.Link href="/order/ubahStatus" style={{color: "black"}} className="pl-5 pr-5">Ubah Status</Nav.Link>)}
+                  {showChangeStatusOrder && (<Nav.Link href="/order/ubahStatusOrder" style={{color: "black"}} className="pl-5 pr-5">Ubah Status Order</Nav.Link>)}
+                  {showChangeStatusOrder && (<Nav.Link href="/order/ubahStatusMaintenance" style={{color: "black"}} className="pl-5 pr-5">Ubah Status Maintenance</Nav.Link>)}
                   </div>
               </NavDropdown> : <></>}
               {currentUser && (showPenugasanEngineer || showDeliveryProgress || showPeriodeKontrak || showPenjadwalanMaintenance) ?
@@ -234,8 +239,9 @@ class App extends Component {
               <Route path="/order/unggah/:id" component={UnggahDokumenOrder} />
               <Route path="/dashboard" component={Dashboard} />
               <Route path="/laporan/finalisasi" component={FinalisasiLaporan} />
-              <Route path="/order/ubahStatus" component={ChangeStatusOrder} />
+              <Route path="/order/ubahStatusOrder" component={ChangeStatusOrder} />
               <Route path="/order/changesequence" component={UpdateSequence} />
+              <Route path="/order/ubahStatusMaintenance" component={ChangeStatusMaintenance} />
               <Route component={PageNotFound}/>
             </Switch>
           </Router>

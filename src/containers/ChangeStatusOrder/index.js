@@ -98,21 +98,6 @@ class ChangeStatusOrder extends Component {
             if(this.state.orderTarget.managedService === true){
                 const ms = this.getMs(this.state.orderTarget.idOrder);
                 if (this.state.statusMs === "Closed"){
-                    let listMaintenance = ms.listMaintenance;
-                    for(let i=0; i<listMaintenance.length; i++){
-                        let maintenance = listMaintenance[i];
-                        let booleanStatus = false;
-                        if (this.state.statusMaintenances[i] === "Maintained"){
-                            booleanStatus = true;
-                        }
-                        const dataMaintenance = {
-                            idMaintenance: maintenance.idMaintenance,
-                            dateMn: maintenance.dateMn,
-                            maintained: booleanStatus
-                        }
-                        await APIConfig.put(`/order/${this.state.orderTarget.idOrder}/ms/${ms.idOrderMs}/maintenance/${maintenance.idMaintenance}/updateStatus`, dataMaintenance, { headers: authHeader() });
-                    }
-                    // console.log(ms.listMaintenance);
                     const msUpdated = await APIConfig.get(`/order/${this.state.orderTarget.idOrder}/ms/${ms.idOrderMs}`, { headers: authHeader() });
                     // console.log(msUpdated.data.listMaintenance);
                     let statusAllMaintenance = true;
@@ -144,21 +129,6 @@ class ChangeStatusOrder extends Component {
                         this.handleErrorMsClosed(event);
                     }
                 } else {
-                    let listMaintenance = ms.listMaintenance;
-                    for(let i=0; i<listMaintenance.length; i++){
-                        let maintenance = listMaintenance[i];
-                        let booleanStatus = false;
-                        if (this.state.statusMaintenances[i] === "Maintained"){
-                            booleanStatus = true;
-                        }
-                        const dataMaintenance = {
-                            idMaintenance: maintenance.idMaintenance,
-                            dateMn: maintenance.dateMn,
-                            maintained: booleanStatus
-                        }
-                        await APIConfig.put(`/order/${this.state.orderTarget.idOrder}/ms/${ms.idOrderMs}/maintenance/${maintenance.idMaintenance}/updateStatus`, dataMaintenance, { headers: authHeader() } );
-                    }
-
                     const dataMs = {
                         idOrderMs: ms.idOrderMs,
                         idUserPic: ms.picEngineerMs,
@@ -384,39 +354,14 @@ class ChangeStatusOrder extends Component {
             statusPi,
         } = this.state;
         let listMaintenance;
-        const tableHeaders = ['No.', 'Id Order', 'Nomor PO', 'Perusahaan', 'Tipe', 'Status','Aksi'];
+        const tableHeaders = ['No.', 'Nomor PO', 'Perusahaan', 'Tipe', 'Status','Aksi'];
         const tableRows = ordersVerified.map((order) => [
-            order.idOrder,
             order.noPO,
             order.clientName,
             this.checkTypeOrder(order.projectInstallation, order.managedService),
             this.checkStatus(order),
             this.checkClosedForRender(order, listMaintenance)
         ]);
-        const tableMaintenanceHeaders = ['No.', 'Tanggal Maintenance', 'Status'];
-        let tableMaintenanceRows;
-
-
-        if(orderTarget !== null){
-            if(orderTarget.projectInstallation === true){}
-            if(orderTarget.managedService === true){
-                let ms = this.getMs(orderTarget.idOrder);
-                tableMaintenanceRows = ms.listMaintenance.map((maintenance, index) => [
-                    this.getDate(maintenance.dateMn),
-                    <Form.Control
-                        as="select"
-                        size="lg"
-                        key={index}
-                        name={"statusMaintenance" + index}
-                        value={ statusMaintenances[index] }
-                        onChange={this.handleChangeField}>
-                        <option value="Not Maintained">Not Maintained</option>
-                        <option value="Maintained">Maintained</option>
-                    </Form.Control>
-                ]);
-                listMaintenance = ms.listMaintenance.map((maintenance) => maintenance.idMaintenance);
-            }
-        }
 
         return (
             <div>
@@ -467,15 +412,6 @@ class ChangeStatusOrder extends Component {
                                     <><tr>
                                         <td style={{fontWeight: 'bold'}}>Managed Service</td>
                                     </tr>
-                                        <tr>
-                                            <td>Maintenances</td>
-                                            <td>
-                                                <><CustomizedTables
-                                                    headers={tableMaintenanceHeaders}
-                                                    rows={tableMaintenanceRows}>
-                                                </CustomizedTables></>
-                                            </td>
-                                        </tr>
                                         <tr>
                                             <td>Status</td>
                                             <td><Form.Control

@@ -56,9 +56,10 @@ class ChangeStatusOrder extends Component {
 
     async handleSubmit(event) {
         event.preventDefault();
+        this.setState({isErrorMsClosed: false, isErrorPiClosed: false});
         // console.log(this.state.orderTarget);
         try {
-            if(this.state.orderTarget.projectInstallation === true){
+            if(this.state.orderTarget.projectInstallation === true && this.state.orderTarget.managedService === false){
                 // console.log(this.state.orderTarget.idOrderPi);
                 const pi = this.getPi(this.state.orderTarget.idOrder);
                 if (this.state.statusPi === "Closed"){
@@ -95,7 +96,7 @@ class ChangeStatusOrder extends Component {
                     this.setState({isEdit: false});
                 }
             }
-            if(this.state.orderTarget.managedService === true){
+            if(this.state.orderTarget.managedService === true && this.state.orderTarget.projectInstallation === false){
                 const ms = this.getMs(this.state.orderTarget.idOrder);
                 if (this.state.statusMs === "Closed"){
                     const msUpdated = await APIConfig.get(`/order/${this.state.orderTarget.idOrder}/ms/${ms.idOrderMs}`, { headers: authHeader() });
@@ -145,6 +146,160 @@ class ChangeStatusOrder extends Component {
                     this.setState({isEdit: false});
                 }
 
+            }
+            if(this.state.orderTarget.managedService === true && this.state.orderTarget.projectInstallation === true){
+                const pi = this.getPi(this.state.orderTarget.idOrder);
+                const ms = this.getMs(this.state.orderTarget.idOrder);
+                if (this.state.statusPi === "Closed"){
+                    if (pi.percentage === 100){
+                        const dataPi = {
+                            idOrderPi: pi.idOrderPi,
+                            idUserEng: pi.picEngineerPi,
+                            percentage: pi.percentage,
+                            startPI: pi.startPI,
+                            deadline: pi.deadline,
+                            dateClosedPI: pi.dateClosedPI,
+                            status: this.state.statusPi
+                        }
+                        // console.log(dataPi);
+                        await APIConfig.put(`/order/${this.state.orderTarget.idOrder}/pi/${pi.idOrderPi}/updateStatus`, dataPi, { headers: authHeader() });
+                        if (this.state.statusMs !== "Closed") {
+                            const dataMs = {
+                                idOrderMs: ms.idOrderMs,
+                                idUserPic: ms.picEngineerMs,
+                                actualStart: ms.actualStart,
+                                actualEnd: ms.actualEnd,
+                                activated: ms.activated,
+                                timeRemaining: ms.timeRemaining,
+                                dateClosedMS: ms.dateClosedMS,
+                                status: this.state.statusMs
+                            }
+                            // console.log(dataMs);
+                            await APIConfig.put(`/order/${this.state.orderTarget.idOrder}/ms/${ms.idOrderMs}/updateStatus`, dataMs,{ headers: authHeader() });
+                            this.handleSubmitted(event, this.state.orderTarget)
+                            this.setState({isEdit: false});
+                        } else {
+                            console.log(ms.idOrderMs)
+                            let statusAllMaintenance = true;
+                            let listMaintenanceChecked = ms.listMaintenance;
+                            for(let i=0; i<listMaintenanceChecked.length; i++){
+                                let maintenanceCheck = listMaintenanceChecked[i];
+                                if (maintenanceCheck.maintained === false){
+                                    statusAllMaintenance = false;
+                                }
+                            }
+                            console.log(statusAllMaintenance)
+                            if (statusAllMaintenance === true){
+                                const dataMs = {
+                                    idOrderMs: ms.idOrderMs,
+                                    idUserPic: ms.picEngineerMs,
+                                    actualStart: ms.actualStart,
+                                    actualEnd: ms.actualEnd,
+                                    activated: ms.activated,
+                                    timeRemaining: ms.timeRemaining,
+                                    dateClosedMS: ms.dateClosedMS,
+                                    status: this.state.statusMs
+                                }
+                                // console.log(dataMs);
+                                await APIConfig.put(`/order/${this.state.orderTarget.idOrder}/ms/${ms.idOrderMs}/updateStatus`, dataMs, { headers: authHeader() });
+                                this.handleSubmitted(event, this.state.orderTarget)
+                                this.setState({isEdit: false});
+                            } else {
+                                this.handleErrorMsClosed(event);
+                            }
+                        }
+                    } else {
+                        this.handleErrorPiClosed(event);
+                    }
+                }
+                if (this.state.statusMs === "Closed"){
+                    const msUpdated = await APIConfig.get(`/order/${this.state.orderTarget.idOrder}/ms/${ms.idOrderMs}`, { headers: authHeader() });
+                    // console.log(msUpdated.data.listMaintenance);
+                    let statusAllMaintenance = true;
+                    let listMaintenanceChecked = msUpdated.data.listMaintenance;
+                    for(let i=0; i<listMaintenanceChecked.length; i++){
+                        let maintenanceCheck = listMaintenanceChecked[i];
+                        if (maintenanceCheck.maintained === false){
+                            statusAllMaintenance = false;
+                        }
+                    }
+                    if (statusAllMaintenance === true) {
+                        const dataMs = {
+                            idOrderMs: ms.idOrderMs,
+                            idUserPic: ms.picEngineerMs,
+                            actualStart: ms.actualStart,
+                            actualEnd: ms.actualEnd,
+                            activated: ms.activated,
+                            timeRemaining: ms.timeRemaining,
+                            dateClosedMS: ms.dateClosedMS,
+                            status: this.state.statusMs
+                        }
+                        // console.log(dataMs);
+                        await APIConfig.put(`/order/${this.state.orderTarget.idOrder}/ms/${ms.idOrderMs}/updateStatus`, dataMs, { headers: authHeader() });
+                        if (this.state.statusPi !== "Closed") {
+                            const dataPi = {
+                                idOrderPi: pi.idOrderPi,
+                                idUserEng: pi.picEngineerPi,
+                                percentage: pi.percentage,
+                                startPI: pi.startPI,
+                                deadline: pi.deadline,
+                                dateClosedPI: pi.dateClosedPI,
+                                status: this.state.statusPi
+                            }
+                            // console.log(dataPi);
+                            await APIConfig.put(`/order/${this.state.orderTarget.idOrder}/pi/${pi.idOrderPi}/updateStatus`, dataPi, { headers: authHeader() });
+                            this.handleSubmitted(event, this.state.orderTarget)
+                            this.setState({isEdit: false});
+                        } else {
+                            if (pi.percentage === 100){
+                                const dataPi = {
+                                    idOrderPi: pi.idOrderPi,
+                                    idUserEng: pi.picEngineerPi,
+                                    percentage: pi.percentage,
+                                    startPI: pi.startPI,
+                                    deadline: pi.deadline,
+                                    dateClosedPI: pi.dateClosedPI,
+                                    status: this.state.statusPi
+                                }
+                                // console.log(dataPi);
+                                await APIConfig.put(`/order/${this.state.orderTarget.idOrder}/pi/${pi.idOrderPi}/updateStatus`, dataPi, { headers: authHeader() });
+                                this.handleSubmitted(event, this.state.orderTarget)
+                                this.setState({isEdit: false});
+                            } else {
+                                this.handleErrorPiClosed(event)
+                            }
+                        }
+                    } else {
+                        this.handleErrorMsClosed(event);
+                    }
+                }
+                if (this.state.statusMs !== "Closed" && this.state.statusPi !== "Closed" ) {
+                    const dataPi = {
+                        idOrderPi: pi.idOrderPi,
+                        idUserEng: pi.picEngineerPi,
+                        percentage: pi.percentage,
+                        startPI: pi.startPI,
+                        deadline: pi.deadline,
+                        dateClosedPI: pi.dateClosedPI,
+                        status: this.state.statusPi
+                    }
+                    const dataMs = {
+                        idOrderMs: ms.idOrderMs,
+                        idUserPic: ms.picEngineerMs,
+                        actualStart: ms.actualStart,
+                        actualEnd: ms.actualEnd,
+                        activated: ms.activated,
+                        timeRemaining: ms.timeRemaining,
+                        dateClosedMS: ms.dateClosedMS,
+                        status: this.state.statusMs
+                    }
+                    // console.log(dataPi);
+                    await APIConfig.put(`/order/${this.state.orderTarget.idOrder}/pi/${pi.idOrderPi}/updateStatus`, dataPi, { headers: authHeader() });
+                    // console.log(dataMs);
+                    await APIConfig.put(`/order/${this.state.orderTarget.idOrder}/ms/${ms.idOrderMs}/updateStatus`, dataMs,{ headers: authHeader() });
+                    this.handleSubmitted(event, this.state.orderTarget)
+                    this.setState({isEdit: false});
+                }
             }
             await this.loadData()
 
@@ -210,8 +365,28 @@ class ChangeStatusOrder extends Component {
                 return "Inactive";
             } else { return pi.status;}
 
+        } else if (order.managedService === true){
+            let ms = this.getMs(order.idOrder)
+            if (ms.status === null){
+                return "Inactive";
+            } else { return ms.status;}
         }
-        else if (order.managedService === true){
+    }
+
+    checkStatusPi(order){
+        if (order.projectInstallation === true){
+            let pi = this.getPi(order.idOrder)
+            // console.log(order)
+            // console.log(pi)
+            if (pi.status === null){
+                return "Inactive";
+            } else { return pi.status;}
+
+        }
+    }
+
+    checkStatusMs(order){
+        if (order.managedService === true){
             let ms = this.getMs(order.idOrder)
             if (ms.status === null){
                 return "Inactive";
@@ -385,7 +560,7 @@ class ChangeStatusOrder extends Component {
                                     <td>Perusahaan</td>
                                     <td>: {orderTarget.clientOrg}</td>
                                 </tr>
-                                { orderTarget.projectInstallation && this.checkStatus(orderTarget) !== "Closed"?
+                                { orderTarget.projectInstallation && this.checkStatusPi(orderTarget) !== "Closed"?
                                     <><tr>
                                         <td style={{fontWeight: 'bold'}}>Project Installation</td>
                                     </tr>
@@ -408,7 +583,7 @@ class ChangeStatusOrder extends Component {
                                                 <td style={{fontWeight: 'bold', color: "#fd693e"}}>Progress order belum 100%</td>
                                             </tr></> : <></>}
                                     </> : <></>}
-                                { orderTarget.managedService && this.checkStatus(orderTarget) !== "Closed"?
+                                { orderTarget.managedService && this.checkStatusMs(orderTarget) !== "Closed"?
                                     <><tr>
                                         <td style={{fontWeight: 'bold'}}>Managed Service</td>
                                     </tr>

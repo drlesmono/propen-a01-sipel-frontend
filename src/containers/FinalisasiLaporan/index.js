@@ -260,7 +260,7 @@ class FinalisasiLaporan extends Component {
             if (bast !== null){
                 if (bast.idOrderPi !== null){
                     const idPi = bast.idOrderPi;
-                    return this.getPi(idPi);
+                    return this.getPiFromIdOrderPi(idPi).idOrder;
                 }
                 if (bast.idMaintenance !== null){
                     const maintenanceTarget = bast.idMaintenance;
@@ -284,6 +284,15 @@ class FinalisasiLaporan extends Component {
     // Mengambil order jenis project installation yang dipilih
     getPi(idOrder){
         let pi = this.state.listPi.filter(pi => pi.idOrder.idOrder === idOrder );
+
+        if (pi.length !== 0) {
+            return pi[0];
+        }
+        return null;
+    }
+
+    getPiFromIdOrderPi(idOrderPi){
+        let pi = this.state.listPi.filter(pi => pi.idOrderPi === idOrderPi );
 
         if (pi.length !== 0) {
             return pi[0];
@@ -371,6 +380,7 @@ class FinalisasiLaporan extends Component {
             listMaintenance: [],
             isInstallationReport: false,
             isMaintenanceReport: false,
+            isBastReport: false,
             isMrUploaded: false,
             isReadyToFinalize: false,
             isUpload: false,
@@ -750,12 +760,10 @@ class FinalisasiLaporan extends Component {
             currentPageNumber,
             perPage
         } = this.state;
-        console.log(this.state.perPage)
         const lastIndex = currentPageNumber * perPage;
         const firstIndex = lastIndex - perPage;
         const currentPage = isFiltered ? reportsFiltered.slice(firstIndex, lastIndex) : reports.slice(firstIndex, lastIndex);
-        console.log(reports)
-        console.log(currentPage)
+
         const tableHeaders = [
             'No.',
             'Nomor Dokumen',

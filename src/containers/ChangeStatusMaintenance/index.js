@@ -113,10 +113,16 @@ class ChangeStatusMaintenance extends Component {
 
     // Mengambil order jenis managed services yang dipilih
     getMs(idMaintenance){
-        let ms = this.state.listMs.filter(ms => ms.listMaintenance.filter(maintenance => maintenance.idMaintenance === idMaintenance));
-
-        if (ms.length !== 0) {
-            return ms[0];
+        console.log(this.state.listMs)
+        let listMs = this.state.listMs;
+        let listMaintenance;
+        for (let i = 0; i < listMs.length; i++){
+            listMaintenance = listMs[i].listMaintenance;
+            for (let j = 0; j < listMaintenance.length; j++) {
+                if (listMaintenance[j].idMaintenance === idMaintenance){
+                    return listMs[i];
+                }
+            }
         }
         return null;
     }

@@ -495,9 +495,13 @@ class LaporanInstalasiMaintenance extends Component {
         // Isi tabel daftar laporan yang disesuaikan dengan yang dicari
         if(currentPage.length !== 0){
             tableRows = currentPage.map((report) =>
-                [ this.getReportNum(report), report.reportName, this.getOrder(report) === null? null : this.getOrder(report).noPO,
+                [
+                    this.getReportNum(report),
+                    report.reportName,
+                    this.getOrder(report) === null? null : this.getOrder(report).noPO,
                     this.getOrder(report) === null? null : this.getOrder(report).clientOrg,
-                    this.getDate(report.uploadedDate), this.getNotes(report),
+                    this.getDate(report.uploadedDate),
+                    this.getNotes(report),
                     <Table borderless size="sm">
                         <tr>
                             <td><Button className={classes.button2} onClick={() => this.handleConfirmDelete(report)}>hapus</Button></td>

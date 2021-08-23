@@ -190,8 +190,6 @@ class ChangeStatusMaintenance extends Component {
 
     }
 
-
-
     handleCancel(event) {
         event.preventDefault();
         this.setState({

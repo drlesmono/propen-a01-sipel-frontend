@@ -4,6 +4,7 @@ import classes from "./styles.module.css";
 import Modal from "react-bootstrap/Modal";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Button } from "react-bootstrap";
+import classes from "./styles.module.css";
 
 
 class ListTaskComponent extends Component {

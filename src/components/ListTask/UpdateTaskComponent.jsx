@@ -98,9 +98,8 @@ class UpdateTaskComponent extends Component {
                                             value={this.state.description} onChange={this.changeDescriptionHandler}/>
                                     </div>
 
-                                    <button className="btn btn-success" onClick={this.updateTask}>Simpan</button>
-                                    <button className="btn btn-danger" onClick={this.cancel.bind(this)} style={{marginLeft: "10px"}}>Batal</button>
-
+                                    <Button className={classes.button1} onClick={this.updateTask}>&nbsp;Simpan&nbsp;</Button>
+                                    <Button className={classes.button2} onClick={this.cancel.bind(this)} style={{marginLeft: "10px"}}>&nbsp;Batal&nbsp;</Button>
                                 </form>
                             </div>
                         </div>

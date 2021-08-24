@@ -60,6 +60,7 @@ class UpdateSequence extends Component {
         //event.preventDefault();
         // let test = this.state.isNotFilled;
         // let val = this.state.sequence;
+        const { value } = event.target;
         const dataSeq = {
             sequenceNum: this.state.sequence
         }
@@ -96,7 +97,7 @@ class UpdateSequence extends Component {
 
 
     render() {
-        let {isNotFilled, sequence} = this.state;
+        let {isNotFilled, sequence, isError, isSuccess} = this.state;
 
         return(
             <div id="content">

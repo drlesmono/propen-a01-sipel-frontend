@@ -357,6 +357,20 @@ class ChangeStatusOrder extends Component {
     }
 
     checkStatus(order){
+        if(order.projectInstallation === true && order.managedService === true){
+            let pi = this.getPi(order.idOrder)
+            let ms = this.getMs(order.idOrder)
+            if (pi.status === null && ms.status === null){
+                return "Inactive, Inactive";
+            } else if (pi.status === null && ms.status !== null) {
+                return "Inactive, " + ms.status;
+            } else if (pi.status !== null && ms.status === null) {
+                return pi.status + ", Inactive";
+            } else {
+                return pi.status + ", " + ms.status;
+            }
+        }
+
         if (order.projectInstallation === true){
             let pi = this.getPi(order.idOrder)
             // console.log(order)
@@ -539,9 +553,11 @@ class ChangeStatusOrder extends Component {
         ]);
 
         return (
-            <div>
-                <h1>Daftar Order</h1>
-                <div className={classes.search}><Form.Control type="text" size="sm" placeholder="Cari..." onChange={this.handleFilter}/></div>
+            <div className={classes.container}>
+                <h1 className="text-center">Daftar Order</h1>
+                <div className="d-flex justify-content-end" style={{padding: 5}}>
+                    <div className={classes.search}><Form.Control type="text" size="sm" placeholder="Cari..." onChange={this.handleFilter}/></div>
+                </div>
                 <CustomizedTables headers={tableHeaders} rows={tableRows}/>
                 <Modal show={isEdit} handleCloseModal={this.handleCancel}>
                     <div><h3 id='titleform' >Form Ubah Status Order</h3></div>

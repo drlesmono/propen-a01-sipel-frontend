@@ -232,9 +232,11 @@ class ChangeStatusMaintenance extends Component {
 
 
         return (
-            <div>
-                <h1>Daftar Maintenance</h1>
-                <div className={classes.search}><Form.Control type="text" size="sm" placeholder="Cari..." onChange={this.handleFilter}/></div>
+            <div className={classes.container}>
+                <h1 className="text-center">Daftar Maintenance</h1>
+                <div className="d-flex justify-content-end" style={{padding: 5}}>
+                    <div className={classes.search}><Form.Control type="text" size="sm" placeholder="Cari..." onChange={this.handleFilter}/></div>
+                </div>
                 <CustomizedTables headers={tableHeaders} rows={tableRows}/>
                 <Modal show={isEdit} handleCloseModal={this.handleCancel}>
                     <div><h3 id='titleform' >Form Ubah Status Maintenance</h3></div>

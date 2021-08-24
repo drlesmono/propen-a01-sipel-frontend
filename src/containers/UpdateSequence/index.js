@@ -18,6 +18,7 @@ class UpdateSequence extends Component {
         };
         this.handleFilled = this.handleFilled.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
+        this.handleCancel = this.handleCancel.bind(this);
 
     }
 
@@ -91,7 +92,7 @@ class UpdateSequence extends Component {
             isSuccess: false,
             isNotFilled: false
         });
-        this.loadData();
+        // this.loadData();
     }
 
 

@@ -104,7 +104,6 @@ class UpdateSequence extends Component {
                 <div>
                     <h1 class="text-center">Reset Urutan Nomor Order</h1>
                     <Card>
-                            <div>Sequence saat ini : {sequence}</div>
                             <Form.Control type="number" className="sequence" size="sm" placeholder="Ubah nilai..." onChange={this.handleFilled}/>
                             <Button className={classes.button4} onClick={() => this.handleSubmit()}>Update</Button>
                     </Card>

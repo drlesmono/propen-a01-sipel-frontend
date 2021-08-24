@@ -95,7 +95,6 @@ class UpdateSequence extends Component {
     }
 
 
-
     render() {
         let {isNotFilled, sequence, isError, isSuccess} = this.state;
 
@@ -111,8 +110,8 @@ class UpdateSequence extends Component {
                 </div>
             </div>
 
-            {/* Menampilkan modal berisi notifikasi ketika berhasil menyimpan data atau error */}
-            <Modal
+                {/* Menampilkan modal berisi notifikasi ketika berhasil menyimpan data atau error */}
+                <Modal
                     show={isSuccess || isError || isNotFilled}
                     dialogClassName="modal-90w"
                     aria-labelledby="contained-modal-title-vcenter"

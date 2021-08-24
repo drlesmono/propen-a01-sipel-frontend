@@ -21,20 +21,20 @@ class UpdateSequence extends Component {
 
     }
 
-    componentDidMount() {
-        this.loadData();
-    }
+    // componentDidMount() {
+    //     this.loadData();
+    // }
 
-    async loadData() {
-        try {
-            const seq = await APIConfig.get("/order/resetSeq", { headers: authHeader() });
-            this.setState({ sequence: seq.data });
-        } catch (error) {
-            // alert("Oops terjadi masalah pada server");
-            this.setState({ isError: true });
-            console.log(error);
-        }
-    }
+    // async loadData() {
+    //     try {
+    //         const seq = await APIConfig.get("/order/resetSeq", { headers: authHeader() });
+    //         this.setState({ sequence: seq.data });
+    //     } catch (error) {
+    //         // alert("Oops terjadi masalah pada server");
+    //         this.setState({ isError: true });
+    //         console.log(error);
+    //     }
+    // }
 
     handleFilled(event){
         const { value } = event.target;

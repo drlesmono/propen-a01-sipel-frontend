@@ -154,6 +154,7 @@ class FinalisasiLaporan extends Component {
                 }
                 await APIConfig.post(`/report/${newReport.idReport}/maintenance/finalize`, dataMaintenanceReport, { headers: authHeader() });
             } else if (this.state.bastPi){
+                console.log("bast pi masuk")
                 const dataBastReport = {
                     idBast: null,
                     bastNum: null,
@@ -192,7 +193,7 @@ class FinalisasiLaporan extends Component {
             console.log(error);
             return this.setState({isUpload: false, isMrUploaded:false, isInstallationReport: false, isError: true, messageError: "Oops terjadi masalah pada server"});
         }
-        this.setState({isSuccess: true, isUpload: false, isMrUploaded:false, isBastUpload: false, isInstallationReport: false});
+        this.setState({isSuccess: true, isUpload: false, isMrUploaded:false, isBastUploaded: false, isInstallationReport: false});
         this.loadData();
     }
 
@@ -537,12 +538,9 @@ class FinalisasiLaporan extends Component {
                 }
             }
         } else {
-            console.log("masuk sini")
             const bast = this.getBast(report.idReport);
-            console.log(bast)
             if(bast !== null){
                 if(bast.notes !== null){
-                    console.log(bast.notes)
                     let splitNotes=bast.notes.split(' ');
                     if(splitNotes.length > 7){
                         for(let i=0; i<7; i++){
@@ -592,9 +590,10 @@ class FinalisasiLaporan extends Component {
 
     // Menyaring list report sesuai dengan data yang dimasukkan pada form search
     handleFilter(event){
+        console.log(this.state.reports)
         let newReportList = this.state.reports;
         const { value } = event.target;
-
+        console.log(newReportList)
         if( value !== "" ){
             newReportList = this.state.reports.filter(report => {
                 return (report.reportName.toLowerCase().includes(value.toLowerCase()) ||
@@ -923,6 +922,35 @@ class FinalisasiLaporan extends Component {
                                 </tr>
                             </Table>
                         </Form>
+                    </Modal.Body>
+                </Modal>
+
+                {/* Menampilkan modal berisi konfirmasi hapus report */}
+                <Modal
+                    show={isDelete}
+                    dialogClassName="modal-90w"
+                    aria-labelledby="contained-modal-title-vcenter"
+                >
+                    <Modal.Header closeButton onClick={this.handleCancel}>
+                    </Modal.Header>
+                    <Modal.Body>
+                        { isFailed ?
+                            <Card body className={classes.card}>
+                                <div className="d-flex justify-content-between">
+                                    <div>{messageError}</div>
+                                    <Button size="sm" className="bg-transparent border border-0 border-transparent" onClick={this.handleCloseNotif}>x</Button>
+                                </div>
+                            </Card>
+                            : <></> }
+                        <div>Apakah Anda yakin menghapus laporan dengan nomor {reportNum === null? "" : reportNum} ?</div>
+                        <div className="d-flex justify-content-center">
+                            <Button className={classes.button3} onClick={this.handleCancel}>
+                                Batal
+                            </Button>
+                            <Button className={classes.button1} onClick={this.handleDelete}>
+                                Hapus
+                            </Button>
+                        </div>
                     </Modal.Body>
                 </Modal>
 

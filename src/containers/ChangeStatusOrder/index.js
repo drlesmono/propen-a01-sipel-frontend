@@ -33,7 +33,8 @@ class ChangeStatusOrder extends Component {
         this.handleSubmit = this.handleSubmit.bind(this);
         this.handleErrorMsClosed = this.handleErrorMsClosed.bind(this);
         this.handleErrorPiClosed = this.handleErrorPiClosed.bind(this);
-        this.handleSubmitted = this.handleSubmitted.bind(this)
+        this.handleSubmitted = this.handleSubmitted.bind(this);
+        this.handleFilter = this.handleFilter.bind(this);
     }
 
     componentDidMount() {
@@ -47,7 +48,7 @@ class ChangeStatusOrder extends Component {
             const listMs = await APIConfig.get("/orders/ms", { headers: authHeader() });
             // const services = await APIConfig.get("/services");
             this.setState({ ordersVerified: orders.data, listPi: listPi.data, listMs: listMs.data});
-
+            console.log(this.state.ordersVerified)
         } catch (error) {
             alert("Oops terjadi masalah pada server");
             console.log(error);
@@ -482,6 +483,7 @@ class ChangeStatusOrder extends Component {
 
     // Menyaring list order sesuai dengan data yang dimasukkan pada form search
     handleFilter(event){
+        console.log(this.state.ordersVerified)
         let newOrderList = this.state.ordersVerified;
         const { value } = event.target;
         if( value !== "" ){
@@ -541,16 +543,26 @@ class ChangeStatusOrder extends Component {
             statusMaintenances,
             statusMs,
             statusPi,
+            isFiltered,
+            orderFiltered
         } = this.state;
         let listMaintenance;
         const tableHeaders = ['No.', 'Nomor PO', 'Perusahaan', 'Tipe', 'Status','Aksi'];
-        const tableRows = ordersVerified.map((order) => [
+        const tableRows = isFiltered ? orderFiltered.map((order) => [
             order.noPO,
             order.clientName,
             this.checkTypeOrder(order.projectInstallation, order.managedService),
             this.checkStatus(order),
             this.checkClosedForRender(order, listMaintenance)
-        ]);
+        ])
+        : ordersVerified.map((order) => [
+                order.noPO,
+                order.clientName,
+                this.checkTypeOrder(order.projectInstallation, order.managedService),
+                this.checkStatus(order),
+                this.checkClosedForRender(order, listMaintenance)
+            ])
+        ;
 
         return (
             <div className={classes.container}>

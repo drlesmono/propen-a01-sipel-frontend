@@ -16,6 +16,7 @@ class ChangeStatusMaintenance extends Component {
             listMs: [],
             listMaintenance: [],
             orderFiltered: [],
+            maintenanceFiltered: [],
             isFiltered: false,
             isLoading: false,
             isEdit: false,
@@ -34,9 +35,10 @@ class ChangeStatusMaintenance extends Component {
         this.handleCancel = this.handleCancel.bind(this);
         this.handleChangeField = this.handleChangeField.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
+        this.handleFilter = this.handleFilter.bind(this);
         this.handleErrorMsClosed = this.handleErrorMsClosed.bind(this);
         this.handleErrorPiClosed = this.handleErrorPiClosed.bind(this);
-        this.handleSubmitted = this.handleSubmitted.bind(this)
+        this.handleSubmitted = this.handleSubmitted.bind(this);
     }
 
     componentDidMount() {
@@ -166,20 +168,20 @@ class ChangeStatusMaintenance extends Component {
         this.setState({isEdit: true, maintenanceTarget: maintenance, statusMaintenance: this.checkStatus(maintenance)});
     }
 
-    // Menyaring list order sesuai dengan data yang dimasukkan pada form search
+    // Menyaring list maintenance sesuai dengan data yang dimasukkan pada form search
     handleFilter(event){
-        let newOrderList = this.state.ordersVerified;
+        let newMaintenanceList = this.state.listMaintenance;
         const { value } = event.target;
         if( value !== "" ){
-            newOrderList = this.state.ordersVerified.filter(order => {
-                return (order.orderName.toLowerCase().includes(value.toLowerCase()) ||
-                    order.noPO.toLowerCase().includes(value.toLowerCase()))
+            newMaintenanceList = this.state.listMaintenance.filter(maintenance => {
+                return (this.getDate(maintenance.dateMn).toLowerCase().includes(value.toLowerCase()) ||
+                    this.getMs(maintenance.idMaintenance).idOrder.noPO.toLowerCase().includes(value.toLowerCase()))
             });
             this.setState({ isFiltered : true });
         }else{
             this.setState({ isFiltered : false });
         }
-        this.setState({ orderFiltered : newOrderList });
+        this.setState({ maintenanceFiltered : newMaintenanceList });
     }
 
     getDate(date) {
@@ -220,15 +222,24 @@ class ChangeStatusMaintenance extends Component {
             statusPi,
             listMaintenance,
             statusMaintenance,
-            maintenanceTarget
+            maintenanceTarget,
+            maintenanceFiltered,
+            isFiltered
         } = this.state;
         const tableHeaders = ['No.', 'Nomor PO', 'Tanggal Maintenance', 'Status','Aksi'];
-        const tableRows = listMaintenance.map((maintenance, index) => [
+        const tableRows = isFiltered ? maintenanceFiltered.map((maintenance, index) => [
             this.getMs(maintenance.idMaintenance).idOrder.noPO,
             this.getDate(maintenance.dateMn),
             this.checkStatus(maintenance),
             this.checkMaintainedForRender(maintenance)
-        ]);
+        ])
+        : listMaintenance.map((maintenance, index) => [
+                this.getMs(maintenance.idMaintenance).idOrder.noPO,
+                this.getDate(maintenance.dateMn),
+                this.checkStatus(maintenance),
+                this.checkMaintainedForRender(maintenance)
+            ])
+        ;
 
 
         return (
